@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <title>Resistorfärger</title>
+    <style>
+     pre {
+       margin:0;
+     }
+     
+     .resistor > * {
+        margin-right: -.3em;
+        display: inline-block;
+        background-color: hsla(37, 40%, 83%, 1);
+        height: 3em;
+        width: 2em;
+      }
+      
+      .left,.right {
+        border-radius: 10px;
+      }
+      
+      .band {
+        position: relative;
+        width: 1.2em;
+        height: 2.2em;
+        margin-bottom: .4em;
+        }
+       
+        .band:after {
+          content: ' ';
+          position: absolute;
+          left: .3em;
+          width: 0.5em;
+          height: 2.2em;
+        }
+        .band.black:after {
+        background-color: hsl(0, 0%, 0%, 1);
+        }
+        .band.brown:after {
+        background-color: hsla(30, 100%, 29%, 1);
+        }
+        .band.red:after {
+        background-color: hsla(0, 100%, 50%, 1);
+        }
+        .band.orange:after {
+        background-color: hsla(30, 100%, 50%, 1);
+        }
+        .band.yellow:after {
+        background-color: hsla(60, 100%, 50%, 1);
+        }
+        .band.green:after {
+        background-color: hsla(120, 100%, 50%, 1);
+        }
+        .band.blue:after {
+        background-color: hsla(240, 100%, 50%, 1);
+        }
+        .band.violet:after {
+        background-color: hsla(274, 100%, 50%, 1);
+        }
+        .band.grey:after {
+        background-color: hsla(0, 0%, 50%, 1);
+        }
+        .band.white:after {
+        background-color: hsla(0, 100%, 100%, 1);
+        }
+        .band.gold:after {
+        background-color: hsla(46, 65%, 52%, 1);
+        }
+        .band.silver:after {
+        background-color: hsla(0, 0%, 75%, 1);
+        }
+        .band4:after {
+        width: 0.25em !important;
+        }
+    </style>
+  </head>
+  <body>
+  <div id="app" class="container">
+    <h1>Träning resistorstorleks avläsning</h1>
+    <p>
+    I denna övning så ska du träna på att läsa av färger och översätta till en resistans. 
+    Det är mycket vanligt innom elyrken att det är färger som ska läsas av för att man ska veta vad något har för egenskaper.
+    Använd tabellern som finns på sidan om <a target="_balank" href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatronik/elektronik/elkomponenter/resistorer">resistorer</a>.
+    </p>
+    <div class="resistor">
+      <div class="left"></div>
+      <div class="band" v-bind:class="band1class"></div>
+      <div class="band" v-bind:class="band2class"></div>
+      <div class="band" v-bind:class="band3class"></div>
+      <div class="band band4" v-bind:class="band4class"></div>
+      <div class="right"></div>
+    </div>
+    <p>Hur stor är resistansen i resistorn ovan?</p>
+    <div>
+      <div class="input-group mb-3">
+        <input v-model="svar" type="text" class="form-control" >
+        <div class="input-group-append">
+          <span class="input-group-text" >Ohm</span>
+        </div>
+      </div>
+      <button v-on:click="check" v-if="kontroll !== svar" class="btn btn-primary">Kontrollera svaren.</button><br>
+      <div v-if="correct" class="alert alert-success">
+        Grattis! Du klarade frågan!<br>
+        <button class="btn btn-primary" v-on:click="next">Nästa övning</button><br>
+        <img class="rounded" width="320" v-bind:src="successImage()">
+      </div>
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="localStorage.removeItem(taskname);alert('Laddaom sidan för att återställa helt')">Återställ övning</button>
+    <div v-if="antal >= 15" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="'https://script.google.com/a/macros/educ.goteborg.se/s/AKfycbx2w--Ik14mFi79rob0DA5QgFnNtOEejjAsvq-ll8WWaskVlv0/exec?page=kod&kod='+btoa(taskname+'-'+questions)">
+      </div>
+    </div>
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+  Vue.use(Success);
+  Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        taskname: "Resistorfärger",
+        band1: 1,
+        band2: 0,
+        band3: 7,
+        band4: 4,
+        svar: "",
+        antal: -1,
+        countcolor: ["black","brown","red","orange","yellow","green","blue","violet","grey","white"],
+        multi: ["black","brown","red","orange","yellow","green","blue","violet","grey","white","gold","silver","pink"],
+        diffcolor: ["brown","red","green","blue","violet","gold","silver"],
+        questions: [],
+        poang: 1,
+        kontroll :""
+        },
+      computed: {
+        right: function(){
+          var rightnumber = Number(this.band1 + "" + this.band2);
+          if(this.band3 > 9){
+            rightnumber = rightnumber * Math.pow(10, (this.band3-9) * -1);
+          } else {
+            rightnumber = rightnumber * Math.pow(10, this.band3);
+          }
+          return rightnumber;
+        },
+        correct: function(){
+          var max = this.right*1.01;
+          var min = this.right*0.91;
+          return (this.kontroll < max && this.kontroll > min);
+        },
+        band1class: function(){
+          return this.countcolor[this.band1];
+        },
+        band2class: function(){
+          return this.countcolor[this.band2];
+        },
+        band3class: function(){
+          return this.multi[this.band3];
+        },
+        band4class: function(){
+          return this.diffcolor[this.band4];
+        },
+        svar: function(){
+          return "";
+        }
+      },
+      methods: {
+        check: function () {
+          this.kontroll = this.svar.trim().split(" ").join("").replace(',', '.');
+          if(this.correct){
+            return
+          }
+          alert("Svaret är inte rätt");
+          this.poang = this.poang/2;
+          if (this.antal < 0){
+            this.antal = 0;
+          }
+        },
+        next: function () {
+          this.svar = "";
+          this.kontroll = "";
+          this.antal = this.antal + this.poang;
+          this.poang = 1;
+          this.band1 = 1+Math.floor(Math.random() * 9);
+          this.band2 = Math.floor(Math.random() * 10);
+          this.band3 = Math.floor(Math.random() * 12);
+          this.band4 = Math.floor(Math.random() * 7);
+          this.questions.push(this.right);
+          this.save();
+        }
+      }
+    })
+  </script>
+</html>
+
+
+
+
+
+
+
+

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://ifa.thure.org/ladder/ladder.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <title>Vridmoment kraft</title>
+    <style>
+    table.logic {
+      border-collapse:true;
+    }
+    
+    table.logic td {
+      padding: 0px;
+    }
+    
+    table.logic img {
+      width: 80px;
+    }   
+    </style>
+  </head>
+  <body>
+  <div id="app" class="container">
+    <h1>Träning - Vridmoment och kraft</h1>
+    <p>
+    Läs mer om 
+    <a target="_blank" href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatronik/mekanik/vridmoment">Vidmoment.</a>
+    </p>
+    <div v-if="antal >= 15" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="'https://script.google.com/a/macros/educ.goteborg.se/s/AKfycbx2w--Ik14mFi79rob0DA5QgFnNtOEejjAsvq-ll8WWaskVlv0/exec?page=kod&kod='+btoa(taskname+'-'+questions)">
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">På bilden finns det en axel som den <b>svarta staven</b> är kopplad till det finns en <b style="color:red">kraft</b> och ett <b style="color:blue">vridmoment</b>.</h5>
+          <img src="data:image/png;base64,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"> 
+          <p v-if="askfor=='Kraft'">Om Vrimomentet är {{ kraft * langd }}Nm vad är då kraften längst ut på den {{ langd }}m långa staven?</p>
+          <p v-if="askfor=='Vrid'">Vad blir vridmomentet om någron drar längst ut på den {{ langd }}m långa staven med {{ kraft }}N?</p>
+          <p v-if="askfor=='Langd'">Hur lång måste staven vara för att få ett Vridmoment på {{ kraft * langd }}Nm om kraften ska vara {{ kraft }}N?</p>
+            <div class="input-group mb-3">
+                <input v-model="svar" type="text" class="form-control" >
+                <div class="input-group-append">
+                  <span class="input-group-text" >{{unit[askfor]}}</span>
+                </div>
+             </div>  
+             <button v-on:click="check" class="btn btn-primary"> Kontrollera svaret </button>
+        </div>
+      </div>
+      <div v-if="right" class="alert alert-success" >
+        Rätt!<br>
+        <button class="btn btn-primary" v-on:click="next"> Nästa övning </button>
+        <br>
+        <img widht="320" v-bind:src="successImage()">
+      </div>
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="localStorage.removeItem(taskname);alert('Laddaom sidan för att återställa helt')">Återställ övning</button>
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+    Vue.use(Success);
+    Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        taskname: "Krafter",
+        svar: "",
+        antal: -1,
+        kontroll: "",
+        poang: 1,
+        questions: [],
+        askfor: "Kraft",
+        kraft: 1,
+        langd: 1,
+        unit: {"Kraft":"N","Vrid":"Nm","Langd":"m"}
+        },
+      computed: {
+        right: function(){
+          if(this.askfor=="Kraft" && parseInt(this.kontroll) == this.kraft){
+            return true
+          } else if (this.askfor=="Vrid" && parseInt(this.kontroll) == this.kraft * this.langd){
+            return true  
+          } else if (this.askfor=="Langd" && parseInt(this.kontroll) == this.langd){
+            return true   
+          }
+          return false;
+        }
+      },
+      created: function () {
+        if(window.localStorage[this.taskname]){
+          var myApp = this;
+          var stored = JSON.parse(window.localStorage[this.taskname]);
+          Object.keys(stored).forEach(function (field){
+            myApp[field] = stored[field];
+          });
+        }
+        else
+        {
+          this.next();
+        }
+      },
+      methods: {
+        check: function () {
+          this.kontroll = this.svar;
+          if(this.right){
+            return
+          }
+          alert("Svaret är inte rätt");
+          this.poang=this.poang/2;
+        },
+        next: function () {
+          askforlist = ["Kraft","Vrid","Langd"]; 
+          this.askfor = askforlist[Math.round(Math.random()*2)];
+          this.langd = 1+Math.round(Math.random()*15)
+          this.kraft = 1+Math.round(Math.random()*15)
+          this.svar = "";
+          this.kontroll = "";
+          this.antal += this.poang;
+          this.poang = 1;
+          this.questions.push(this.askfor);
+          this.save();
+        }
+      }
+    })
+  </script>
+</html>

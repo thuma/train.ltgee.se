@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://ifa.thure.org/schema.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <title>Ledningsresistans</title>
+    <style>
+     pre {
+       margin:0;
+     }
+    </style>
+  </head>
+  <body>
+
+  <div id="app" class="container">
+    <h1>Träning Ledningsresistans</h1>
+    <p>
+    I denna övning får du träna på att räkan ut hur stor resistans en sladd har.
+    Det du ska lära dig är hur resistansen i en kabel påverkas av längd, tjocklek och materail.
+    Detta är viktigt för att du kan kunna veta vilken storlek du behöver på en kabel innan du installerar den.
+    Läs mer om <a href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatronik/elektronik/elektricitet/ohms-lag/ledningsresistnas" target="_blank">Resistnas</a>.
+    </p>
+    <div>
+      <img src="data:image/png;base64,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" alt="" /><br>
+      <span v-if="attveta=='R'">
+        Vad är resistansen i kretsen om kabeln är {{ langd }} meter, 
+        ledarna har en area på {{ area }} mm² och materialet på ledaren är {{ material }}?<br>
+      </span>
+      <span v-if="attveta=='langd'">
+        Hur lång är en kabel som har resistansen {{ prefix(R) }} Ω, 
+        ledarna har en area på {{ area }} mm² och materialet på ledaren är {{ material }}?<br>
+      </span>
+      <span v-if="attveta=='area'">
+        Hur stor area har ledaren på en kabel som är är {{ langd }} meter, 
+        resistansen i kretsen är {{ prefix(R) }} Ω och materialet på ledaren är {{ material }}?<br>
+      </span>
+      <div class="input-group mb-3">
+        <input v-model="svar" type="text" class="form-control" >
+        <div class="input-group-append">
+          <span class="input-group-text" >{{attvetaenht[attveta]}}</span>
+        </div>
+      </div>
+      <button v-on:click="check" v-if="kontroll !== svar" class="btn btn-primary">Kontrollera svaren.</button><br>
+      <div v-if="right(kontroll, this[attveta])" class="alert alert-success">
+        Grattis! Du klarade frågan!<br>
+        <button class="btn btn-primary" v-on:click="next">Nästa övning</button><br>
+        <img class="rounded" width="320" v-bind:src="successImage()">
+      </div>
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="localStorage.removeItem(taskname);alert('Laddaom sidan för att återställa helt')">Återställ övning</button>
+    <div v-if="antal >= 15" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="'https://script.google.com/a/macros/educ.goteborg.se/s/AKfycbx2w--Ik14mFi79rob0DA5QgFnNtOEejjAsvq-ll8WWaskVlv0/exec?page=kod&kod='+btoa(taskname+'-'+questions)">
+      </div>
+    </div>
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+  Vue.use(Success);
+  Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        langd: 100,
+        poang: 1,
+        material: "koppar",
+        area: 1.5,
+        antal: -1,
+        attveta: "R",
+        attvetaalts: ["R","langd","area"],
+        attvetaenht: {"R":"Ω","langd":"m","area":"mm²"},
+        svar: "",
+        kontroll: "",
+        raknare: "",
+        questions:[],
+        coef: {
+          "silver": 0.0159,
+          "koppar": 0.01678,
+          "guld": 0.0235,
+          "aluminium": 0.0265,
+          "järn": 0.097,
+          },
+        materialalt: ["silver","koppar","guld","aluminium","järn"],
+        taskname: "Ledningsresistans"
+        },
+      computed: {
+        rsvar: function () {
+           try{
+             return eval(this.raknare.split(",").join("."));
+           }
+           catch(e){
+             return ""
+           }
+        },
+        R: function(){
+          return (this.langd*2*this.coef[this.material])/this.area;
+        }
+      },
+      methods: {
+        right: function(a, b){
+          a = Number(a.replace(',','.'))
+          var max = b*1.01;
+          var min = b*0.91;
+          return (a < max && a > min);
+        },
+        prefix: function(count) {
+          if (count < 1){
+            return Number( count +'e+3').toFixed(3) + " m";
+          }
+          if (count > 1000){
+            return Number( count +'e-3').toFixed(3) + " k";
+          }
+          return count.toFixed(3);
+        },
+        check: function () {
+          this.kontroll = this.svar;
+          if(this.right( this.kontroll, this[this.attveta])){
+            return
+          }
+          alert("Svaret är inte rätt");
+          this.poang = this.poang / 2;
+          if (this.antal < 0){
+            this.antal = 0;
+          }
+        },
+        next: function () {
+          this.svar = "";
+          this.kontroll = "";
+          this.antal = this.antal + this.poang;
+          this.poang = 1;
+          if(this.antal > 10){
+            this.attveta = this.attvetaalts[Math.round(Math.random() * 2)];
+          } else {
+            this.attveta = this.attvetaalts[0];
+          }
+          this.langd = 10 + 10 + Math.floor(Math.random() * 200);
+          this.material = this.materialalt[Math.round(Math.random() * 4)];
+          this.area = 0.5 + (Math.floor(Math.random() * 40)/10);
+          this.questions.push(this.attveta);
+          this.save();
+        }
+      }
+    })
+  </script>
+</html>
+
+
+
+
+
+
