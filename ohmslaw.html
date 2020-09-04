@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="http://ifa.thure.org/schema.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <title>Ohms Lag</title>
+  </head>
+  <body>
+
+  <div id="app" class="container">
+    <h1>Träning Ohms Lag</h1>
+    <p>
+    I denna övning får du träna på att använda Ohms Lag.
+    Ohms lag är viktig för att kunna förstå och räkna på hur Ström, Spänning och Resistans påverkar varandra.
+    Detta är grunden för elläran.
+    </p>
+    <p>
+    Läs på mer om <a target="_blank" href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatronik/elektronik/elektricitet/ohms-lag">Ohms Lag</a> om du känner dig osäker.
+    </p>
+    <div>
+      <table class="sh">
+        <tr>
+          <td class="l-d-corner"></td>
+          <td class="resistor">R=<span v-if="!(veta == 'R')">{{R}}</span><span v-else="">...</span>Ohm</td>
+          <td class="r-d-corner"></td>
+        </tr>
+        <tr>
+          <td class="bat vert">U=<span v-if="!(veta == 'U')">{{U}}</span><span v-else="">...</span>V</td>
+          <td class=""></td>
+          <td class="amp vert">I=<span v-if="!(veta == 'I')">{{I}}</span><span v-else="">...</span>A</td>
+        </tr>
+        <tr>
+          <td class="r-u-corner"></td>
+          <td class="line"></td>
+          <td class="l-u-corner"></td>
+        </tr>
+      </table>
+      <div v-if="veta == 'I'">Kretesen ovan har en spänning på {{U}} Volt och en resistans på {{R}} Ohm vad är Strömmen?</div>
+      <div v-if="veta == 'R'">Kretesen ovan har en spänning på {{U}} Volt och en Ström på {{I}} A vad är Resistansen?</div>
+      <div v-if="veta == 'U'"> Kretesen ovan har en resistans på {{R}} Ohm och en Ström på {{I}} A vad är Spänningen?</div>
+      <table>
+        <tr v-if="veta == 'U'"><td>U=</td><td><input class="form-control" type="number" v-model="svar"></td><td>V</td></tr>
+        <tr v-if="veta == 'I'"><td>I=</td><td><input class="form-control" type="number" v-model="svar"></td><td>A</td></tr>
+        <tr v-if="veta == 'R'"><td>R=</td><td><input class="form-control" type="number" v-model="svar"></td><td>Ohm</td></tr>
+      </table>
+      <div v-if="status == true" class="alert alert-success">
+        Grattis! Du klarade frågan!<br>
+        <button class="btn btn-primary" v-on:click="next">Nästa övning</button><br>
+        <img class="rounded" width="320" v-bind:src="successImage()">
+      </div>
+      <button class="btn btn-primary" v-on:click="kolla">Kolla om svaret är rätt.</button>
+      <div class="progress mt-2">
+        <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+      </div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="localStorage.removeItem(taskname);alert('Laddaom sidan för att återställa helt')">Återställ övning</button>
+    <div v-if="antal >= 15" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="'https://script.google.com/a/macros/educ.goteborg.se/s/AKfycbx2w--Ik14mFi79rob0DA5QgFnNtOEejjAsvq-ll8WWaskVlv0/exec?page=kod&kod='+btoa(taskname+questions)">
+      </div>
+    </div>
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+  Vue.use(Success);
+  Vue.use(SaveAndRestore);
+  var app = new Vue({
+    el: '#app',
+    data: {
+      I: 1,
+      R: 1,
+      veta: "R",
+      questions: [],
+      svar: "",
+      poang: 1,
+      ksvar: "",
+      antal:-1,
+      taskname: "OhmsLag"
+    },
+    computed: {
+      status: function () {
+        if (this.ksvar == this[this.veta]){
+          return true;
+        }
+        else {
+          return false;
+        }
+      },
+      U: function(){
+        return this.I*this.R;
+      }
+    },
+    methods: {
+      kolla: function(){
+         if(!(this[this.veta] == this.svar)){
+           alert("Svaret är inte rätt");
+           this.poang = this.poang/2;
+         }
+         this.ksvar = this.svar;
+      },
+      next: function () {
+        this.questions.push(this.veta);
+        attVeta = ["U","I","R"];
+        this.veta = attVeta[Math.floor(Math.random() * 3)];
+        this.I=(Math.floor(Math.random() * 9)+1);
+        this.R=Math.floor(Math.random() * 400)+1;
+        this.antal = this.antal + this.poang;
+        this.svar="";
+        this.ksvar="";
+        this.poang=1;
+        this.save();
+      }
+    }
+  })
+  </script>
+</html>
+
