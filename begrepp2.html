@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <title>Begrepp och enheter</title>
+  </head>
+  <body>
+
+  <div id="app" class="container">
+    <h1>Begrepp och enheter</h1>
+    <p>
+    I denna övning så får du träna på Storheter och enheter som är grunden för all ellära.
+    När du jobbar med el så kommer du att anbända dessa ord ofta för att tillexempel veta vilken kabelstorlek du ska använda.
+    Läs på mer om <a target="_blank" href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatronik/elektronik/elektricitet">de olika storheterna, ström, spänning, effekt och resistans på mekatronik sidan</a>
+    <span>Tecken att kopiera: Ω</span>
+    </p>
+    <div>
+      <table class="table">
+        <tr>
+          <th>Storhet</th>
+          <th>Storhetsbeteckning</th>
+          <th>Enhet</th>
+          <th>Enhetsbeteckning</th>
+          <th>Beskrivning</th>
+        </tr>
+        <tr v-for="storhet in attVeta">
+          <td v-if="veta[tabell[storhet][1]] == 0">{{ tabell[storhet][0] }}</td>
+          <td v-else="">
+            <span v-if="kolladesvar[storhet][0].trim() == tabell[storhet][0]">{{ tabell[storhet][0] }}</span>
+            <input v-else="" v-model="svar[storhet][0]" class="form-control">
+          </td>
+          
+          <td v-if="veta[tabell[storhet][1]] == 1">{{ tabell[storhet][1] }}</td>
+          <td v-else="">
+            <span v-if="kolladesvar[storhet][1].trim() == tabell[storhet][1]">{{ tabell[storhet][1] }}</span>
+            <input v-else="" v-model="svar[storhet][1]" class="form-control">
+          </td>
+
+          <td v-if="veta[tabell[storhet][1]] == 2">{{ tabell[storhet][2] }}</td>
+          <td v-else="">
+            <span v-if="kolladesvar[storhet][2].trim() == tabell[storhet][2]">{{ tabell[storhet][2] }}</span>
+            <input v-else="" v-model="svar[storhet][2]" class="form-control">
+          </td>
+
+          <td v-if="veta[tabell[storhet][1]] == 3">{{ tabell[storhet][3] }}</td>
+          <td v-else="">
+            <span v-if="kolladesvar[storhet][3].trim() == tabell[storhet][3]">{{ tabell[storhet][3] }}</span>
+            <input v-else="" v-model="svar[storhet][3]" class="form-control">
+          </td>
+          
+          <td v-if="veta[tabell[storhet][1]] == 4">{{ tabell[storhet][4] }}</td>
+          <td v-else=""></td>
+          
+        </tr>
+      </table>
+    </div>
+    <div v-if="status == true" class="alert alert-success">
+      Grattis! Du klarade övningen!<br>
+      <button class="btn btn-primary" v-on:click="next">Nästa övning</button><br>
+      <img class="rounded" width="320"  v-bind:src="successImage()">
+    </div>
+    <button v-on:click="check" class="btn btn-primary">Kontrollera svaren.</button>
+    <div class="progress">
+      <div class="progress-bar bg-success" role="progressbar" v-bind:style="{width: (antal/15*100)+'%'}"></div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="localStorage.removeItem(taskname);alert('Laddaom sidan för att återställa helt')">Återställ övning</button>
+    <div v-if="antal >= 15" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="'https://script.google.com/a/macros/educ.goteborg.se/s/AKfycbx2w--Ik14mFi79rob0DA5QgFnNtOEejjAsvq-ll8WWaskVlv0/exec?page=kod&kod='+btoa(taskname+'-'+questions)">
+      </div>
+    </div>
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+    Vue.use(Success);
+    Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+      taskname: "Begrepp med effekt",
+        svar: {
+          "U":["","","",""],
+          "I":["","","",""],
+          "R":["","","",""],
+          "P":["","","",""]
+          },
+        kolladesvar: {
+          "U":["","","",""],
+          "I":["","","",""],
+          "R":["","","",""],
+          "P":["","","",""]
+        },
+        tabell: {
+          "U":["Spänning","U","Volt","V","Det som får elektronerna att vilja röra på sig."],
+          "I":["Ström","I","Ampere","A","Hur många elektroner som rör sig genom kretsen under en viss tid."],
+          "R":["Resistans","R","Ohm","Ω","Hur stort motstånd det är i kretsen, hur jobbigt det är för elektronerna att röra sig."],
+          "P":["Effekt","P","Watt","W","Hur mycket som händer / hur stor energi/kraft som sker."]
+        },
+        veta: { "U":3, "I":1,"R":0,"P":0 },
+        attVeta: ["U","I","R"],
+        antal: -1,
+        questions:[],
+        poang: 1
+      },
+      computed: {
+        status: function () {
+          var midstatus = true;
+          var id = "U";
+          var max = this.attVeta.length;
+          var data = ""; 
+          for (var i = 0; i < max ; i++ ){
+            id = this.attVeta[i];
+            if (
+              (this.tabell[id][0] == this.kolladesvar[id][0].trim() || this.veta[id] == 0) &&
+              (this.tabell[id][1] == this.kolladesvar[id][1].trim() || this.veta[id] == 1) &&
+              (this.tabell[id][2] == this.kolladesvar[id][2].trim() || this.veta[id] == 2) &&
+              (this.tabell[id][3] == this.kolladesvar[id][3].trim() || this.veta[id] == 3)
+              ){} 
+            else{
+              midstatus = false;
+            }
+          }
+          return midstatus;
+          },
+      },
+      methods: {
+        check: function () {
+          this.kolladesvar = JSON.parse(JSON.stringify(this.svar));
+          if(!this.status){
+            alert("Alla är inte rätt");
+            this.poang = this.poang/2;
+            if(this.antal < 0){
+              this.antal = 0;
+            }
+          }
+        },
+        next: function () {
+        var alts = [["I"],["R"],["U"],["P"],["U","P"],["R","I"],["P","U","I"],["R","U","I"]]
+        this.attVeta = alts[Math.floor(Math.random() * alts.length)];
+        this.antal = this.antal + this.poang;
+        this.poang = 1;
+        this.veta = {
+          "U":Math.floor(Math.random() * 5),
+          "I":Math.floor(Math.random() * 5),
+          "R":Math.floor(Math.random() * 5),
+          "P":Math.floor(Math.random() * 5)
+          };
+        this.svar = {
+          "U":["","","",""],
+          "I":["","","",""],
+          "R":["","","",""],
+          "P":["","","",""]
+          };
+        this.kolladesvar = JSON.parse(JSON.stringify(this.svar));
+        this.questions.push(this.veta.U);
+        this.save();
+        }
+      }
+    });
+  </script>
+</html>
+
+
+

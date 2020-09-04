@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ifa.thure.org/schema.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <title></title>
+    <style>
+     pre {
+       margin:0;
+     }
+     td {
+       font-size: 13px;
+     }
+    </style>
+  </head>
+  <body>
+
+  <div id="app" class="container">
+    <h1>Ellära paralell och serie</h1>
+    <p> I denna övning får du träna på att kombinera beräkningar i <a href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatronik/elektronik/elektricitet">Effekt, Ström, Spänning & Resistans</a> i <a href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatronik/elektronik/elektricitet/elektrisk-krets" target="_blank">kretsar</a> 
+    som är både seriella och paralella samtidigt. Denna övning visar hur kretas kan vara kopplade i verklighetn när
+    många olika delar i en anläggning är inkopplade samtidigt.
+     
+    </p>
+    <table class="sh">
+      <tr>
+        <td class="l-d-corner"></td>
+        <td class="amp">I</td>
+        <td v-if="extrar" class="conn"></td>
+        <td v-if="extrar" class="line"></td>
+        <td v-for="r,index in resistanser" class="conn"></td>
+        <td class="r-d-corner"></td>
+      </tr>
+      <tr>
+        <td class="line vert"></td>
+        <td></td>
+        <td class="line vert"></td>
+        <td v-if="extrar" ></td>
+        <td v-if="extrar" class="line vert"></td>
+        <td v-for="r,index in resistanser" class="amp vert">I<sub>{{ index+1 }}</sub><span v-if="askfor!='I2'">={{prefix(ix[index])}}A</span></td>
+      </tr>
+      <tr>
+        <td class="bat vert"></td>
+        <td></td>
+        <td class="volt vert">U<span v-if="askfor[0]!='U'">={{ upress }}</span></td>
+        <td v-if="extrar"></td>
+        <td v-if="extrar" class="volt vert">U<sub>1</sub><span v-if="askfor[0]!='U'">={{ prefix(U1) }}V</span></td>
+        <td v-for="r,index in resistanser" class="resistor vert">R<sub>{{ index+1 }}</sub>={{ rdisplay(r)}}</td>
+      </tr>
+      <tr>
+        <td class="line vert"></td>
+        <td></td>
+        <td v-if="extrar" class="conn r-vert"></td>
+        <td v-else="" class="line vert"></td>
+        <td v-if="extrar" class="volt">U<sub>2</sub><span v-if="askfor[0]!='U'">={{ prefix(U2) }}V</span></td>
+        <td v-if="extrar" class="conn vert"></td>
+        <td v-for="r,index in resistanser2" class="resistor vert" v-if="r!=0">R<sub>{{ index+1+resistanser.length }}</sub>={{ rdisplay(r)}}</td>
+        <td class="line vert" v-else></td>
+      </tr>
+      <tr>
+        <td class="r-u-corner"></td>
+        <td class="line"></td>
+        <td v-if="extrar" class="conn u-vert"></td>
+        <td v-if="extrar" class="resistor">R<sub>0</sub>={{ rdisplay(extrar)}}</td>
+        <td v-for="r,index in resistanser" class="conn u-vert"></td>
+        <td class="l-u-corner"></td>
+      </tr>
+    </table>
+    <div>
+      <span v-if="askfor=='U'">Vad är spänningen i kretsen (som batteriet ger)?</span>
+      <span v-if="askfor=='U2'">Vad är spänningen över R<sub>0</sub> som voltmetern U<sub>2</sub> mäter.</span>
+      <span v-if="askfor=='I'">Vad är den totala strömmen i kretsen (som batteriet ger)?</span>
+      <span v-if="askfor=='I2'">Vad är I<sub>2</sub> alltså strömen som går genom den ampere metern?</span>
+      <span v-if="askfor=='rtot'">Vad är den totala resistansen i kretsen?</span>
+      <span v-if="askfor=='P'">Vad är den totala effekten i kretsen?</span>
+      <span v-if="askfor=='P1'">Vad är den effekten i resistor R<sub>1</sub>?</span>
+      <br>
+      <div class="input-group mb-3">
+        <input  v-model="svar" type="text" class="form-control" >
+        <div class="input-group-append">
+          <span class="input-group-text" >{{ unit[askfor] }}</span>
+        </div>
+      </div>
+      <button v-on:click="check" class="btn btn-primary">Kontrollera svaren.</button><br>
+      <div v-if="right" class="alert alert-success">
+        Grattis! Du klarade frågan!<br>
+        <button class="btn btn-primary" v-on:click="next">Nästa övning</button><br>
+        <img class="rounded" width="320" v-bind:src="successImage()">
+      </div>
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="localStorage.removeItem(taskname);alert('Laddaom sidan för att återställa helt')">Återställ övning</button>
+    <div v-if="antal >= 15" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="'https://script.google.com/a/macros/educ.goteborg.se/s/AKfycbx2w--Ik14mFi79rob0DA5QgFnNtOEejjAsvq-ll8WWaskVlv0/exec?page=kod&kod='+btoa(taskname+'-<?=activeUser?>-'+questions)">
+      </div>
+    </div>
+
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+  Vue.use(Success);
+  Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        resistanser: [100],
+        resistanser2: [100],
+        U:1,
+        svar: "",
+        antal:-1,
+        tosvar: "",
+        extrar: 0,
+        askfor: "U",
+        askforopts: ["U","rtot","I","I2","P","P1","U2"],
+        unit: {"U":"V","rtot":"Ohm","I":"A","I2":"A","P":"W","P1":"W","U2":"V"},
+        raknare:"",
+        questions:[],
+        poang: 1,
+        taskname: "Kombinerad krets"
+      },
+      computed: {
+        I: function(){
+          return this.U/this.rtot;
+        },
+        I2: function(){
+          return this.ix[1];
+        },
+        P:  function(){
+          return this.U*this.I;
+        },
+        P1:  function(){
+          return this.ix[0]*this.ix[0]*this.resistanser[0];
+        },
+        cols: function () {
+          return this.resistanser.length;
+        },
+        U1:  function(){
+          return this.U - this.U2;
+        },
+        U2:   function(){
+          return this.extrar*this.I;
+        },
+        ix: function(){
+          var r = this.resistanser;
+          var is = [];
+          for (var i=0; i < r.length; i++){
+            is.push((this.U-this.I*this.extrar)/(r[i]+this.resistanser2[i]))
+            }
+          return is;
+        },
+        rtot: function () {
+          var tot = 0;
+          var sum = 0;
+          var r = this.resistanser
+          for (var i=0; i < r.length; i++){
+            sum = sum + 1/(r[i]+this.resistanser2[i]);
+            tot = 1 / sum;
+            }
+          return tot + this.extrar;
+          },
+        right: function(){
+          var r = this.tosvar;
+          var max = this[this.askfor]*1.01;
+          var min = this[this.askfor]*0.99;
+          return (r < max && r > min);
+        },
+        upress: function() {
+          var U = this.U;
+          if (U < 1){
+            return Number( U +'e+3') + " mV";
+          }
+          return U + " V";
+        },
+        rasvar: function () {
+           try{
+             return eval(this.raknare.split(",").join("."));
+           }
+           catch(e){
+             return ""
+           }
+        }
+      },
+      methods: {
+        prefix: function(count) {
+          if (count < 1){
+            return Number( count +'e+3').toFixed(2) + " m";
+          }
+          if (count > 1000){
+            return Number( count +'e-3').toFixed(2) + " k";
+          }
+          return count.toFixed(2);
+        },
+        check: function () {
+          this.tosvar = Number(this.svar.trim().replace(',','.'));
+          if (!this.right){
+            alert("Svaret stämmer inte");
+            this.poang = this.poang/2;
+          }
+          if (this.antal < 0){
+            this.antal = 0;
+          }
+        },
+        next: function () {
+          this.svar = "";
+          this.tosvar = "";
+          this.antal = this.antal + this.poang;
+          this.poang = 1;
+          this.askfor = this.askforopts[Math.floor(Math.random() * this.askforopts.length)];
+          this.resistanser = [];
+          this.resistanser2 = [];
+          var count = 2 + Math.floor(Math.random() * 3)
+          for( var i = 0; i < count; i++){
+            this.resistanser.push((1+Math.floor(Math.random() * 200))*10);
+          }
+          for( var i = 0; i < count; i++){
+            if(Math.random()*10 < 5){
+              this.resistanser2.push(0);
+            } else {
+              this.resistanser2.push((1+Math.floor(Math.random() * 200))*10);
+            }
+          }
+          if(Math.random()*10 < 5 && this.antal > 5){
+            this.extrar = (1+Math.floor(Math.random() * 200))*10;
+          } else {
+            this.extrar = 0;
+          }
+          this.U = Math.round(5 + Math.random() * 72);
+          if(this.extrar == 0 && this.askfor == "U2"){
+             this.askfor = "U";
+          }
+          this.questions.push(this.askfor);
+          this.save();
+        },
+        rdisplay: function (r) {
+          if (r >= 1000){
+            return Number( r +'e-3') + " kΩ";
+          }
+          return r + " Ω";
+        }
+      }
+    })
+  </script>
+</html>
+
+
+

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="http://ifa.thure.org/schema.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <title>Paralellkretsar</title>
+    <style>
+     pre {
+       margin:0;
+     }
+    </style>
+  </head>
+  <body>
+
+  <div id="app" class="container">
+    <h1>Träning Paralellkretsar</h1>
+    <table class="sh">
+      <tr>
+        <td class="l-d-corner"></td>
+        <td class="amp">I=???</td>
+        <td v-for="r,index in resistanser" class="conn"></td>
+        <td class="r-d-corner"></td>
+      </tr>
+      <tr>
+        <td class="bat vert"></td>
+        <td></td>
+        <td v-for="r,index in resistanser" class="resistor vert">R{{ index+1 }}={{ rdisplay(r)}}</td>
+        <td class="volt vert">U={{ upress }}</td>
+      </tr>
+      <tr>
+        <td class="r-u-corner"></td>
+        <td class="line"></td>
+        <td v-for="r,index in resistanser" class="conn u-vert"></td>
+        <td class="l-u-corner"></td>
+      </tr>
+    </table>
+    <div><br>
+      Vad är det totala resistansen i kretsen?<br>
+      <div class="input-group mb-3">
+        <input v-model="rsvar" type="text" class="form-control" >
+        <div class="input-group-append">
+          <span class="input-group-text" >Ω</span>
+        </div>
+      </div>
+      <div v-if="rtot == torsvar" class="alert alert-success" > Rätt! </div>
+      Spänningen (U) är {{ upress }} hur stor är den totala strömmen?<br>
+      <div class="input-group mb-3">
+        <input  v-model="isvar" type="text" class="form-control" >
+        <div class="input-group-append">
+          <span class="input-group-text" >A</span>
+        </div>
+      </div>
+      <button v-on:click="check"  v-if="!iright || !rright" class="btn btn-primary">Kontrollera svaren.</button><br>
+      <div v-if="iright && rright" class="alert alert-success">
+        Grattis! Du klarade frågan!<br>
+        <button class="btn btn-primary" v-on:click="next">Nästa övning</button><br>
+        <img class="rounded" width="320" v-bind:src="successImage()">
+      </div>
+    </div>
+    <div v-if="antal >= 15" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="'https://script.google.com/a/macros/educ.goteborg.se/s/AKfycbx2w--Ik14mFi79rob0DA5QgFnNtOEejjAsvq-ll8WWaskVlv0/exec?page=kod&kod='+btoa(taskname+'-'+questions)">
+      </div>
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+    </div>
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+    Vue.use(Success);
+    Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        resistanser: [100],
+        U:1,
+        rsvar: "",
+        isvar: "",
+        antal:-1,
+        torsvar: "",
+        toisvar: "",
+        questions: [],
+        poang:1,
+        raknare:"",
+        taskname: "Paralell"
+      },
+      computed: {
+        I: function(){
+          return this.U/this.rtot;
+        },
+        cols: function () {
+          return this.resistanser.length;
+        },
+        rtot: function () {
+          var tot = 0;
+          var sum = 0;
+          var r = this.resistanser
+          for (var i=0; i < r.length; i++){
+            sum = sum + 1/r[i];
+            tot = 1 / sum;
+            }
+          return tot
+          },
+        rright: function(){
+          r = this.torsvar.replace(',','.')
+          var max = this.rtot*1.01;
+          var min = this.rtot*0.91;
+          return (r < max && r > min);
+        },
+        iright: function(){
+          i = this.toisvar.replace(',','.')
+          var max = this.I*1.01;
+          var min = this.I*0.91;
+          return (i < max && i > min);
+        },
+        upress: function() {
+          var U = this.U;
+          if (U < 1){
+            return Number( U +'e+3') + " mV";
+          }
+          return U + " V";
+        },
+        rasvar: function () {
+           try{
+             return eval(this.raknare.split(",").join("."));
+           }
+           catch(e){
+             return ""
+           }
+        }
+      },
+      created: function () {
+        this.next();
+      },
+      methods: {
+        check: function () {
+          this.torsvar = this.rsvar;
+          this.toisvar = this.isvar;
+          if(!this.rright){
+            alert("Resistansen stämmer inte.");
+            this.poang = this.poang/2;
+          } else if (!this.iright){
+            alert("Strömmen stämmer inte.");
+            this.poang = this.poang/2;
+          }
+          if (this.antal < 0){
+            this.antal = 0;
+          }
+        },
+        next: function () {
+          this.rsvar = "";
+          this.isvar = "";
+          this.torsvar = "";
+          this.toisvar = "";
+          this.antal = this.antal + this.poang;
+          this.poang = 1;
+          this.resistanser = [];
+          var count = 2 + Math.floor(Math.random() * 3)
+          for( var i = 0; i < count; i++){
+            this.resistanser.push((1+Math.floor(Math.random() * 200))*10);
+          }
+          this.U = Math.round(1 + Math.random() * 72);
+          this.questions.push(this.U);
+          this.save();
+        },
+        rdisplay: function (r) {
+          if (r >= 1000){
+            return Number( r +'e-3') + " kΩ";
+          }
+          return r + " Ω";
+        }
+      }
+    })
+  </script>
+</html>
+
+
+

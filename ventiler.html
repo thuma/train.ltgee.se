@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ifa.thure.org/valves/valve.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <title>Ventiler</title>
+    <style>
+    table.logic {
+      border-collapse:true;
+    }
+    
+    table.logic td {
+      padding: 0px;
+    }
+    
+    table.logic img {
+      width: 80px;
+    }   
+    </style>
+  </head>
+<body>
+  <div id="app" class="container">
+    <h1>Träning - Pneumatiska ventiler</h1>
+    <p>
+      Läs mer om 
+      <a target="_blank" href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatroniska-system/aktuator/pneumatik/pneumatiska-ventiler">Pneumatiska ventiler.</a>
+    </p>
+    <div v-if="antal >= 15" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="'https://script.google.com/a/macros/educ.goteborg.se/s/AKfycbx2w--Ik14mFi79rob0DA5QgFnNtOEejjAsvq-ll8WWaskVlv0/exec?page=kod&kod='+btoa(taskname+questions)">
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Välj egenskaperna som ventilen har</h5>
+        <table class="pvalve">
+          <tr>
+            <td class="control" v-bind:class="valve.left[0][0]"></td>
+            <td class="control" v-bind:class="valve.left[0][1]"></td>
+            <td v-for="block in valve.valves" v-bind:class="block" rowspan="2" class="valve"></td>
+            <td class="control right" v-bind:class="valve.right[0][1]"></td>
+            <td class="control right" v-bind:class="valve.right[0][0]"></td>
+          </tr>
+          <tr>
+            <td class="control" v-bind:class="valve.left[1][1]"></td>
+            <td class="control" v-bind:class="valve.left[1][0]"></td>
+            <!-- Rowspan 2 from top row. -->
+            <!-- Rowspan 2 from top row. -->
+            <td class="control right" v-bind:class="valve.right[1][1]"></td>
+            <td class="control right" v-bind:class="valve.right[1][0]"></td>
+          </tr>
+        </table>
+        <div class="input-group mb-3">
+          <select v-model="svar.type" class="form-control">
+            <option v-for="valve in valvetypes" v-bind:value="valve" > {{ valve }} </option>
+          </select>
+          <select v-model="svar.pos" class="form-control">
+            <option value="bi">Bistabil</option>
+            <option value="uni">Unistabil/Monostabil</option>
+            <option value="tri">Tristabil</option>
+          </select>
+          <select v-model="svar.cont" class="form-control">
+            <option value="button">Knappstyrd</option>
+            <option value="penaumatic">Pneumatiskt stryd</option>
+            <option value="roll">Gränslägesbrytare</option>
+            <option value="coil">Elstyrd</option>
+            <option value="button,pilot">Knappstyrd med pilot</option>
+            <option value="penaumatic,pilot">Pneumatiskt stryd med pilot</option>
+            <option value="roll,pilot">Gränslägesbrytare med pilot</option>
+            <option value="coil,pilot">Elstyrd med pilot</option>
+          </select>
+          <div class="input-group-append">
+            <span class="input-group-text" >Ventiltyp</span>
+          </div>
+        </div>
+        <button v-on:click="check" class="btn btn-primary"> Kontrollera svaret </button>
+      </div>
+    </div>
+    <div v-if="right" class="alert alert-success">
+      Grattis! Du klarade frågan!<br>
+      <button class="btn btn-primary" v-on:click="next">Nästa övning</button><br>
+      <img class="rounded" width="320" v-bind:src="successImage()">
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="localStorage.removeItem(taskname);alert('Laddaom sidan för att återställa helt')">Återställ övning</button>
+  </div>
+</div>
+</body>
+  <script src="common.js"></script>
+  <script>
+    Vue.use(Success);
+    Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        taskname: "ventiler",
+        svar: {"type":"","cont":"","pos":""},
+        valve: {"left":[["","button"],["",""]],"valves":["v2o","v2c"],"right":[["",""],["","spring"]]},
+        antal: -1,
+        kontroll: {"type":"","cont":"","pos":""},
+        poang: 1,
+        questions: [],
+        },
+      computed: {
+        valvetypes: function(){
+          var svar = [];
+          for (var i = 1; i < 6; i++){
+            for (var j = 1; j < 6; j++){
+              svar.push(i+"/"+j);
+            }
+          }
+          return svar;
+        },
+        right: function(){
+          var rvalve = this.valve.valves[0][1] + "/" + this.valve.valves.length;
+          var bistable = this.valve.right[1][1] !== "spring";
+          var trisable = bistable && this.valve.valves.length == 3;
+          if (this.kontroll.type !== rvalve){
+            console.log(this.kontroll.type);
+            return false;
+          }
+          if (bistable && !trisable && this.kontroll.pos !== "bi"){
+            console.log(this.kontroll.pos+="==bi");
+            return false;
+          }
+          if (trisable && this.kontroll.pos !== "tri"){
+            console.log(this.kontroll.pos+"==tri");
+            return false;
+          }
+          var check = this.kontroll.cont.split(",");
+          for(var i = 0 ; i < check.length; i++){
+            if (JSON.stringify(this.valve).indexOf(check[i])==-1){
+              console.log(check[i]);
+              return false;
+            }
+          }
+          return true;
+        }
+      },
+      methods: {
+        springRand: function(){
+          if (Math.random()>0.5){
+            return "";
+          }
+          return "spring";
+        },
+        check: function () {
+          this.kontroll = JSON.parse(JSON.stringify(this.svar));
+          if(this.right){
+            return
+          }
+          alert("Svaret är inte rätt");
+          this.poang=this.poang/2;
+        },
+        next: function () {
+          valves =[
+            ["v2o","v2c"],
+            ["v3a","v3b"],
+            ["v3a","v3x","v3b"],
+            ["v4a","v4b"],
+            ["v4a","v4x","v4b"],
+            ["v5a","v5b"],
+            ["v5a","v5x","v5b"],
+            ["v5a","v5f","v5b"],
+          ];
+          var valve = valves[Math.floor(Math.random()*valves.length)]
+          var springa = this.springRand();
+          if (valve.length < 3){
+            springa = "";
+          }
+          controlls = [
+            {"left":[["","button"],[springa,""]],"right":[["",""],["","spring"]]},
+            {"left":[["","roll"],[springa,""]],"right":[["",""],["","spring"]]},
+            {"left":[["","coil"],[springa,""]],"right":[["",""],["","spring"]]},
+            {"left":[["","penaumatic"],[springa,""]],"right":[["",""],["","spring"]]},
+            {"left":[["button","pilot"],[springa,""]],"right":[["",""],["","spring"]]},
+            {"left":[["roll","pilot"],[springa,""]],"right":[["",""],["","spring"]]},
+            {"left":[["coil","pilot"],[springa,""]],"right":[["",""],["","spring"]]},
+            {"left":[["penaumatic","pilot"],[springa,""]],"right":[["",""],["","spring"]]},
+          ];
+          cont = controlls[Math.floor(Math.random()*controlls.length)]
+          this.valve = {
+            "left":cont.left,
+            "valves":valve,
+            "right":cont.right
+            }
+          if (Math.random() > 0.5 || valve.length == 3){
+            this.valve.right = this.valve.left;
+          }
+          this.svar =  {"type":"","cont":"","pos":""},
+          this.kontroll =  {"type":"","cont":"","pos":""},
+          this.antal += this.poang;
+          this.poang = 1;
+          this.questions.push(this.valve);
+          this.save();
+        }
+      }
+    })
+  </script>
+</html>
+
