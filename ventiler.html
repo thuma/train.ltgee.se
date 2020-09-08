@@ -27,17 +27,7 @@
     </style>
   </head>
 <body>
-    <div class="g-signin2" data-onsuccess="onSignIn"></div>
-    <script>
-    function onSignIn(googleUser) {
-      var profile = googleUser.getBasicProfile();
-      console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-      console.log('Name: ' + profile.getName());
-      console.log('Image URL: ' + profile.getImageUrl());
-      console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-      app.email = profile.getEmail();
-    }
-    </script>
+  <div class="g-signin2" data-onsuccess="onSignIn"></div>
   <div id="app" class="container">
     <h1>Träning - Pneumatiska ventiler</h1>
     <p>
@@ -51,7 +41,7 @@
         <div class="input-group-prepend">
           <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
         </div>
-        <input id="correctlink" class="form-control" v-bind:value="'https://script.google.com/a/macros/educ.goteborg.se/s/AKfycbx2w--Ik14mFi79rob0DA5QgFnNtOEejjAsvq-ll8WWaskVlv0/exec?page=kod&kod='+btoa(taskname+'-'+email+'-'+questions)">
+        <input id="correctlink" class="form-control" v-bind:value="handinlink()">
       </div>
     </div>
     <div class="card">
@@ -108,7 +98,7 @@
     <div class="progress mt-2">
       <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
     </div>
-    <button class="btn btn-secondary" v-on:click="localStorage.removeItem(taskname);alert('Laddaom sidan för att återställa helt')">Återställ övning</button>
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>
   </div>
 </div>
 </body>
@@ -125,8 +115,7 @@
         antal: -1,
         kontroll: {"type":"","cont":"","pos":""},
         poang: 1,
-        questions: [],
-        email: ""
+        questions: []
         },
       computed: {
         valvetypes: function(){

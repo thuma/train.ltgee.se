@@ -39,9 +39,19 @@ var Success = {"install": function (Vue, options) {
 var SaveAndRestore = {
   "install": function (Vue, options) {
     Vue.mixin({
+      data: function(){
+        return {"email":""};
+      },
       methods: {
-        save: function () {
+        save: function() {
           localStorage.setItem(this.taskname,JSON.stringify(this.$data))
+        },
+        handinlink: function(){
+          return 'https://script.google.com/a/macros/educ.goteborg.se/s/AKfycbx2w--Ik14mFi79rob0DA5QgFnNtOEejjAsvq-ll8WWaskVlv0/exec?page=kod&kod='+btoa(this.taskname+'-'+this.email+'-'+this.questions);
+        },
+        reset: function(){
+          localStorage.removeItem(this.taskname);
+          alert('Laddaom sidan för att återställa helt');
         }
       },
       created: function () {
@@ -58,4 +68,9 @@ var SaveAndRestore = {
       }
     })
   }
+}
+
+function onSignIn(googleUser) {
+  var profile = googleUser.getBasicProfile();
+  app.email = profile.getEmail();
 }

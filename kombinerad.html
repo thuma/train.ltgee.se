@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://ifa.thure.org/schema.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
@@ -20,7 +22,7 @@
     </style>
   </head>
   <body>
-
+  <div class="g-signin2" data-onsuccess="onSignIn"></div>
   <div id="app" class="container">
     <h1>Ellära paralell och serie</h1>
     <p> I denna övning får du träna på att kombinera beräkningar i <a href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatronik/elektronik/elektricitet">Effekt, Ström, Spänning & Resistans</a> i <a href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatronik/elektronik/elektricitet/elektrisk-krets" target="_blank">kretsar</a> 
@@ -97,15 +99,14 @@
     <div class="progress mt-2">
       <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
     </div>
-    <button class="btn btn-secondary" v-on:click="localStorage.removeItem(taskname);alert('Laddaom sidan för att återställa helt')">Återställ övning</button>
-    <div v-if="antal >= 15" class="alert alert-success" >
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>    <div v-if="antal >= 15" class="alert alert-success" >
       Nu har du klarat ett träningsvarv. <br>
       Lämna in denna länk på google classroom:<br>
       <div class="input-group mb-3">
         <div class="input-group-prepend">
           <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
         </div>
-        <input id="correctlink" class="form-control" v-bind:value="'https://script.google.com/a/macros/educ.goteborg.se/s/AKfycbx2w--Ik14mFi79rob0DA5QgFnNtOEejjAsvq-ll8WWaskVlv0/exec?page=kod&kod='+btoa(taskname+'-<?=activeUser?>-'+questions)">
+        <input id="correctlink" class="form-control" v-bind:value="handinlink()">
       </div>
     </div>
 
