@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://ifa.thure.org/schema.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <title>Strömmens väg</title>
+    <style>
+     pre {
+       margin:0;
+     }
+     td {
+       font-size: 13px;
+     }
+    </style>
+  </head>
+  <body>
+  <div class="g-signin2" data-onsuccess="onSignIn"></div>
+  <div id="app" class="container">
+    <h1>Ellära Strömmens väg</h1>
+    <p> I denna övning får du träna på att se hur ström rör sig i olika kretsar.
+    </p>
+    <table class="sh">
+      <tr v-for="row in circuit.cdata">
+        <td v-for="block in row" v-bind:class="block.type">{{block.name}}</td>
+      </tr>
+    </table>
+    <div>
+      <br>
+      <div class="input-group mb-3">
+        <input  v-model="svar" type="text" class="form-control" >
+        <div class="input-group-append">
+          <span class="input-group-text" >sss</span>
+        </div>
+      </div>
+      <button v-on:click="check" class="btn btn-primary">Kontrollera svaren.</button><br>
+      <div v-if="right" class="alert alert-success">
+        Grattis! Du klarade frågan!<br>
+        <button class="btn btn-primary" v-on:click="next">Nästa övning</button><br>
+        <img class="rounded" width="320" v-bind:src="successImage()">
+      </div>
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>    <div v-if="antal >= 15" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="handinlink()">
+      </div>
+    </div>
+
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+  Vue.use(Success);
+  Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        svar: "",
+        circuit:[],
+        circuits:[
+            {
+              "questions": ["A"],
+              "cdata" : [
+                [{"name":"","type":"l-d-corner"},{"name":"A","type":"breaker"},{"name":"","type":"r-d-corner"}],
+                [{"name":"","type":"line vert"},{"name":"","type":""},{"name":"","type":"line vert"}],
+                [{"name":"","type":"r-u-corner"},{"name":"B","type":"lamp"},{"name":"","type":"l-u-corner"}]
+              ]
+            },
+            {
+              "questions": [],
+              "cdata" : [
+                [{"name":"","type":"l-d-corner"},{"name":"","type":"line"},{"name":"","type":"r-d-corner"}],
+                [{"name":"","type":"line vert"},{"name":"","type":""},{"name":"A","type":"breaker vert"}],
+                [{"name":"","type":"r-u-corner"},{"name":"B","type":"lamp"},{"name":"","type":"l-u-corner"}]
+              ]
+            },
+            {
+              "questions": [],
+              "cdata" : [
+                [{"name":"","type":"l-d-corner"},{"name":"C","type":"lamp"},{"name":"","type":"r-d-corner"}],
+                [{"name":"","type":"bat vert"},{"name":"","type":""},{"name":"A","type":"breaker vert"}],
+                [{"name":"","type":"r-u-corner"},{"name":"B","type":"lamp"},{"name":"","type":"l-u-corner"}]
+              ]
+            },
+            {
+              "questions": [],
+              "cdata" : [
+                [{"name":"","type":"l-d-corner"},{"name":"B","type":"lamp"},{"name":"","type":"r-d-corner"}],
+                [{"name":"","type":"bat vert"},{"name":"","type":""},{"name":"A","type":"breaker vert"}],
+                [{"name":"","type":"r-u-corner"},{"name":"","type":"line"},{"name":"","type":"l-u-corner"}]
+              ]
+            },
+            {
+              "questions": [],
+              "cdata" : [
+                [{"name":"","type":"l-d-corner"},{"name":"","type":"conn"},{"name":"","type":"r-d-corner"}],
+                [{"name":"B","type":"lamp vert"},{"name":"","type":"bat vert"},{"name":"A","type":"breaker vert"}],
+                [{"name":"","type":"r-u-corner"},{"name":"","type":"conn u-vert"},{"name":"","type":"l-u-corner"}]
+              ]
+            },
+            {
+              "questions": [],
+              "cdata" : [
+                [{"name":"","type":"l-d-corner"},{"name":"","type":"conn"},{"name":"","type":"r-d-corner"}],
+                [{"name":"B","type":"lamp vert"},{"name":"","type":"bat vert"},{"name":"C","type":"lamp vert"}],
+                [{"name":"","type":"line vert"},{"name":"","type":"line vert"},{"name":"A","type":"breaker vert"}],
+                [{"name":"","type":"r-u-corner"},{"name":"","type":"conn u-vert"},{"name":"","type":"l-u-corner"}]
+              ]
+            },
+            {
+              "questions": [],
+              "cdata" : [
+                [{"name":"","type":"l-d-corner"},{"name":"","type":"conn"},{"name":"","type":"r-d-corner"}],
+                [{"name":"","type":"bat vert"},{"name":"B","type":"lamp vert"},{"name":"C","type":"lamp vert"}],
+                [{"name":"","type":"line vert"},{"name":"","type":"line vert"},{"name":"A","type":"breaker vert"}],
+                [{"name":"","type":"r-u-corner"},{"name":"","type":"conn u-vert"},{"name":"","type":"l-u-corner"}]
+              ]
+            },
+            {
+              "questions": [],
+              "cdata" : [
+                [{"name":"","type":"l-d-corner"},{"name":"A","type":"breaker"},{"name":"","type":"r-d-corner"}],
+                [{"name":"","type":"bat vert"},{"name":"","type":""},{"name":"C","type":"lamp vert"}],
+                [{"name":"","type":"line vert"},{"name":"","type":""},{"name":"B","type":"lamp vert"}],
+                [{"name":"","type":"r-u-corner"},{"name":"","type":"line"},{"name":"","type":"l-u-corner"}]
+              ]
+            },
+            {
+              "questions": [],
+              "cdata" : [
+                [{"name":"","type":"l-d-corner"},{"name":"A","type":"breaker"},{"name":"","type":"r-d-corner"}],
+                [{"name":"","type":"bat vert"},{"name":"","type":""},{"name":"C","type":"lamp vert"}],
+                [{"name":"","type":"line vert"},{"name":"","type":""},{"name":"B","type":"breaker vert"}],
+                [{"name":"","type":"r-u-corner"},{"name":"","type":"line"},{"name":"","type":"l-u-corner"}]
+              ]
+            },
+            {
+              "questions": [],
+              "cdata" : [
+                [{"name":"","type":"l-d-corner"},{"name":"","type":"line"},{"name":"","type":"r-d-corner"}],
+                [{"name":"","type":"bat vert"},{"name":"","type":""},{"name":"B","type":"lamp vert"}],
+                [{"name":"","type":"conn r-vert"},{"name":"","type":"line"},{"name":"","type":"conn vert"}],
+                [{"name":"","type":"r-u-corner"},{"name":"A","type":"breaker"},{"name":"","type":"l-u-corner"}]
+              ]
+            },
+            {
+              "questions": [],
+              "cdata" : [
+                [{"name":"","type":"l-d-corner"},{"name":"","type":"line"},{"name":"","type":"r-d-corner"}],
+                [{"name":"","type":"bat vert"},{"name":"","type":""},{"name":"B","type":"lamp vert"}],
+                [{"name":"","type":"conn r-vert"},{"name":"","type":"line"},{"name":"","type":"conn vert"}],
+                [{"name":"","type":"r-u-corner"},{"name":"A","type":"breaker"},{"name":"","type":"l-u-corner"}]
+              ]
+            },
+            {
+              "questions": [],
+              "cdata" : [
+                [{"name":"","type":"l-d-corner"},{"name":"","type":"line"},{"name":"","type":"r-d-corner"}],
+                [{"name":"","type":"bat vert"},{"name":"","type":""},{"name":"B","type":"lamp vert"}],
+                [{"name":"","type":"conn r-vert"},{"name":"C","type":"lamp"},{"name":"","type":"conn vert"}],
+                [{"name":"","type":"r-u-corner"},{"name":"A","type":"breaker"},{"name":"","type":"l-u-corner"}]
+              ]
+            },
+            {
+              "questions": [],
+              "cdata" : [
+                [{"name":"","type":"l-d-corner"},{"name":"B","type":"lamp"},{"name":"","type":"r-d-corner"}],
+                [{"name":"","type":"bat vert"},{"name":"","type":""},{"name":"","type":"line vert"}],
+                [{"name":"","type":"conn r-vert"},{"name":"C","type":"lamp"},{"name":"","type":"conn vert"}],
+                [{"name":"","type":"r-u-corner"},{"name":"A","type":"breaker"},{"name":"","type":"l-u-corner"}]
+              ]
+            },
+            {
+              "questions": [],
+              "cdata" : [
+                [{"name":"","type":"l-d-corner"},{"name":"B","type":"lamp"},{"name":"","type":"r-d-corner"}],
+                [{"name":"","type":"line vert"},{"name":"","type":""},{"name":"","type":"bat vert"}],
+                [{"name":"","type":"conn r-vert"},{"name":"C","type":"lamp"},{"name":"","type":"conn vert"}],
+                [{"name":"","type":"r-u-corner"},{"name":"A","type":"breaker"},{"name":"","type":"l-u-corner"}]
+              ]
+            },
+            {
+              "questions": [],
+              "cdata" : [
+                [{"name":"","type":"l-d-corner"},{"name":"B","type":"lamp"},{"name":"","type":"r-d-corner"}],
+                [{"name":"","type":"conn r-vert"},{"name":"C","type":"lamp"},{"name":"","type":"conn vert"}],
+                [{"name":"","type":"line vert"},{"name":"","type":""},{"name":"","type":"bat vert"}],
+                [{"name":"","type":"r-u-corner"},{"name":"A","type":"breaker"},{"name":"","type":"l-u-corner"}]
+              ]
+            },
+            {
+              "questions": [],
+              "cdata" : [
+                [{"name":"","type":"l-d-corner"},{"name":"B","type":"lamp"},{"name":"","type":"r-d-corner"}],
+                [{"name":"","type":"line vert"},{"name":"","type":""},{"name":"","type":"line vert"}],
+                [{"name":"","type":"conn r-vert"},{"name":"C","type":"lamp"},{"name":"","type":"conn vert"}],
+                [{"name":"","type":"line vert"},{"name":"","type":""},{"name":"","type":"bat vert"}],
+                [{"name":"","type":"r-u-corner"},{"name":"A","type":"breaker"},{"name":"","type":"l-u-corner"}]
+              ]
+            }
+            ],
+        antal:-1,
+        questions:[],
+        poang: 1,
+        taskname: "Kombinerad krets"
+      },
+      computed: {
+        right: function(){return true}
+      },
+      methods: {
+        check: function () {
+          this.tosvar = Number(this.svar.trim().replace(',','.'));
+          if (!this.right){
+            alert("Svaret stämmer inte");
+            this.poang = this.poang/2;
+          }
+          if (this.antal < 0){
+            this.antal = 0;
+          }
+        },
+        next: function () {
+          this.circuit = this.circuits[0];
+          this.svar = "";
+          this.poang = 1;
+          this.questions.push(this.askfor);
+          this.save();
+        }
+      }
+    })
+  </script>
+</html>
