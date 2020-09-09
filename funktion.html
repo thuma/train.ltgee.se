@@ -34,11 +34,19 @@
     </table>
     <div>
       <br>
-      <div class="input-group mb-3">
-        <input  v-model="svar" type="text" class="form-control" >
-        <div class="input-group-append">
-          <span class="input-group-text" >sss</span>
+      <div class="input-group mb-3" v-for="question in circuit.questions">
+        <div class="input-group-preend">
+          <span class="input-group-text" >Lampa {{ question.name }} </span>
         </div>
+        <select v-model="svar[question.name]" class="custom-select">
+          <option selected>Välj...</option>
+          <option value="IT">fortsätter att lysa</option>
+          <option value="IS">fortsätter att vara släckt</option>
+          <option value="S">släcks</option>
+          <option value="T">tänds</option>
+          <option value="TS">lyser starkare</option>
+          <option value="TSV">lyser svagare</option>
+        </select>
       </div>
       <button v-on:click="check" class="btn btn-primary">Kontrollera svaren.</button><br>
       <div v-if="right" class="alert alert-success">
@@ -70,11 +78,12 @@
     var app = new Vue({
       el: '#app',
       data: {
-        svar: "",
+        svar: {},
+        tosvar: {},
         circuit:[],
         circuits:[
             {
-              "questions": ["A"],
+              "questions": [{"name":"B","right":"IS"}],
               "cdata" : [
                 [{"name":"","type":"l-d-corner"},{"name":"A","type":"breaker"},{"name":"","type":"r-d-corner"}],
                 [{"name":"","type":"line vert"},{"name":"","type":""},{"name":"","type":"line vert"}],
@@ -82,7 +91,7 @@
               ]
             },
             {
-              "questions": [],
+              "questions": [{"name":"B","right":"IS"}],
               "cdata" : [
                 [{"name":"","type":"l-d-corner"},{"name":"","type":"line"},{"name":"","type":"r-d-corner"}],
                 [{"name":"","type":"line vert"},{"name":"","type":""},{"name":"A","type":"breaker vert"}],
@@ -90,7 +99,7 @@
               ]
             },
             {
-              "questions": [],
+              "questions": [{"name":"C","right":"T"},{"name":"B","right":"T"}],
               "cdata" : [
                 [{"name":"","type":"l-d-corner"},{"name":"C","type":"lamp"},{"name":"","type":"r-d-corner"}],
                 [{"name":"","type":"bat vert"},{"name":"","type":""},{"name":"A","type":"breaker vert"}],
@@ -98,7 +107,7 @@
               ]
             },
             {
-              "questions": [],
+              "questions": [{"name":"B","right":"T"}],
               "cdata" : [
                 [{"name":"","type":"l-d-corner"},{"name":"B","type":"lamp"},{"name":"","type":"r-d-corner"}],
                 [{"name":"","type":"bat vert"},{"name":"","type":""},{"name":"A","type":"breaker vert"}],
@@ -106,7 +115,7 @@
               ]
             },
             {
-              "questions": [],
+              "questions": [{"name":"B","right":"S"}],
               "cdata" : [
                 [{"name":"","type":"l-d-corner"},{"name":"","type":"conn"},{"name":"","type":"r-d-corner"}],
                 [{"name":"B","type":"lamp vert"},{"name":"","type":"bat vert"},{"name":"A","type":"breaker vert"}],
@@ -114,7 +123,7 @@
               ]
             },
             {
-              "questions": [],
+              "questions": [{"name":"B","right":"IT"},{"name":"C","right":"T"}],
               "cdata" : [
                 [{"name":"","type":"l-d-corner"},{"name":"","type":"conn"},{"name":"","type":"r-d-corner"}],
                 [{"name":"B","type":"lamp vert"},{"name":"","type":"bat vert"},{"name":"C","type":"lamp vert"}],
@@ -123,7 +132,7 @@
               ]
             },
             {
-              "questions": [],
+              "questions": [{"name":"B","right":"IT"},{"name":"C","right":"T"}],
               "cdata" : [
                 [{"name":"","type":"l-d-corner"},{"name":"","type":"conn"},{"name":"","type":"r-d-corner"}],
                 [{"name":"","type":"bat vert"},{"name":"B","type":"lamp vert"},{"name":"C","type":"lamp vert"}],
@@ -132,7 +141,7 @@
               ]
             },
             {
-              "questions": [],
+              "questions": [{"name":"B","right":"T"},{"name":"C","right":"T"}],
               "cdata" : [
                 [{"name":"","type":"l-d-corner"},{"name":"A","type":"breaker"},{"name":"","type":"r-d-corner"}],
                 [{"name":"","type":"bat vert"},{"name":"","type":""},{"name":"C","type":"lamp vert"}],
@@ -141,7 +150,7 @@
               ]
             },
             {
-              "questions": [],
+              "questions": [{"name":"C","right":"IS"}],
               "cdata" : [
                 [{"name":"","type":"l-d-corner"},{"name":"A","type":"breaker"},{"name":"","type":"r-d-corner"}],
                 [{"name":"","type":"bat vert"},{"name":"","type":""},{"name":"C","type":"lamp vert"}],
@@ -150,7 +159,7 @@
               ]
             },
             {
-              "questions": [],
+              "questions": [{"name":"B","right":"IT"}],
               "cdata" : [
                 [{"name":"","type":"l-d-corner"},{"name":"","type":"line"},{"name":"","type":"r-d-corner"}],
                 [{"name":"","type":"bat vert"},{"name":"","type":""},{"name":"B","type":"lamp vert"}],
@@ -159,7 +168,7 @@
               ]
             },
             {
-              "questions": [],
+              "questions": [{"name":"B","right":"IT"}],
               "cdata" : [
                 [{"name":"","type":"l-d-corner"},{"name":"","type":"line"},{"name":"","type":"r-d-corner"}],
                 [{"name":"","type":"bat vert"},{"name":"","type":""},{"name":"B","type":"lamp vert"}],
@@ -168,7 +177,7 @@
               ]
             },
             {
-              "questions": [],
+              "questions": [{"name":"B","right":"TS"},{"name":"C","right":"S"}],
               "cdata" : [
                 [{"name":"","type":"l-d-corner"},{"name":"","type":"line"},{"name":"","type":"r-d-corner"}],
                 [{"name":"","type":"bat vert"},{"name":"","type":""},{"name":"B","type":"lamp vert"}],
@@ -177,7 +186,7 @@
               ]
             },
             {
-              "questions": [],
+              "questions": [{"name":"B","right":"TS"},{"name":"C","right":"S"}],
               "cdata" : [
                 [{"name":"","type":"l-d-corner"},{"name":"B","type":"lamp"},{"name":"","type":"r-d-corner"}],
                 [{"name":"","type":"bat vert"},{"name":"","type":""},{"name":"","type":"line vert"}],
@@ -186,7 +195,7 @@
               ]
             },
             {
-              "questions": [],
+              "questions": [{"name":"B","right":"TS"},{"name":"C","right":"S"}],
               "cdata" : [
                 [{"name":"","type":"l-d-corner"},{"name":"B","type":"lamp"},{"name":"","type":"r-d-corner"}],
                 [{"name":"","type":"line vert"},{"name":"","type":""},{"name":"","type":"bat vert"}],
@@ -195,7 +204,7 @@
               ]
             },
             {
-              "questions": [],
+              "questions": [{"name":"B","right":"T"},{"name":"C","right":"T"}],
               "cdata" : [
                 [{"name":"","type":"l-d-corner"},{"name":"B","type":"lamp"},{"name":"","type":"r-d-corner"}],
                 [{"name":"","type":"conn r-vert"},{"name":"C","type":"lamp"},{"name":"","type":"conn vert"}],
@@ -204,7 +213,7 @@
               ]
             },
             {
-              "questions": [],
+              "questions": [{"name":"B","right":"T"},{"name":"C","right":"T"}],
               "cdata" : [
                 [{"name":"","type":"l-d-corner"},{"name":"B","type":"lamp"},{"name":"","type":"r-d-corner"}],
                 [{"name":"","type":"line vert"},{"name":"","type":""},{"name":"","type":"line vert"}],
@@ -217,14 +226,22 @@
         antal:-1,
         questions:[],
         poang: 1,
-        taskname: "Kombinerad krets"
+        taskname: "Strömmens väg"
       },
       computed: {
-        right: function(){return true}
+        right: function () {
+          for(var i = 0; i < this.circuit.questions.length ;i++){
+            if (this.tosvar[this.circuit.questions[i].name] == this.circuit.questions[i].right){
+            } else {
+              return false;
+            }
+          }
+          return true;
+        }
       },
       methods: {
         check: function () {
-          this.tosvar = Number(this.svar.trim().replace(',','.'));
+          this.tosvar = JSON.parse(JSON.stringify(this.svar));
           if (!this.right){
             alert("Svaret stämmer inte");
             this.poang = this.poang/2;
@@ -234,10 +251,13 @@
           }
         },
         next: function () {
-          this.circuit = this.circuits[0];
-          this.svar = "";
+          var thisid = Math.floor(Math.random() * this.circuits.length);
+          this.circuit = this.circuits[thisid];
+          this.svar = {"A":"","B":"","C":"","D":"","E":""};
+          this.tosvar = JSON.parse(JSON.stringify(this.svar));
+          this.antal += this.poang;
           this.poang = 1;
-          this.questions.push(this.askfor);
+          this.questions.push(thisid);
           this.save();
         }
       }
