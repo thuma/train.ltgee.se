@@ -75,7 +75,8 @@
       computed: {
         status: function () {
           if(this.uppgift.tillprefix){
-            return this.kollatsvar.replace(',','.').split(' ').join('') == Number(this.uppgift.value+'e'+this.format[this.uppgift.prefix]) + this.uppgift.enhet;
+            cnumber = Number(this.uppgift.value+'e'+this.format[this.uppgift.prefix]).toLocaleString("sv-SE",{maximumFractionDigits:20});
+            return this.kollatsvar.replace('.',',').split(' ').join('') == cnumber + this.uppgift.enhet;
           }
           else {
             return this.kollatsvar.replace(',','.').split(' ').join('') == this.uppgift.value + this.uppgift.prefix + this.uppgift.enhet;
