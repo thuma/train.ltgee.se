@@ -75,7 +75,7 @@
       computed: {
         status: function () {
           if(this.uppgift.tillprefix){
-            cnumber = Number(this.uppgift.value+'e'+this.format[this.uppgift.prefix]).toLocaleString("sv-SE",{maximumFractionDigits:20});
+            cnumber = Number(this.uppgift.value+'e'+this.format[this.uppgift.prefix]).toLocaleString("sv-SE",{maximumFractionDigits:20}).split(" ").join("");
             return this.kollatsvar.replace('.',',').split(' ').join('') == cnumber + this.uppgift.enhet;
           }
           else {
