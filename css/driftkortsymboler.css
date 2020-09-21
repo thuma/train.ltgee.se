@@ -106,6 +106,9 @@
 .tank {
   background-image:url("../imgs/driftkortsymboler/tank.png");
   }
+.sv {
+  background-image:url("../imgs/driftkortsymboler/Stydspjall.png");
+  }
 .kylare {
   background-image:url("../imgs/driftkortsymboler/Kyla.png");
   }
