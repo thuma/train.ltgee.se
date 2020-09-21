@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/driftkortsymboler.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <title>Driftkort grundsymboler</title>
+    <style>
+     pre {
+       margin:0;
+     }
+     td {
+       font-size: 13px;
+     }
+    </style>
+  </head>
+  <body>
+  <div class="g-signin2" data-onsuccess="onSignIn"></div>
+  <div id="app" class="container">
+    <h1>Ellära grundsymboler</h1>
+    <p> I denna övning får du träna på att känna igen de mest grundläggande symbolerna för driftkort.
+    </p>
+    <div v-bind:class="circuit.code" style="background-size:contain; background-repeat: no-repeat; width: 150px;height: 150px;">
+    </div>
+    <div>
+      <br>
+      <p>Vilken symbol visas på bilden?</p>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <input class="from-control" v-model:value="hitta">
+        </div>
+        <select v-model="svar" class="custom-select">
+          <option value=""selected>Välj...</option>
+          <option v-for="c in hittade" v-bind:value="c.code">{{c.name}}</option>
+        </select>
+        <div class="input-group-append">
+          <span class="input-group-text" >Välj symbol</span>
+        </div>
+      </div>
+      <button v-on:click="check" class="btn btn-primary">Kontrollera svaren.</button><br>
+      <div v-if="right" class="alert alert-success">
+        Grattis! Du klarade frågan!<br>
+        <button class="btn btn-primary" v-on:click="next">Nästa övning</button><br>
+        <img class="rounded" width="320" v-bind:src="successImage()">
+      </div>
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/76 * 100)+"%"}'></div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>    <div v-if="antal >= 76" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="handinlink()">
+      </div>
+    </div>
+
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+  Vue.use(Success);
+  Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        svar: "",
+        tosvar: "",
+        hitta: "",
+        circuit:{"name":"Styrventil","code":"styrventil"},
+        circuits:[
+          {"name":"Styrventil","code":"styrventil"},
+          {"name":"Cirkulationspump","code":"pump"},
+          {"name":"Värmeväxlare standardsymbol","code":"generiskvvx"},
+          {"name":"Termostatventil (oftast)","code":"styrventilmv"},
+          {"name":"Vattenmätare volym (oftast)","code":"vattenmatare"},
+          {"name":"Ställdon som håller sin position vid strömbortfall.","code":"stalldonstannar"},
+          {"name":"Manuell avstängning","code":"avstängning"},
+          {"name":"Utomhusgivare","code":"utegivare"},
+          {"name":"Ställdon som öppnar vid strömbortfall.","code":"stalldonno"},
+          {"name":"Kylbatteri","code":"kylare"},
+          {"name":"Luftkylare","code":"kylare"},
+          {"name":"Tank","code":"tank"},
+          {"name":"Ställdon som stänger vid strömbortfall.","code":"stalldonnc"},
+          {"name":"Ställdon med internt mätställe, termostat.","code":"stalldonintern"},
+          {"name":"Radiator","code":"radiator"},
+          {"name":"Ställdon med manuellt reglage.","code":"stalldoman"},
+          {"name":"Givare","code":"givareint"},
+          {"name":"Kompressor","code":"kompressor"},
+          {"name":"Ställdon allmän symbol","code":"stalldon"},
+          {"name":"Givare med två mätställen oftast en filtervakt.","code":"diffgivare"},
+          {"name":"Expansionskärl.","code":"exkerl"},
+          {"name":"Spjäll","code":"spjal"},
+          {"name":"Givare allmän symbol","code":"givare"},
+          {"name":"Mätinstrument med visare på.","code":"visare"},
+          {"name":"Ställdon som använder elektromagnet.","code":"solonoid"},
+          {"name":"Ventil","code":"ventil"},
+          {"name":"Slinga","code":"slinga"},
+          {"name":"Luftfuktare","code":"luftfuktare"},
+          {"name":"Värmare","code":"varmare"},
+          {"name":"Trevägs Styrventil","code":"shunt"},
+          {"name":"Luftrenare","code":"filter"},
+          {"name":"Givare med exempelvis sladd till mätpunkten.","code":"vaktex"},
+          {"name":"Roterande värmeväxlare","code":"roterandevvx"},
+          {"name":"Fläkt","code":"flakt"},
+          {"name":"Elbatteri","code":"elbatteri"},
+          {"name":"Värmeväxlare med 2 sidor","code":"vvxintern"},
+          {"name":"Ställdon motor","code":"motor"},
+          {"name":"Termometer","code":"termometer"},
+          {"name":"Ställdon med membran","code":"membran"}
+          ],
+        antal:-1,
+        questions:[],
+        poang: 1,
+        taskname: "Driftkort grundsymboler"
+      },
+      computed: {
+        right: function () {
+          return this.tosvar == this.circuit.code;
+        },
+        hittade: function () {
+          var kortlista = this.circuits.filter(en => en.name.toUpperCase().includes(this.hitta.toUpperCase()));
+          if(kortlista.length == 1){
+            this.svar = kortlista[0].code;
+          }
+          return kortlista
+        }
+      },
+      methods: {
+        check: function () {
+          this.tosvar = JSON.parse(JSON.stringify(this.svar));
+          if (!this.right){
+            alert("Svaret stämmer inte");
+            this.poang = this.poang/2;
+          }
+          if (this.antal < 0){
+            this.antal = 0;
+          }
+        },
+        next: function () {
+          var thisid = Math.floor(Math.random() * this.circuits.length);
+          this.circuit = this.circuits[thisid];
+          this.svar = "";
+          this.hitta = "";
+          this.tosvar = JSON.parse(JSON.stringify(this.svar));
+          this.antal += this.poang;
+          this.poang = 1;
+          this.questions.push(thisid);
+          this.save();
+        }
+      }
+    })
+  </script>
+</html>
