@@ -156,12 +156,12 @@
           this.antal = this.antal +  this.poang;
           this.poang = 1;
           this.resistanser = [];
-          var tmpU = 1+Math.floor(Math.random() * 230);
+          var tmpU = 1 + Math.floor(Math.random() * 230);
           var count = 2 + Math.floor(Math.random() * 3)
           for( var i = 0; i < count; i++){
             this.resistanser.push((1+Math.floor(Math.random() * 200))*10);
           }
-          this.I = Number(Math.round((tmpU / this.rtot)*1000)+"e-3");
+          this.I = Number(Math.round((tmpU / this.rtot)*1000)+1+"e-3");
           this.questions.push(this.I + " " + count);
           this.save();
         },
