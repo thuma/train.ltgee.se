@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <title>Talsystem</title>
+    <style>
+     pre {
+       margin:0;
+     }
+    </style>
+  </head>
+  <body>
+  <div class="g-signin2" data-onsuccess="onSignIn"></div>
+  <div id="app" class="container">
+    <h1>Träning Talsystems</h1>
+    <p>
+    I denna övning får du träna på hur olika talsystem fungerar. Detta är viktigt för att kunna förstå programmering och addressering av bussar.
+    </p>
+    <div>
+      <div>
+        Hur mycket är {{ printastype(fromtype) }} {{ fromtype }} om det skrivs som {{ totype }}?
+      </div>
+      <div class="input-group mb-3" v-if="totype !== 'BIN' && fromtype !== 'BIN' ">
+        <input v-model="svarb" type="text" class="form-control" >
+        <div class="input-group-append">
+          <span class="input-group-text" >BIN</span>
+        </div>
+      </div>
+      <div class="input-group mb-3">
+        <input v-model="svar" type="text" class="form-control" >
+        <div class="input-group-append">
+          <span class="input-group-text" >{{ totype }}</span>
+        </div>
+      </div>
+      <button v-on:click="check" v-if="kontroll !== svar" class="btn btn-primary">Kontrollera svaren.</button><br>
+      <div v-if="right" class="alert alert-success">
+        Grattis! Du klarade frågan!<br>
+        <button class="btn btn-primary" v-on:click="next">Nästa övning</button><br>
+        <img class="rounded" width="320" v-bind:src="successImage()">
+      </div>
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/77 * 100)+"%"}'></div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>
+    <div v-if="antal >= 77" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="handinlink()">
+      </div>
+    </div>
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+  Vue.use(Success);
+  Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        poang: 1,
+        antal: -1,
+        number: 1024,
+        fromtype: "HEX",
+        totype: "BIN",
+        svar: "",
+        svarb: "",
+        kontroll: "",
+        questions:[],
+        talsystem: {
+          "HEX": 16,
+          "DEC": 10,
+          "BIN": 2,
+          "OKT": 8
+          },
+        talsystemnamn: ["OKT","BIN"],
+        taskname: "Talsystem_A"
+        },
+      computed: {
+          right: function(){
+          return this.number == parseInt(this.kontroll, this.talsystem[this.totype]);
+        },
+      },
+      methods: {
+        printastype: function(type) {
+            if(type == "HEX"){
+            return this.number.toString(16);
+            } else if(type == "DEC"){
+            return this.number.toString(10);
+            } else if(type == "OKT"){
+            return this.number.toString(8);
+            } else if(type == "BIN"){
+            return this.number.toString(2);
+            } else {
+            return this.number;
+            }
+        },
+        check: function () {
+          this.kontroll = this.svar;
+          if (this.right){
+            return
+          }
+          alert("Svaret är inte rätt");
+          this.poang = this.poang / 2;
+          if (this.antal < 0){
+            this.antal = 0;
+          }
+        },
+        next: function () {
+          this.svar = "";
+          this.svarb = "";
+          this.kontroll = "";
+          this.number = Math.round(Math.random() * (Math.round(Math.abs(this.antal)) * 10 + 1 ) );
+          this.antal = this.antal + this.poang;
+          this.poang = 1;
+          this.fromtype = "HEX";
+          this.totype = "HEX";
+          var count = this.talsystemnamn.length - 1;
+          this.totype = this.talsystemnamn[Math.round(Math.random() * count)];
+          this.fromtype = this.talsystemnamn[Math.round(Math.random() * count)];
+          while(this.fromtype == this.totype){
+            this.totype = this.talsystemnamn[Math.round(Math.random() * count)];
+            this.fromtype = this.talsystemnamn[Math.round(Math.random() * count)];
+            }
+          this.questions.push(this.nummer);
+          this.save();
+        }
+      }
+    })
+  </script>
+</html>
+
+
+
+
+
+
