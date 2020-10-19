@@ -29,6 +29,12 @@
       <div>
         Hur mycket är {{ printastype(fromtype) }} {{ fromtype }} om det skrivs som {{ totype }}?
       </div>
+      <div class="input-group mb-3" v-if="totype !== 'BIN' && fromtype !== 'BIN' ">
+        <input v-model="svarb" type="text" class="form-control" >
+        <div class="input-group-append">
+          <span class="input-group-text" >BIN</span>
+        </div>
+      </div>
       <div class="input-group mb-3">
         <input v-model="svar" type="text" class="form-control" >
         <div class="input-group-append">
@@ -71,6 +77,7 @@
         fromtype: "HEX",
         totype: "BIN",
         svar: "",
+        svarb: "",
         kontroll: "",
         questions:[],
         talsystem: {
@@ -114,6 +121,7 @@
         },
         next: function () {
           this.svar = "";
+          this.svarb = "";
           this.kontroll = "";
           this.number = Math.round(Math.random() * (Math.round(Math.abs(this.antal)) * 10 + 1 ) );
           this.antal = this.antal + this.poang;
