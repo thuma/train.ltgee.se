@@ -43,16 +43,16 @@
       </div>
     </div>
     <div class="progress mt-2">
-      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/77 * 100)+"%"}'></div>
     </div>
     <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>
-    <div v-if="antal >= 15" class="alert alert-success" >
+    <div v-if="antal >= 77" class="alert alert-success" >
       Nu har du klarat ett träningsvarv. <br>
       Lämna in denna länk på google classroom:<br>
       <div class="input-group mb-3">
         <div class="input-group-prepend">
           <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
-        </div?
+        </div>
         <input id="correctlink" class="form-control" v-bind:value="handinlink()">
       </div>
     </div>
@@ -80,7 +80,7 @@
           "OKT": 8
           },
         talsystemnamn: ["HEX","OKT","DEC","BIN"],
-        taskname: "Talsystem"
+        taskname: "Talsystem_A"
         },
       computed: {
           right: function(){
@@ -115,7 +115,7 @@
         next: function () {
           this.svar = "";
           this.kontroll = "";
-          this.number = Math.round(Math.random() * 4096);
+          this.number = Math.round(Math.random() * (Math.round(this.antal) * 10 + 1 ) );
           this.antal = this.antal + this.poang;
           this.poang = 1;
           this.fromtype = "HEX";
