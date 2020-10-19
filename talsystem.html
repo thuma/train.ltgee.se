@@ -115,7 +115,7 @@
         next: function () {
           this.svar = "";
           this.kontroll = "";
-          this.number = Math.round(Math.random() * (Math.round(this.antal) * 10 + 1 ) );
+          this.number = Math.round(Math.random() * (Math.round(Math.abs(this.antal)) * 10 + 1 ) );
           this.antal = this.antal + this.poang;
           this.poang = 1;
           this.fromtype = "HEX";
