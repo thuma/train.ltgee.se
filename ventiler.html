@@ -61,20 +61,23 @@
             <td class="control" v-bind:class="valve.left[1][0]"></td>
             <!-- Rowspan 2 from top row. -->
             <!-- Rowspan 2 from top row. -->
-            <td class="control right" v-bind:class="valve.right[1][1]"></td>
             <td class="control right" v-bind:class="valve.right[1][0]"></td>
+            <td class="control right" v-bind:class="valve.right[1][1]"></td>
           </tr>
         </table>
         <div class="input-group mb-3">
           <select v-model="svar.type" class="form-control">
+            <option value="" > Välj... </option>
             <option v-for="valve in valvetypes" v-bind:value="valve" > {{ valve }} </option>
           </select>
           <select v-model="svar.pos" class="form-control">
+            <option value="" > Välj... </option>
             <option value="bi">Bistabil</option>
             <option value="uni">Unistabil/Monostabil</option>
             <option value="tri">Tristabil</option>
           </select>
           <select v-model="svar.cont" class="form-control">
+            <option value="" > Välj... </option>
             <option value="button">Knappstyrd</option>
             <option value="penaumatic">Pneumatiskt stryd</option>
             <option value="roll">Gränslägesbrytare</option>
@@ -112,7 +115,7 @@
       data: {
         taskname: "ventiler",
         svar: {"type":"","cont":"","pos":""},
-        valve: {"left":[["","button"],["",""]],"valves":["v2o","v2c"],"right":[["",""],["","spring"]]},
+        valve: {"left":[["","button"],["",""]],"valves":["v2o","v2c"],"right":[["",""],["spring",""]]},
         antal: -1,
         kontroll: {"type":"","cont":"","pos":""},
         poang: 1,
@@ -130,7 +133,7 @@
         },
         right: function(){
           var rvalve = this.valve.valves[0][1] + "/" + this.valve.valves.length;
-          var bistable = this.valve.right[1][1] !== "spring";
+          var bistable = this.valve.right[1][0] !== "spring";
           var trisable = bistable && this.valve.valves.length == 3;
           if (this.kontroll.type !== rvalve){
             console.log(this.kontroll.type);
@@ -189,14 +192,14 @@
             springa = "";
           }
           controlls = [
-            {"left":[["","button"],[springa,""]],"right":[["",""],["","spring"]]},
-            {"left":[["","roll"],[springa,""]],"right":[["",""],["","spring"]]},
-            {"left":[["","coil"],[springa,""]],"right":[["",""],["","spring"]]},
-            {"left":[["","penaumatic"],[springa,""]],"right":[["",""],["","spring"]]},
-            {"left":[["button","pilot"],[springa,""]],"right":[["",""],["","spring"]]},
-            {"left":[["roll","pilot"],[springa,""]],"right":[["",""],["","spring"]]},
-            {"left":[["coil","pilot"],[springa,""]],"right":[["",""],["","spring"]]},
-            {"left":[["penaumatic","pilot"],[springa,""]],"right":[["",""],["","spring"]]},
+            {"left":[["","button"],[springa,""]],"right":[["",""],["spring",""]]},
+            {"left":[["","roll"],[springa,""]],"right":[["",""],["spring",""]]},
+            {"left":[["","coil"],[springa,""]],"right":[["",""],["spring",""]]},
+            {"left":[["","penaumatic"],[springa,""]],"right":[["",""],["spring",""]]},
+            {"left":[["button","pilot"],[springa,""]],"right":[["",""],["spring",""]]},
+            {"left":[["roll","pilot"],[springa,""]],"right":[["",""],["spring",""]]},
+            {"left":[["coil","pilot"],[springa,""]],"right":[["",""],["spring",""]]},
+            {"left":[["penaumatic","pilot"],[springa,""]],"right":[["",""],["spring",""]]},
           ];
           cont = controlls[Math.floor(Math.random()*controlls.length)]
           this.valve = {
