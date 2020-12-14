@@ -133,18 +133,17 @@
         },
         right: function(){
           var rvalve = this.valve.valves[0][1] + "/" + this.valve.valves.length;
-          var bistable = this.valve.right[1][0] !== "spring";
-          var trisable = bistable && this.valve.valves.length == 3;
+          var stable = "uni"
+          if (this.valve.right[1][0] !== "spring"){
+            stable = "bi"
+          }
+          if (stable == "bi" && this.valve.valves.length == 3){
+            stable = "tri"
+          }
           if (this.kontroll.type !== rvalve){
-            console.log(this.kontroll.type);
             return false;
           }
-          if (bistable && !trisable && this.kontroll.pos !== "bi"){
-            console.log(this.kontroll.pos+="==bi");
-            return false;
-          }
-          if (trisable && this.kontroll.pos !== "tri"){
-            console.log(this.kontroll.pos+"==tri");
+          if (stable !== this.kontroll.pos){
             return false;
           }
           var check = this.kontroll.cont.split(",");
