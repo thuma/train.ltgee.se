@@ -146,12 +146,15 @@
           if (stable !== this.kontroll.pos){
             return false;
           }
-          var check = this.kontroll.cont.split(",");
-          for(var i = 0 ; i < check.length; i++){
-            if (JSON.stringify(this.valve).indexOf(check[i])==-1){
-              console.log(check[i]);
+          function notempty(controller){
+            return controller !== "";
+          }
+          var check = this.kontroll.cont.split(",").sort().join(',');
+          var ctypes = this.valve.left[0].sort().filter(notempty).join(',');
+
+          if (check !== ctypes){
+              console.log(check+" "+ctypes);
               return false;
-            }
           }
           return true;
         }
