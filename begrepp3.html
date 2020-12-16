@@ -100,7 +100,9 @@
           "R":["","","",""],
           "P":["","","",""],
           "F":["","","",""],
-          "τ":["","","",""]
+          "τ":["","","",""],
+          "p":["","","",""],
+          "A":["","","",""]
           },
         kolladesvar: {
           "U":["","","",""],
@@ -108,7 +110,9 @@
           "R":["","","",""],
           "P":["","","",""],
           "F":["","","",""],
-          "τ":["","","",""]
+          "τ":["","","",""],
+          "p":["","","",""],
+          "A":["","","",""]
         },
         tabell: {
           "U":["Spänning","U","Volt","V","Det som får elektronerna att vilja röra på sig."],
@@ -116,15 +120,17 @@
           "R":["Resistans","R","Ohm","Ω","Hur stort motstånd det är i kretsen, hur jobbigt det är för elektronerna att röra sig."],
           "P":["Effekt","P","Watt","W","Hur mycket som händer / hur stor energi/kraft som sker."],
           "τ":["Vridmoment","τ","NewtonMeter","Nm","Beskriver hur hårt/kraftigt något snurrar eller vrider runt sin axel."],
-          "F":["Kraft","F","Newton","N","Något som påverkar object med tryck eller drag och kan skapa rörelse. 1Kg som hänger rakt ner ger 10 av enheten."]
+          "F":["Kraft","F","Newton","N","Något som påverkar object med tryck eller drag och kan skapa rörelse. 1Kg som hänger rakt ner ger 10 av enheten."],
+          "p":["Tryck","p","Pascal","Pa","Beskriver hur stor tillexempel lufttrycket är."],
+          "A":["Area","A","KvadratMeter","m²","Beskriver hur stor yta något har."]
         },
-        veta: { "U":3, "I":1,"R":0,"P":0,"F":0,"τ":0 },
-        attVeta: ["U","I","R","F","τ"],
+        veta: { "U":3, "I":1,"R":0,"P":0,"F":0,"τ":0,"p":0,"A":0 },
+        attVeta: ["U","I","R","F","τ","p","A"],
         start: new Date(),
         antal: -1,
         questions:[],
         poang: 1,
-        taskname: "begrepp3"
+        taskname: "begreppmekanik"
       },
       computed: {
         status: function () {
@@ -165,21 +171,30 @@
           "R":Math.floor(Math.random() * 5),
           "P":Math.floor(Math.random() * 5),
           "F":Math.floor(Math.random() * 5),
-          "τ":Math.floor(Math.random() * 5)
+          "τ":Math.floor(Math.random() * 5),
+          "p":Math.floor(Math.random() * 5),
+          "A":Math.floor(Math.random() * 5),
           };
         var alts = [
           ["F"],
           ["τ"],
+          ["A"],
+          ["p"],
           ["U","P","F"],
           ["R","τ","T"],
           ["P","τ","I"],
           ["U","τ","F"],
           ["τ","U","I"],
           ["R","τ","P"],
-          ["F","U","I"],
-          ["R","τ","P"],
-          ["F","τ","I"],
-          ["P","F","I"]
+          ["A","p","P"],
+          ["R","","A"],
+          ["U","τ","F"],
+          ["p","τ","U"],
+          ["A","P","R"],
+          ["I","F","p"]
+          ["τ","A","p"],
+          ["I","A","R"],
+          ["U","","τ"]
         ]
         this.attVeta = alts[Math.floor(Math.random() * alts.length)];
         this.antal = this.antal + this.poang;
@@ -190,7 +205,9 @@
           "R":["","","",""],
           "P":["","","",""],
           "F":["","","",""],
-          "τ":["","","",""]
+          "τ":["","","",""],
+          "p":["","","",""],
+          "A":["","","",""]
           };
         this.kolladesvar = JSON.parse(JSON.stringify(this.svar));
         this.questions.push(this.veta.U);
