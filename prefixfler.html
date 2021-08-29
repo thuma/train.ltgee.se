@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <title>Prefix</title>
+  </head>
+  <body>
+  <div class="g-signin2" data-onsuccess="onSignIn"></div>
+  <div id="app" class="container">
+    <h1>Prefix</h1>
+    <p>
+      I denn övning så ska du träna på att använda Prefix.
+      Prefix är viktigt för att kunna läsa av instrument och manualer.
+      Läs mer om <a target="_blank" href="https://sites.google.com/educ.goteborg.se/mekatronik/%C3%B6versikt_1/algebra/prefix">prefix</a> om du känner dig osäker.
+    </p>
+    <div>
+      <div v-if="uppgift.tillprefix">
+        Omvandla {{ uppgift.value.toLocaleString("sv-SE",{maximumFractionDigits:20}) }} {{ uppgift.prefix }}{{ uppgift.enhet }} till grundformen (utan prefix).
+        <input class="form-control" v-model="svar">
+      </div>
+      <div v-if="uppgift.tillprefix==0">
+        Omvandla {{ Number(uppgift.value+'e'+format[uppgift.prefix]).toLocaleString("sv-SE",{maximumFractionDigits:20}) }} {{ uppgift.enhet }} till {{ uppgift.prefix }}{{ uppgift.enhet }}.
+        <input class="form-control" v-model="svar">
+      </div>
+      <div v-if="status == true" class="alert alert-success">
+        Grattis! Du klarade frågan!<br>
+        <button class="btn btn-primary" v-on:click="next">Nästa övning</button><br>
+        <img class="rounded" width="320" v-bind:src="successImage()">
+      </div>
+      <button class="btn btn-primary" v-on:click="kolla">Kolla om svaret är rätt.</button>
+      <div class="progress mt-2">
+        <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+      </div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>
+    <div v-if="antal >= 15" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="handinlink()">
+      </div>
+    </div>
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+    Vue.use(Success);
+    Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        enheter: ["V","A","W","Ω","N"],
+        format: {"p":"-12","n":"-9","µ":"-6","m":"-3","k":"3","M":"6","G":"9","T":"12"},
+        prefix: ["p","n","µ","m","k","M","G","T"],
+        uppgift: {"prefix":"k","enhet":"V","value":900,"tillprefix":false },
+        svar: "",
+        antal:-1,
+        kollatsvar:"",
+        klara:[],
+        poang: 0,
+        questions: [],
+        taskname: "Prefix"
+      },
+      computed: {
+        status: function () {
+          if(this.uppgift.tillprefix){
+            cnumber = Number(this.uppgift.value+'e'+this.format[this.uppgift.prefix]).toLocaleString("sv-SE",{maximumFractionDigits:20}).split(" ").join("");
+            return this.kollatsvar.replace('.',',').split(' ').join('') == cnumber + this.uppgift.enhet;
+          }
+          else {
+            return this.kollatsvar.replace(',','.').split(' ').join('') == this.uppgift.value + this.uppgift.prefix + this.uppgift.enhet;
+            }
+          },
+      },
+      methods: {
+        kolla: function (){
+          this.kollatsvar = this.svar;
+          if(!this.status){
+            this.poang = this.poang/2;
+            if(this.antal < 0){
+              this.antal = 0;
+            }
+            alert("Svaret är inte rätt!");
+          }
+        },
+        next: function () {
+          this.save();
+          this.uppgift.svar = this.svar;
+          this.klara.push(this.uppgift);
+          this.svar = "";
+          this.antal = this.antal + this.poang;
+          this.poang = 1;
+          this.uppgift = {
+            "enhet": this.enheter[Math.floor(Math.random() * this.enheter.length)],
+            "prefix": this.prefix[Math.floor(Math.random() * this.prefix.length)],
+            "value": Math.floor(Math.random() * 1000),
+            "tillprefix": Math.floor(Math.random() * 2)
+          }
+          if(this.antal > 7){
+             this.uppgift.value = this.uppgift.value/100;
+          }
+          this.questions.push(this.uppgift.prefix);
+          this.kollatsvar = "";
+        }
+      }
+    });
+  </script>
+</html>
+
