@@ -103,15 +103,15 @@
           }
         },
         next: function () {
+          if (this.right){
+            this.antal = this.antal + 1;
+          }
           this.nummer = Math.floor(Math.random() * 10)+1;
           this.typ = this.typlista[Math.floor(Math.random() * 2)];
           this.svar = "";
           this.tosvar = JSON.parse(JSON.stringify(this.svar));
-          if (this.right){
-            this.antal = this.antal + 1;
-            this.questions.push(this.typ+this.nummer);
-            this.save();
-          }
+          this.questions.push(this.typ+this.nummer);
+          this.save();
         }
       }
     })
