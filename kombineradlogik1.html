@@ -29,7 +29,7 @@
   <body>
   <div class="g-signin2" data-onsuccess="onSignIn"></div>
   <div id="app" class="container">
-    <h1>Träning Logiska grindar i kombination AND, OR, XOR, NOT 4 ingångar.</h1>
+    <h1>Träning Logiska grindar i kombination AND, OR, XOR</h1>
     <p>
     Läs mer om Kombinerade/sammansatta logiska kretsar i mekatronikboken.
     </p>
@@ -55,7 +55,7 @@
                 <img v-bind:src="'http://ifa.thure.org/ieclogic/mellan.png'" >
               </td>
               <td>
-                <img v-bind:src="'http://ifa.thure.org/ieclogic/'+fraga[2]+'.png'" >
+                <img v-bind:src="'http://ifa.thure.org/ieclogic/'+fraga[1]+'.png'" >
               </td>
               <td>
                 <img v-if="invert[2]" v-bind:src="'http://ifa.thure.org/ieclogic/not.png'" >
@@ -68,18 +68,15 @@
             <tr>
               <td>
               C
-              <br>
-              D
               </td>
               <td>
-                <img v-bind:src="'http://ifa.thure.org/ieclogic/'+fraga[1]+'.png'" >
+                <img src="http://ifa.thure.org/ieclogic/rak.png" >
               </td>
               <td>
-                <img v-if="invert[1]" v-bind:src="'http://ifa.thure.org/ieclogic/not.png'" >
-                <img v-else="" v-bind:src="'http://ifa.thure.org/ieclogic/rak.png'" >
+                <img src="http://ifa.thure.org/ieclogic/rak.png" >
               </td>
               <td>
-                <img v-bind:src="'http://ifa.thure.org/ieclogic/upp.png'" >
+                <img src="http://ifa.thure.org/ieclogic/upp.png" >
               </td>
             </tr>
           </table>
@@ -124,9 +121,9 @@
     var app = new Vue({
       el: '#app',
       data: {
-        taskname: "Kombinerad logik",
-        fraga: ["and","and","and"],
-        invert: [1,1,1],
+        taskname: "Kombinerad logik 1",
+        fraga: ["and","and"],
+        invert: [0,0,0],
         fragor: ["and","or","xor"],
         svar: ["","","",""],
         antal: -1,
@@ -142,11 +139,11 @@
             if(this.invert[0]){
               first = !first;
             }
-            var second = this.yfor( [this.rows[i][2],this.rows[i][3]], this.fraga[1] )
+            var second = this.rows[i][2]
             if(this.invert[1]){
               second = !second;
             }
-            var nextstep = this.yfor( [first,second], this.fraga[2])
+            var nextstep = this.yfor( [first, this.rows[i][2]], this.fraga[1])
             if(this.invert[2]){
               nextstep = !nextstep;
             }
@@ -159,26 +156,18 @@
         },
         rows: function(){
           return [
-            [0,0,0,0],
-            [0,0,0,1],
-            [0,0,1,0],
-            [0,0,1,1],
-            [0,1,0,0],
-            [0,1,0,1],
-            [0,1,1,0],
-            [0,1,1,1],
-            [1,0,0,0],
-            [1,0,0,1],
-            [1,0,1,0],
-            [1,0,1,1],
-            [1,1,0,0],
-            [1,1,0,1],
-            [1,1,1,0],
-            [1,1,1,1],
+            [0,0,0],
+            [0,0,1],
+            [0,1,0],
+            [0,1,1],
+            [1,0,0],
+            [1,0,1],
+            [1,1,0],
+            [1,1,1]
             ];
         },
         cols: function(){
-          return ["A","B","C","D"];
+          return ["A","B","C"];
         }
       },
       methods: {
@@ -202,12 +191,15 @@
           this.poang=this.poang/2;
         },
         next: function () {
-          this.svar = ["","","","","","","","","","","","","","","",""];
-          this.kontroll = ["","","","","","","","","","","","","","","",""];
+          this.svar = ["","","","","","","",""];
+          this.kontroll = ["","","","","","","",""];
           this.antal = this.antal + this.poang;
           this.poang = 1;
-          this.fraga = [this.fragor[Math.floor(Math.random()*this.fragor.length)],this.fragor[Math.floor(Math.random()*this.fragor.length)],this.fragor[Math.floor(Math.random()*this.fragor.length)]];
-          this.invert = [Math.round(Math.random()*0.7),Math.round(Math.random()*0.7),Math.round(Math.random()*0.7)],
+          this.fraga = [
+            this.fragor[Math.floor(Math.random()*this.fragor.length)],
+            this.fragor[Math.floor(Math.random()*this.fragor.length)]
+          ];
+          this.invert = [0,0,0],
           this.questions.push(this.fraga);
           this.save();
         }

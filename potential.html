@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="https://ifa.thure.org/schema.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <title>Potential</title>
+    <style>
+     pre {
+       margin:0;
+     }
+    </style>
+  </head>
+  <body>
+  <div class="g-signin2" data-onsuccess="onSignIn"></div>
+  <div id="app" class="container">
+    <h1>Träning Seriekrets</h1>
+    <p> I denna övning så får du öva på hur potential fungerar.
+    Detta är viktigt för att kunna förstå och hur ritningar fungerar.
+    </p>
+    <table class="sh">
+      <tr>
+        <td class="l-d-corner"></td>
+        <td class="line"></td>
+        <td class="r-d-corner"></td>
+      </tr>
+      <tr>
+        <td class="conn vert">&nbsp;&nbsp;&nbsp;&nbsp;A</td>
+        <td></td>
+        <td class="bat vert"></td>
+      </tr>
+      <template v-for="r,index in resistanser">
+      <tr>
+        <td class="resistor vert"></td>
+        <td></td>
+        <td class="line vert"></td>
+      </tr>
+      <tr>
+        <td class="conn vert">&nbsp;&nbsp;&nbsp;&nbsp;{{names[index]}}</td>
+        <td></td>
+        <td class="line vert"></td>
+      </tr>
+      </template>
+      <tr>
+        <td class="r-u-corner"></td>
+        <td class="line"></td>
+        <td class="l-u-corner"></td>
+      </tr>
+    </table>
+    <div><br>
+      Vad är potentialen i punkt {{ names[fraga] }}?<br>
+      <div class="input-group mb-3">
+        <input v-model="psvar" type="text" class="form-control" >
+        <div class="input-group-append">
+          <span class="input-group-text" >V</span>
+        </div>
+      </div>
+      <button v-on:click="check" class="btn btn-primary">Kontrollera svaren.</button><br>
+      <div v-if="status" class="alert alert-success" >
+        Rätt!<br>
+        <button class="btn btn-primary" v-on:click="next"> Nästa övning </button>
+        <br>
+        <img widht="320" v-bind:src="successImage()">
+      </div>
+    </div>
+    <div v-if="antal >= 15" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="handinlink()">
+      </div>
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+    Vue.use(Success);
+    Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        resistanser: [100],
+        I:1,
+        psvar: "",
+        antal:-1,
+        poang: 1,
+        fraga: 0,
+        topsvar: "",
+        questions: [],
+        taskname: "potential",
+        names: ["B","C","D","E","F","G"]
+      },
+      computed: {
+        cols: function () {
+          return this.resistanser.length;
+        },
+        uright: function(){
+          var u = 0;
+          for(var i = this.fraga; i > 0; i++){
+            u = u + this.resistanser[i];
+          }
+          return u;
+        },
+        status: function(){
+          return (this.uright && this.rtot == this.rsvar)
+        }
+      },
+      methods: {
+        check: function () {
+          this.topsvar = this.psvar;
+          if(!(this.uright == this.torsvar)){
+            alert("Resistansen stämmer inte.");
+            this.poang = this.poang/2;
+          }
+        },
+        next: function () {
+          this.psvar = "";
+          this.topsvar = "";
+          count = 2+Math.floor(Math.random()*3);
+          this.fraga = Math.floor(Math.random() * count);
+          this.antal = this.antal + this.poang;
+          this.poang = 1;
+          this.resistanser = [];
+          for( var i = 0; i > count; i++){
+            this.resistanser.push((1+Math.floor(Math.random()*20)));
+          }
+          this.questions.push(this.resistanser);
+          this.save();
+        },
+        rdisplay: function (r) {
+          if (r >= 1000){
+            return Number( r +'e-3') + " kΩ";
+          }
+          return r + " Ω";
+        }
+      }
+    })
+  </script>
+</html>
+
