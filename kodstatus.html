@@ -5,8 +5,6 @@
     <meta charset="UTF-8">    
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id" content="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com">
     <script src="jquery-3.3.1.slim.min.js"></script>
     <script src="popper.min.js"></script>
     <script src="bootstrap.min.js"></script>
@@ -20,7 +18,7 @@
     <div class="card-body">
       <h5 class="card-title">Slutförd Uppgift</h5>
       <h6 class="card-subtitle mb-2 text-muted">Bekräftelse på slutförd uppgift</h6>
-      <p class="card-text">{{ atob(urldata).split('-') }}</p>
+      <p class="card-text">{{ urldata }}</p>
     </div>
   </div>
 </div>
@@ -29,7 +27,7 @@
   var app = new Vue({
     el: '#app',
     data: {
-      urldata: window.location.hash.replace("#","")
+      urldata: atob(window.location.hash.replace("#",""))
     }
   });
 </script>
