@@ -47,7 +47,7 @@ var SaveAndRestore = {
           localStorage.setItem(this.taskname,JSON.stringify(this.$data))
         },
         handinlink: function(){
-          return 'https://script.google.com/a/macros/educ.goteborg.se/s/AKfycbx2w--Ik14mFi79rob0DA5QgFnNtOEejjAsvq-ll8WWaskVlv0/exec?page=kod&kod='+btoa(this.taskname+'-'+this.email+'-'+this.questions);
+          return 'https://train.ltgee.se/kodstatus.html#'+btoa(this.taskname+'-'+this.email+'-'+this.questions);
         },
         reset: function(){
           localStorage.removeItem(this.taskname);
