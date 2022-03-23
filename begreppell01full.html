@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com">
+    <script src="jquery-3.3.1.slim.min.js"></script>
+    <script src="popper.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="vue.js"></script>
+    <link rel="stylesheet" href="css/katex.min.css">
+    <script src="katex.min.js"></script>
+    <title>Begrepp</title>
+  </head>
+  <body>
+  <div class="g-signin2" data-onsuccess="onSignIn"></div>
+  <div id="app" class="container">
+    <h1>Begrepp och enheter</h1>
+    <p>
+    Fyll i alla de tomma fälten med rätt svar.
+    Läs på el.ltgee.se kap 11.
+    </p>
+    <div>
+      <table class="table">
+        <tr>
+          <th>Storhet</th>
+          <th>Storhetsbeteckning</th>
+          <th>Enhet</th>
+          <th>Enhetsbeteckning</th>
+          <th>Beskrivning</th>
+        </tr>
+        <tr v-for="(storhet, rad) in htmltabell">
+          <td v-if="1" v-html="storhet[0]"></td>
+          <td v-else="">
+          </td>
+          
+          <td v-if="0" v-html="storhet[1]"></td>
+          <td v-else="">
+                <button v-on:click="open = 1">Knapp</button>
+		<ul class="list-group">
+		  <button v-on:click="svar[tabell[rad][1]]=tabell[fid][1]; open = 0;" v-for="(frad, fid) in htmltabell" type="button" class="list-group-item list-group-item-action" v-html="frad[1]"></button>
+		</ul>
+          </td>
+
+          <td v-if="1" v-html="storhet[2]"></td>
+          <td v-else="">
+            <span v-if="kolladesvar[storhet][0].trim() == tabell[storhet][0]">{{ tabell[storhet][0] }}</span>
+            <input v-else="" v-model="svar" class="form-control">
+          </td>
+
+          <td v-if="1" v-html="storhet[3]"></td>
+          <td v-else="">
+            <span v-if="kolladesvar[storhet][0].trim() == tabell[storhet][0]">{{ tabell[storhet][0] }}</span>
+            <input v-else="" v-model="svar" class="form-control">
+          </td>
+         
+          
+        </tr>
+      </table>
+    </div>
+    <div v-if="status == true" class="alert alert-success">
+        Grattis! Du klarade frågan!<br>
+        <button class="btn btn-primary" v-on:click="next">Nästa övning</button><br>
+        <img class="rounded" width="320" v-bind:src="successImage()">
+    </div>
+    <button v-on:click="check" class="btn btn-primary">Kontrollera svaren.</button>
+    <div class="progress" ><div class="progress-bar bg-success" role="progressbar" v-bind:style="{width: (antal/15*100)+'%'}"></div></div>
+    <div v-if="antal >= 15" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="handinlink()">
+      </div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>    </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+  Vue.use(Success);
+  Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        svar: {},
+        open: 0,
+        kolladesvar:{},
+        tabell: [
+		["Ström (Toppvärde)","î","Ampere","A"],
+		["Ström (Effektivvärde)","I","Ampere","A"],
+		["Spänning (Toppvärde)","û","Volt","V"],
+		["Spänning (Effektivvärde)","U","Volt","V"],
+		["Spänning över reaktans","U_l","Volt","V"],
+		["Spänning över kapacitans","U_c","Volt","V"],
+		["Resistans","R","Ohm","Ω"],
+		["Kapacitiv reaktans","X_c","Ohm","Ω"],
+		["Induktiv reaktans","X_l","Ohm","Ω"],
+		["Impedans","Z","Ohm","Ω"],
+		["Effekt","P","Watt","W"],
+		["Skenbar effekt","S"," VoltAmpere","VA"],
+		["Reaktiv effekt induktiv","Q_l","VoltAmpereReaktiv","VAR"],
+		["Reaktiv effekt kapasitiv","Q_c","VoltAmpereReaktiv","VAR"],
+		["Fasförskjutning","\\varphi","Grader","\\degree"],
+		["Effektfaktor","Cos\\varphi","Faktor","ingen"],
+		["Verkninsgrad","\\eta","Procent / Faktor","%/ingen"],
+		["Periodtid","t","Sekunder","s"],
+		["Frekvens","f","Hertz","Hz"],
+		["Resistivitet","\\rho","Ohm per meter per kvadratmillimeter","Ohm/m/mm²"],
+		["Längd","l","Meter","m"],
+		["Tvärsnittsarea","A","Kvadratmillimeter","mm²"]
+        ],
+        start: new Date(),
+        antal: -1,
+        questions:[],
+        poang: 1,
+        taskname: "begreppellhel"
+      },
+      computed: {
+        htmltabell: function (){
+          function katexig(rad){
+            return [rad[0], window.katex.renderToString(rad[1]), rad[2], window.katex.renderToString(rad[3])]
+          }
+          return this.tabell.map(katexig)
+        },
+        status: function () {/*
+          var midstatus = true;
+          var id = "U";
+          var max = this.attVeta.length;
+          var data = ""; 
+          for (var i = 0; i < max ; i++ ){
+            id = this.attVeta[i];
+            if (
+              (this.tabell[id][0] == this.kolladesvar[id][0].trim() || this.veta[id] == 0) &&
+              (this.tabell[id][1] == this.kolladesvar[id][1].trim() || this.veta[id] == 1) &&
+              (this.tabell[id][2] == this.kolladesvar[id][2].trim() || this.veta[id] == 2) &&
+              (this.tabell[id][3] == this.kolladesvar[id][3].trim() || this.veta[id] == 3)
+              ){} 
+            else{
+              midstatus = false;
+            }
+          }
+          return midstatus;
+          }*/
+          return false;
+          }
+      },
+      methods: {
+        check: function () {
+          /*this.kolladesvar = JSON.parse(JSON.stringify(this.svar));
+          if(!this.status){
+            alert("Alla är inte rätt");
+            this.poang = this.poang/2;
+            if(this.antal < 0){
+              this.antal = 0;
+            }
+          }*/
+        },
+        next: function () {
+        /*this.veta = {
+          "U":Math.floor(Math.random() * 5),
+          "I":Math.floor(Math.random() * 5),
+          "R":Math.floor(Math.random() * 5),
+          "P":Math.floor(Math.random() * 5),
+          "F":Math.floor(Math.random() * 5),
+          "τ":Math.floor(Math.random() * 5),
+          "p":Math.floor(Math.random() * 5),
+          "A":Math.floor(Math.random() * 5),
+          };
+        var alts = [
+          ["F"],
+          ["τ"],
+          ["A"],
+          ["p"],
+          ["U","P","F"],
+          ["R","τ","T"],
+          ["P","τ","I"],
+          ["U","τ","F"],
+          ["τ","U","I"],
+          ["R","τ","P"],
+          ["A","p","P"],
+          ["R","","A"],
+          ["U","τ","F"],
+          ["p","τ","U"],
+          ["A","P","R"],
+          ["I","F","p"]
+          ["τ","A","p"],
+          ["I","A","R"],
+          ["U","","τ"]
+        ]
+        this.attVeta = alts[Math.floor(Math.random() * alts.length)];
+        this.antal = this.antal + this.poang;
+        this.poang = 1;
+        this.svar = {
+          "U":["","","",""],
+          "I":["","","",""],
+          "R":["","","",""],
+          "P":["","","",""],
+          "F":["","","",""],
+          "τ":["","","",""],
+          "p":["","","",""],
+          "A":["","","",""]
+          };
+        this.kolladesvar = JSON.parse(JSON.stringify(this.svar));
+        this.questions.push(this.veta.U);
+        this.save();*/
+        }
+      }
+    });
+  </script>
+</html>
