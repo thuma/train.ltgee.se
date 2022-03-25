@@ -27,68 +27,68 @@
       <table class="table">
         <tr>
           <th>Storhet</th>
-          <th>Storhetsbeteckning</th>
+          <th>betn.</th>
           <th>Enhet</th>
-          <th>Enhetsbeteckning</th>
+          <th>Betn.</th>
           <th>Beskrivning</th>
         </tr>
         <tr v-for="(storhet, rad) in tabell">
           <td v-if="visa.r == rad && visa.c == 0">
           	<ul class="list-group" style="position: absolute;z-index: 999999;">
-		  <button 
-		  	v-on:click="valj(-1, -1)"
-		  	v-for="(frad, fid) in htmltabell"
-		  	type="button"
-		  	class="list-group-item list-group-item-action"
-		  	>{{frad[0]}}</button>
-		</ul>
+            <button 
+              v-on:click="valjsvar(rad, 0, frad)"
+              v-for="(frad, fid) in namnstorhet"
+              type="button"
+              class="list-group-item list-group-item-action"
+              >{{frad}}</button>
+          </ul>
           </td>
           <td v-else="">
-		<button v-on:click="valj(rad, 0)" type="button" class="btn btn-outline-dark">{{storhet[0]}}</button>
+		        <button v-on:click="valj(rad, 0)" type="button" class="btn btn-outline-dark">{{svar[rad][0]}}</button>
           </td>
           
           <td v-if="visa.r == rad && visa.c == 1">
           	<ul class="list-group" style="position: absolute;z-index: 999999;">
-		  <button 
-		  	v-on:click="valj(-1, -1)"
-		  	v-for="(frad, fid) in htmltabell"
-		  	type="button"
-		  	class="list-group-item list-group-item-action"
-		  	v-html="frad[1]"></button>
-		</ul>
+            <button 
+              v-on:click="valjsvar(rad, 1, frad)"
+              v-for="(frad, fid) in htmlstorhetsb"
+              type="button"
+              class="list-group-item list-group-item-action"
+              v-html="frad"></button>
+          </ul>
           </td>
           <td v-else="">
-		<button v-on:click="valj(rad, 1)" type="button" class="btn btn-outline-dark" v-html="htmltabell[rad][1]"></button>
+		        <button v-on:click="valj(rad, 1)" type="button" class="btn btn-outline-dark" v-html="svar[rad][1]"></button>
           </td>
 
           <td v-if="visa.r == rad && visa.c == 2">
           	<ul class="list-group" style="position: absolute;z-index: 999999;">
-		  <button 
-		  	v-on:click="valj(-1, -1)"
-		  	v-for="(frad, fid) in htmltabell"
-		  	type="button"
-		  	class="list-group-item list-group-item-action">{{frad[2]}}</button>
-		</ul>
+            <button 
+              v-on:click="valjsvar(rad, 2, frad)"
+              v-for="(frad, fid) in namnenheter"
+              type="button"
+              class="list-group-item list-group-item-action">{{frad}}</button>
+          </ul>
           </td>
           <td v-else="">
-		<button v-on:click="valj(rad, 2)" type="button" class="btn btn-outline-dark">{{storhet[2]}}</button>
+		        <button v-on:click="valj(rad, 2)" type="button" class="btn btn-outline-dark">{{svar[rad][2]}}</button>
           </td>
 
           <td v-if="visa.r == rad && visa.c == 3">
           	<ul class="list-group" style="position: absolute;z-index: 999999;">
-		  <button 
-		  	v-on:click="valj(-1, -1)"
-		  	v-for="(frad, fid) in htmltabell"
-		  	type="button"
-		  	class="list-group-item list-group-item-action"
-		  	v-html="frad[3]"></button>
-		</ul>
+            <button 
+              v-on:click="valjsvar(rad, 3, frad)"
+              v-for="(frad, fid) in htmlenheter"
+              type="button"
+              class="list-group-item list-group-item-action"
+              v-html="frad"></button>
+          </ul>
           </td>
           <td v-else="">
-		<button v-on:click="valj(rad, 3)" type="button" class="btn btn-outline-dark" v-html="htmltabell[rad][3]"></button>
+		        <button v-on:click="valj(rad, 3)" type="button" class="btn btn-outline-dark" v-html="svar[rad][3]"></button>
           </td>
           <td>
-		{{storhet[4]}}
+		        {{storhet[4]}}
           </td>
           
         </tr>
@@ -120,32 +120,32 @@
     var app = new Vue({
       el: '#app',
       data: {
-        svar: Array(22),
+        svar: Array.from(Array(22), () => ["Välj...","Välj...","Välj...","Välj..."]),
+        kolladesvar: Array.from(Array(22), () => ["Välj...","Välj...","Välj...","Välj..."]),
         visa: {"r":-1,"c":-1},
-        kolladesvar:{},
         tabell: [
-		["Ström (Toppvärde)","î","Ampere","A","Hur mång elektroner som passerar som mest i en växelströmskrets."],
-		["Ström (Effektivvärde)","I","Ampere","A","Hur många elektroner som passerar i en likströmskretss eller hur många som passerar i snitt i en likströmskrets."],
-		["Spänning (Toppvärde)","û","Volt","V"],
-		["Spänning (Effektivvärde)","U","Volt","V"],
-		["Spänning över reaktans","U_l","Volt","V"],
-		["Spänning över kapacitans","U_c","Volt","V"],
-		["Resistans","R","Ohm","Ω"],
-		["Kapacitiv reaktans","X_c","Ohm","Ω"],
-		["Induktiv reaktans","X_l","Ohm","Ω"],
-		["Impedans","Z","Ohm","Ω"],
-		["Effekt","P","Watt","W"],
-		["Skenbar effekt","S"," VoltAmpere","VA"],
-		["Reaktiv effekt induktiv","Q_l","VoltAmpereReaktiv","VAR"],
-		["Reaktiv effekt kapasitiv","Q_c","VoltAmpereReaktiv","VAR"],
-		["Fasförskjutning","\\varphi","Grader","\\degree"],
-		["Effektfaktor","Cos\\varphi","Faktor","ingen"],
-		["Verkninsgrad","\\eta","Procent / Faktor","\\%/ingen"],
-		["Periodtid","t","Sekunder","s"],
-		["Frekvens","f","Hertz","Hz"],
-		["Resistivitet","\\rho","Ohm per meter per kvadratmillimeter","Ohm/m/mm²"],
-		["Längd","l","Meter","m"],
-		["Tvärsnittsarea","A","Kvadratmillimeter","mm²"]
+          ["Ström (Toppvärde)","\\hat{\\imath}","Ampere","A","Hur mång elektroner som passerar som mest i en växelströmskrets."],
+          ["Ström (Effektivvärde)","I","Ampere","A","Hur många elektroner som passerar i en likströmskretss eller hur många som passerar i snitt i en likströmskrets."],
+          ["Spänning (Toppvärde)","\\hat{u}","Volt","V", "Hur kraftist elektronernas trycks/dras som kraftigast i en växelströmskrets."],
+          ["Spänning (Effektivvärde)","U","Volt","V","Hur kraftigt som elektronerna dras/trycks i en likströmskrets eller i snitt hur kraftigt de dras i en växelströmms krets."],
+          ["Spänning över induktiv reaktans","U_l","Volt","V","Spänningsfall i en spole borträknat spänningsfallet över resistansen i spolen."],
+          ["Spänning över kapacitiv reaktans","U_c","Volt","V","Spänningsfall över en kondensator som inte har någon resistans."],
+          ["Resistans","R","Ohm","Ω","Motståndet för likspänning i en krets, eller motståndet som växelströmmen möter när den är i fas med spänningen."],
+          ["Kapacitiv reaktans","X_c","Ohm","Ω","Motståndet som växelströmmen möter i en kondensator borträknat resistansen."],
+          ["Induktiv reaktans","X_l","Ohm","Ω","Motståndet som växelströmmen möter i en spole borträknat resistansen."],
+          ["Impedans","Z","Ohm","Ω","Motståndet som växelströmmen möter i en krets."],
+          ["Effekt","P","Watt","W","Den aktiva effeken i en krets som faktiskt utför något, lyser, snurrar etc."],
+          ["Skenbar effekt","S"," VoltAmpere","VA","Effekten i kretsen som det verkar vara om du mäter ström och spänning."],
+          ["Reaktiv effekt induktiv","Q_l","VoltAmpereReaktiv","VAR","Den effekt i en krets som inte utför något alls där ström och spänning är ur fas i en spole."],
+          ["Reaktiv effekt kapasitiv","Q_c","VoltAmpereReaktiv","VAR","Den effekt i en krets som inte utför något alls där ström och spänning är ur fas i en kondensator"],
+          ["Fasförskjutning","\\varphi","Grader","\\degree","Vinkeln som beskriver hur mycket strömmen och spänningen ligger i otakt."],
+          ["Effektfaktor","Cos\\varphi","Faktor","ingen","Beskriver hur mycket den skenbara effekten och den aktiva effekten skilljer sig åt."],
+          ["Verkninsgrad","\\eta","Procent / Faktor","\\%/ingen","Hur stor del av den effekt som tillförs som faktiskt kommer till nytta."],
+          ["Periodtid","t","Sekunder","s","Hur lång tid det tar för växelspänningen att gå hela vägen upp och sedan hela vägen ner och tillba till 0 igen."],
+          ["Frekvens","f","Hertz","Hz","Hur många gåner något sker under en sekund."],
+          ["Resistivitet","\\rho","Resistivitet","Ohm/m/mm^2","Hur stort motstånd ett vist material har att leda ström."],
+          ["Längd","l","Meter","m","Ett sätt att mäta avstånd."],
+          ["Tvärsnittsarea","A","Kvadratmillimeter","mm^2","Ett sätt att mäta hur tjock en ledare är."]
         ],
         start: new Date(),
         antal: -1,
@@ -160,26 +160,38 @@
           }
           return this.tabell.map(katexig)
         },
-        status: function () {/*
-          var midstatus = true;
-          var id = "U";
-          var max = this.attVeta.length;
-          var data = ""; 
-          for (var i = 0; i < max ; i++ ){
-            id = this.attVeta[i];
-            if (
-              (this.tabell[id][0] == this.kolladesvar[id][0].trim() || this.veta[id] == 0) &&
-              (this.tabell[id][1] == this.kolladesvar[id][1].trim() || this.veta[id] == 1) &&
-              (this.tabell[id][2] == this.kolladesvar[id][2].trim() || this.veta[id] == 2) &&
-              (this.tabell[id][3] == this.kolladesvar[id][3].trim() || this.veta[id] == 3)
-              ){} 
-            else{
-              midstatus = false;
-            }
+        htmlstorhetsb: function (){
+          function katexig(rad){
+            return window.katex.renderToString(rad[1])
           }
-          return midstatus;
-          }*/
-          return false;
+          return this.tabell.map(katexig).sort()
+        },
+        namnstorhet: function (){
+          function katexig(rad){
+            return rad[0];
+          }
+          return this.tabell.map(katexig).sort()
+        },
+        htmlenheter: function (){
+          function katexig(rad){
+            return window.katex.renderToString(rad[3])
+          }
+          function onlyUnique(value, index, self) {
+            return self.indexOf(value) === index;
+          }
+          return this.tabell.map(katexig).filter(onlyUnique).sort()
+        },
+        namnenheter: function (){
+          function katexig(rad){
+            return rad[2]
+          }
+          function onlyUnique(value, index, self) {
+            return self.indexOf(value) === index;
+          }
+          return this.tabell.map(katexig).filter(onlyUnique).sort()
+        },
+        status: function () {
+          return JSON.stringify(this.htmltabell) === JSON.stringify(this.kolladesvar);
           }
       },
       methods: {
@@ -187,64 +199,30 @@
             this.visa.r = rad;
             this.visa.c = col;
       	},
+        valjsvar: function(rad, col, svar){
+          Vue.set(this.svar[rad], col ,svar);
+          this.valj(-1,-1);
+      	},
         check: function () {
-          /*this.kolladesvar = JSON.parse(JSON.stringify(this.svar));
+          this.kolladesvar = JSON.parse(JSON.stringify(this.svar));
           if(!this.status){
             alert("Alla är inte rätt");
-            this.poang = this.poang/2;
-            if(this.antal < 0){
-              this.antal = 0;
-            }
-          }*/
+            this.antal = 0;
+          }
+          this.poang = 15;
         },
         next: function () {
-        /*this.veta = {
-          "U":Math.floor(Math.random() * 5),
-          "I":Math.floor(Math.random() * 5),
-          "R":Math.floor(Math.random() * 5),
-          "P":Math.floor(Math.random() * 5),
-          "F":Math.floor(Math.random() * 5),
-          "τ":Math.floor(Math.random() * 5),
-          "p":Math.floor(Math.random() * 5),
-          "A":Math.floor(Math.random() * 5),
-          };
-        var alts = [
-          ["F"],
-          ["τ"],
-          ["A"],
-          ["p"],
-          ["U","P","F"],
-          ["R","τ","T"],
-          ["P","τ","I"],
-          ["U","τ","F"],
-          ["τ","U","I"],
-          ["R","τ","P"],
-          ["A","p","P"],
-          ["R","","A"],
-          ["U","τ","F"],
-          ["p","τ","U"],
-          ["A","P","R"],
-          ["I","F","p"]
-          ["τ","A","p"],
-          ["I","A","R"],
-          ["U","","τ"]
-        ]
-        this.attVeta = alts[Math.floor(Math.random() * alts.length)];
-        this.antal = this.antal + this.poang;
-        this.poang = 1;
-        this.svar = {
-          "U":["","","",""],
-          "I":["","","",""],
-          "R":["","","",""],
-          "P":["","","",""],
-          "F":["","","",""],
-          "τ":["","","",""],
-          "p":["","","",""],
-          "A":["","","",""]
-          };
-        this.kolladesvar = JSON.parse(JSON.stringify(this.svar));
-        this.questions.push(this.veta.U);
-        this.save();*/
+          this.antal = this.antal + this.poang;
+          this.questions.push(this.svar[0][0]);
+          this.kolladesvar = Array.from(Array(22), () => ["Välj...","Välj...","Välj...","Välj..."]);
+          this.svar = Array.from(Array(22), () => ["Välj...","Välj...","Välj...","Välj..."]);
+          for (let i = this.tabell.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const temp = this.tabell[i];
+            Vue.set(this.tabell,i, this.tabell[j]);
+            Vue.set(this.tabell,j, temp);
+          }
+          this.save();
         }
       }
     });
