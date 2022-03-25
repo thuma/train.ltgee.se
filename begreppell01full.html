@@ -32,31 +32,64 @@
           <th>Enhetsbeteckning</th>
           <th>Beskrivning</th>
         </tr>
-        <tr v-for="(storhet, rad) in htmltabell">
-          <td v-if="1" v-html="storhet[0]"></td>
-          <td v-else="">
-          </td>
-          
-          <td v-if="0" v-html="storhet[1]"></td>
-          <td v-else="">
-                <button v-on:click="open = 1">Knapp</button>
-		<ul class="list-group">
-		  <button v-on:click="svar[tabell[rad][1]]=tabell[fid][1]; open = 0;" v-for="(frad, fid) in htmltabell" type="button" class="list-group-item list-group-item-action" v-html="frad[1]"></button>
+        <tr v-for="(storhet, rad) in tabell">
+          <td v-if="visa.r == rad && visa.c == 0">
+          	<ul class="list-group" style="position: absolute;z-index: 999999;">
+		  <button 
+		  	v-on:click="valj(-1, -1)"
+		  	v-for="(frad, fid) in htmltabell"
+		  	type="button"
+		  	class="list-group-item list-group-item-action"
+		  	>{{frad[0]}}</button>
 		</ul>
           </td>
-
-          <td v-if="1" v-html="storhet[2]"></td>
           <td v-else="">
-            <span v-if="kolladesvar[storhet][0].trim() == tabell[storhet][0]">{{ tabell[storhet][0] }}</span>
-            <input v-else="" v-model="svar" class="form-control">
+		<button v-on:click="valj(rad, 0)" type="button" class="btn btn-outline-dark">{{storhet[0]}}</button>
+          </td>
+          
+          <td v-if="visa.r == rad && visa.c == 1">
+          	<ul class="list-group" style="position: absolute;z-index: 999999;">
+		  <button 
+		  	v-on:click="valj(-1, -1)"
+		  	v-for="(frad, fid) in htmltabell"
+		  	type="button"
+		  	class="list-group-item list-group-item-action"
+		  	v-html="frad[1]"></button>
+		</ul>
+          </td>
+          <td v-else="">
+		<button v-on:click="valj(rad, 1)" type="button" class="btn btn-outline-dark" v-html="htmltabell[rad][1]"></button>
           </td>
 
-          <td v-if="1" v-html="storhet[3]"></td>
-          <td v-else="">
-            <span v-if="kolladesvar[storhet][0].trim() == tabell[storhet][0]">{{ tabell[storhet][0] }}</span>
-            <input v-else="" v-model="svar" class="form-control">
+          <td v-if="visa.r == rad && visa.c == 2">
+          	<ul class="list-group" style="position: absolute;z-index: 999999;">
+		  <button 
+		  	v-on:click="valj(-1, -1)"
+		  	v-for="(frad, fid) in htmltabell"
+		  	type="button"
+		  	class="list-group-item list-group-item-action">{{frad[2]}}</button>
+		</ul>
           </td>
-         
+          <td v-else="">
+		<button v-on:click="valj(rad, 2)" type="button" class="btn btn-outline-dark">{{storhet[2]}}</button>
+          </td>
+
+          <td v-if="visa.r == rad && visa.c == 3">
+          	<ul class="list-group" style="position: absolute;z-index: 999999;">
+		  <button 
+		  	v-on:click="valj(-1, -1)"
+		  	v-for="(frad, fid) in htmltabell"
+		  	type="button"
+		  	class="list-group-item list-group-item-action"
+		  	v-html="frad[3]"></button>
+		</ul>
+          </td>
+          <td v-else="">
+		<button v-on:click="valj(rad, 3)" type="button" class="btn btn-outline-dark" v-html="htmltabell[rad][3]"></button>
+          </td>
+          <td>
+		{{storhet[4]}}
+          </td>
           
         </tr>
       </table>
@@ -87,12 +120,12 @@
     var app = new Vue({
       el: '#app',
       data: {
-        svar: {},
-        open: 0,
+        svar: Array(22),
+        visa: {"r":-1,"c":-1},
         kolladesvar:{},
         tabell: [
-		["Ström (Toppvärde)","î","Ampere","A"],
-		["Ström (Effektivvärde)","I","Ampere","A"],
+		["Ström (Toppvärde)","î","Ampere","A","Hur mång elektroner som passerar som mest i en växelströmskrets."],
+		["Ström (Effektivvärde)","I","Ampere","A","Hur många elektroner som passerar i en likströmskretss eller hur många som passerar i snitt i en likströmskrets."],
 		["Spänning (Toppvärde)","û","Volt","V"],
 		["Spänning (Effektivvärde)","U","Volt","V"],
 		["Spänning över reaktans","U_l","Volt","V"],
@@ -107,7 +140,7 @@
 		["Reaktiv effekt kapasitiv","Q_c","VoltAmpereReaktiv","VAR"],
 		["Fasförskjutning","\\varphi","Grader","\\degree"],
 		["Effektfaktor","Cos\\varphi","Faktor","ingen"],
-		["Verkninsgrad","\\eta","Procent / Faktor","%/ingen"],
+		["Verkninsgrad","\\eta","Procent / Faktor","\\%/ingen"],
 		["Periodtid","t","Sekunder","s"],
 		["Frekvens","f","Hertz","Hz"],
 		["Resistivitet","\\rho","Ohm per meter per kvadratmillimeter","Ohm/m/mm²"],
@@ -150,6 +183,10 @@
           }
       },
       methods: {
+        valj: function(rad, col){
+            this.visa.r = rad;
+            this.visa.c = col;
+      	},
         check: function () {
           /*this.kolladesvar = JSON.parse(JSON.stringify(this.svar));
           if(!this.status){
