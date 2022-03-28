@@ -44,7 +44,8 @@
           </ul>
           </td>
           <td v-else="">
-		        <button v-on:click="valj(rad, 0)" type="button" class="btn btn-outline-dark">{{svar[rad][0]}}</button>
+            <div v-if="svar[rad][0] == kolladesvar[rad][0] && svar[rad][0] !=='Välj...'">{{svar[rad][0]}}</div>
+		        <button v-else="" v-on:click="valj(rad, 0)" type="button" class="btn btn-outline-dark">{{svar[rad][0]}}</button>
           </td>
           
           <td v-if="visa.r == rad && visa.c == 1">
@@ -58,7 +59,8 @@
           </ul>
           </td>
           <td v-else="">
-		        <button v-on:click="valj(rad, 1)" type="button" class="btn btn-outline-dark" v-html="svar[rad][1]"></button>
+            <div v-if="svar[rad][1] == kolladesvar[rad][1] && svar[rad][1] !=='Välj...'" v-html="svar[rad][1]"></div>
+		        <button v-else="" v-on:click="valj(rad, 1)" type="button" class="btn btn-outline-dark" v-html="svar[rad][1]"></button>
           </td>
 
           <td v-if="visa.r == rad && visa.c == 2">
@@ -71,7 +73,8 @@
           </ul>
           </td>
           <td v-else="">
-		        <button v-on:click="valj(rad, 2)" type="button" class="btn btn-outline-dark">{{svar[rad][2]}}</button>
+            <div v-if="svar[rad][2] == kolladesvar[rad][2] && svar[rad][2] !=='Välj...'">{{svar[rad][2]}}</div>
+		        <button v-else="" v-on:click="valj(rad, 2)" type="button" class="btn btn-outline-dark">{{svar[rad][2]}}</button>
           </td>
 
           <td v-if="visa.r == rad && visa.c == 3">
@@ -85,7 +88,8 @@
           </ul>
           </td>
           <td v-else="">
-		        <button v-on:click="valj(rad, 3)" type="button" class="btn btn-outline-dark" v-html="svar[rad][3]"></button>
+            <div v-if="svar[rad][3] == kolladesvar[rad][3] && svar[rad][3] !=='Välj...'" v-html="svar[rad][3]"></div>
+		        <button v-else="" v-on:click="valj(rad, 3)" type="button" class="btn btn-outline-dark" v-html="svar[rad][3]"></button>
           </td>
           <td>
 		        {{storhet[4]}}
@@ -204,7 +208,9 @@
           this.valj(-1,-1);
       	},
         check: function () {
-          this.kolladesvar = JSON.parse(JSON.stringify(this.svar));
+          for (var i = 0; i < this.svar.length; i++){
+            Vue.set(this.kolladesvar,i, this.svar[i]);
+          }
           if(!this.status){
             alert("Alla är inte rätt");
             this.antal = 0;
