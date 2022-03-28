@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="https://ifa.thure.org/schema.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="vue.js"></script>
+    <link rel="stylesheet" href="css/katex.min.css">
+    <script src="katex.min.js"></script>
+    <title></title>
+    <style>
+     pre {
+       margin:0;
+     }
+     td {
+       font-size: 13px;
+     }
+    </style>
+  </head>
+  <body>
+  <div class="g-signin2" data-onsuccess="onSignIn"></div>
+  <div id="app" class="container">
+    <h1>Ritare</h1>
+    <p>
+     
+    </p>
+    <table class="sh">
+      <tr v-for="(row, i) in tabell">
+        <td v-for="(col, j) in row" v-bind:class="col.bild" v-on:click="val(i,j)" v-html="rita(col.text)"></td>
+        <td><button v-on:click="addcol(i)" class="btn btn-primary">+</button></td>
+      </tr>
+      <tr>
+        <td><button v-on:click="addrow()" class="btn btn-primary">+</button></td>
+      </tr>
+    </table>
+    <input  v-if="vald.i > -1 && vald.j > -1" v-model:value="tabell[vald.i][vald.j].text">
+    <button  v-if="vald.i > -1 && vald.j > -1" class="btn btn-outline-dark" v-on:click="vald.i=-1;vald.j=-1;">Klart</button>
+    <ul class="list-group" style="position: absolute;z-index: 999999;" v-if="vald.i > -1 && vald.j > -1">
+      <button 
+        v-on:click="valjsvar(vald.i, vald.j, bild)"
+        v-for="bild in vallista"
+        type="button"
+        class="list-group-item list-group-item-action"
+        ><table class="sh"><tr><td v-bind:class="bild"></td></tr></table></button>
+    </ul><br>
+    <textarea>{{JSON.stringify(tabell,null,2)}}</textarea>
+    </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        vald: {i:-1, j:-1},
+        tabell: [[{"bild":"","text":""}]],
+      },
+      computed: {
+        vallista: function(){
+          var bas = ["amp","volt","ohm","line","resistor","lamp","bat","power","fuse","breaker"];
+          var alla = ["","l-d-corner","r-d-corner","l-u-corner","r-u-corner","conn","conn vert","conn r-vert","conn u-vert"];
+          bas.forEach(function(item){alla.push("vert "+ item);alla.push(item)})
+          return alla;
+        }
+      },
+      methods: {
+        rita: function(text){
+          if(text){
+            try {
+              return window.katex.renderToString(text);
+            } catch (e) {
+              return "Formatfel";
+            }
+          }
+          return "";
+          },
+        addcol: function(i){
+          this.tabell[i].push({"bild":"","text":""})
+        },
+        addrow: function(){
+          this.tabell.push([{"bild":"","text":""}]);
+        },
+        val: function(i,j){
+          this.vald.i = i;
+          this.vald.j = j;
+        },
+        valjsvar: function(i, j, bild){
+          this.tabell[i][j].bild = bild;
+          this.vald.i = -1;
+          this.vald.j = -1;
+        }
+      }
+    })
+  </script>
+</html>
+
+
+
