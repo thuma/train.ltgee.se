@@ -209,7 +209,7 @@
       	},
         check: function () {
           for (var i = 0; i < this.svar.length; i++){
-            Vue.set(this.kolladesvar,i, this.svar[i]);
+            Vue.set(this.kolladesvar,i, this.svar[i].slice());
           }
           if(!this.status){
             alert("Alla är inte rätt");
