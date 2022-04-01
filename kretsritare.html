@@ -35,7 +35,7 @@
         <td><button v-on:click="addrow()" class="btn btn-primary">+</button></td>
       </tr>
     </table>
-    <input  v-if="vald.i > -1 && vald.j > -1" v-model:value="tabell[vald.i][vald.j].text">
+    <input class="from-control" v-if="vald.i > -1 && vald.j > -1" v-model:value="tabell[vald.i][vald.j].text">
     <button  v-if="vald.i > -1 && vald.j > -1" class="btn btn-outline-dark" v-on:click="vald.i=-1;vald.j=-1;">Klart</button>
     <ul class="list-group" style="position: absolute;z-index: 999999;" v-if="vald.i > -1 && vald.j > -1">
       <button 
@@ -45,7 +45,12 @@
         class="list-group-item list-group-item-action"
         ><table class="sh"><tr><td v-bind:class="bild"></td></tr></table></button>
     </ul><br>
-    <textarea>{{JSON.stringify(tabell,null,2)}}</textarea>
+    	<div class="input-group mb-3">
+	  <input type="text" class="form-control" v-bind:value="url" id="url">
+	  <div class="input-group-append">
+	    <button class="btn btn-outline-secondary" type="button" v-on:click="copy">Kopiera</button> 
+	  </div>
+    	</div>
     </div>
   </body>
   <script src="common.js"></script>
@@ -62,7 +67,16 @@
           var alla = ["","korsning","l-d-corner","r-d-corner","l-u-corner","r-u-corner","conn","conn vert","conn r-vert","conn u-vert"];
           bas.forEach(function(item){alla.push("vert "+ item);alla.push(item)})
           return alla;
+        },
+        url: function(){
+          window.location.hash = window.btoa(JSON.stringify(this.tabell));
+          return 'https://train.ltgee.se/kretsritare.html#'+window.btoa(JSON.stringify(this.tabell));
         }
+      },
+      created: function(){
+      	if(window.location.hash) {
+	  this.tabell = JSON.parse(window.atob(window.location.hash.replace("#","")));
+	}
       },
       methods: {
         rita: function(text){
@@ -89,7 +103,12 @@
           this.tabell[i][j].bild = bild;
           this.vald.i = -1;
           this.vald.j = -1;
-        }
+        },
+        copy: function() {
+  		let copyText = document.getElementById("url");
+  		copyText.select();
+  		document.execCommand("copy");
+	}
       }
     })
   </script>
