@@ -44,7 +44,7 @@
           </ul>
           </td>
           <td v-else="">
-            <div v-if="svar[rad][0] == kolladesvar[rad][0] && svar[rad][0] !=='Välj...'">{{svar[rad][0]}}</div>
+            <div v-if="htmltabell[rad][0] === kolladesvar[rad][0] && svar[rad][0] !=='Välj...'">{{svar[rad][0]}}</div>
 		        <button v-else="" v-on:click="valj(rad, 0)" type="button" class="btn btn-outline-dark">{{svar[rad][0]}}</button>
           </td>
           
@@ -59,7 +59,7 @@
           </ul>
           </td>
           <td v-else="">
-            <div v-if="svar[rad][1] == kolladesvar[rad][1] && svar[rad][1] !=='Välj...'" v-html="svar[rad][1]"></div>
+            <div v-if="htmltabell[rad][1] === kolladesvar[rad][1] && svar[rad][1] !=='Välj...'" v-html="svar[rad][1]"></div>
 		        <button v-else="" v-on:click="valj(rad, 1)" type="button" class="btn btn-outline-dark" v-html="svar[rad][1]"></button>
           </td>
 
@@ -73,7 +73,7 @@
           </ul>
           </td>
           <td v-else="">
-            <div v-if="svar[rad][2] == kolladesvar[rad][2] && svar[rad][2] !=='Välj...'">{{svar[rad][2]}}</div>
+            <div v-if="htmltabell[rad][2] === kolladesvar[rad][2] && svar[rad][2] !=='Välj...'">{{svar[rad][2]}}</div>
 		        <button v-else="" v-on:click="valj(rad, 2)" type="button" class="btn btn-outline-dark">{{svar[rad][2]}}</button>
           </td>
 
@@ -88,7 +88,7 @@
           </ul>
           </td>
           <td v-else="">
-            <div v-if="svar[rad][3] == kolladesvar[rad][3] && svar[rad][3] !=='Välj...'" v-html="svar[rad][3]"></div>
+            <div v-if="htmltabell[rad][3] === kolladesvar[rad][3] && svar[rad][3] !=='Välj...'" v-html="svar[rad][3]"></div>
 		        <button v-else="" v-on:click="valj(rad, 3)" type="button" class="btn btn-outline-dark" v-html="svar[rad][3]"></button>
           </td>
           <td>
