@@ -195,7 +195,8 @@
           return this.tabell.map(katexig).filter(onlyUnique).sort()
         },
         status: function () {
-          return JSON.stringify(this.htmltabell) === JSON.stringify(this.kolladesvar);
+          function tillrad(rad){return rad[0]+rad[1]+rad[2]+rad[3]}
+          return JSON.stringify(this.htmltabell.map(tillrad)) === JSON.stringify(this.kolladesvar.map(tillrad));
           }
       },
       methods: {
