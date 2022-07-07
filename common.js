@@ -70,7 +70,8 @@ var SaveAndRestore = {
   }
 }
 
-function onSignIn(googleUser) {
-  var profile = googleUser.getBasicProfile();
-  app.email = profile.getEmail();
+function onSignIn(result) {
+  console.log(result);
+  var profile = JSON.parse(atob(result.credential.split(".")[1]));
+  app.email = profile.email;
 }
