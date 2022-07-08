@@ -44,17 +44,17 @@ var SaveAndRestore = {
       },
       methods: {
         save: function() {
-          localStorage.setItem(this.taskname,JSON.stringify(this.$data))
+          localStorage.setItem(this.taskname+this.email,JSON.stringify(this.$data))
         },
         restore: function () {
           if(window.localStorage[this.taskname+this.email]){
             var myApp = this;
-            var stored = JSON.parse(window.localStorage[this.taskname]);
+            var stored = JSON.parse(window.localStorage[this.taskname+this.email]);
             Object.keys(stored).forEach(function (field){
               myApp[field] = stored[field];
             });
           }
-        }
+        },
         handinlink: function(){
           return 'https://train.ltgee.se/kodstatus.html#'+btoa(this.taskname+'-'+this.email+'-'+this.questions);
         },
