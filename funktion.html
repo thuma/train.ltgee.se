@@ -23,8 +23,22 @@
     </style>
   </head>
   <body>
-  <div class="g-signin2" data-onsuccess="onSignIn"></div>
-  <div id="app" class="container">
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <div id="g_id_onload"
+      data-client_id="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com"
+      data-context="signin"
+      data-auto_select="true"
+      data-callback="onSignIn">
+    </div>
+    <div class="g_id_signin"
+      data-type="standard"
+      data-shape="rectangular"
+      data-theme="outline"
+      data-text="signin_with"
+      data-size="large"
+      data-logo_alignment="left">
+    </div>
+  <div id="app" class="container" v-if="email">
     <h1>Ellära Strömmens väg</h1>
     <p> I denna övning får du träna på att se hur ström rör sig i olika kretsar.
     </p>

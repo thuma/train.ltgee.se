@@ -44,7 +44,16 @@ var SaveAndRestore = {
       },
       methods: {
         save: function() {
-          localStorage.setItem(this.taskname,JSON.stringify(this.$data))
+          localStorage.setItem(this.taskname+this.email,JSON.stringify(this.$data))
+        },
+        restore: function () {
+          if(window.localStorage[this.taskname+this.email]){
+            var myApp = this;
+            var stored = JSON.parse(window.localStorage[this.taskname+this.email]);
+            Object.keys(stored).forEach(function (field){
+              myApp[field] = stored[field];
+            });
+          }
         },
         handinlink: function(){
           return 'https://train.ltgee.se/kodstatus.html#'+btoa(this.taskname+'-'+this.email+'-'+this.questions);
@@ -55,22 +64,15 @@ var SaveAndRestore = {
         }
       },
       created: function () {
-        if(window.localStorage[this.taskname]){
-          var myApp = this;
-          var stored = JSON.parse(window.localStorage[this.taskname]);
-          Object.keys(stored).forEach(function (field){
-            myApp[field] = stored[field];
-          });
-        }
-        else {
          this.next();
-        }
       }
     })
   }
 }
 
-function onSignIn(googleUser) {
-  var profile = googleUser.getBasicProfile();
-  app.email = profile.getEmail();
+function onSignIn(result) {
+  console.log(result);
+  var profile = JSON.parse(atob(result.credential.split(".")[1]));
+  app.email = profile.email;
+  app.restore();
 }
