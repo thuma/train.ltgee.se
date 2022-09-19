@@ -50,9 +50,8 @@ var SaveAndRestore = {
           if(window.localStorage[this.taskname+this.email]){
             var myApp = this;
             var stored = JSON.parse(window.localStorage[this.taskname+this.email]);
-            Object.keys(stored).forEach(function (field){
-              myApp[field] = stored[field];
-            });
+            myApp.questions = stored.questions;
+            myApp.antal = stored.antal;
           }
         },
         handinlink: function(){
