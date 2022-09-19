@@ -84,8 +84,10 @@
       data: {
         svar: "",
         tosvar: "",
+        circuitid: 0,
         circuits:[
-        {"file":"knapp.png","name":"Knapp"},
+        {"file":"knapp.png","name":"Knapp Normalt öppen"},
+        {"file":"knappNC.png","name":"Knapp Normalt sluten"},
         {"file":"sensor.png","name":"Sensor allmän symbol"},
         {"file":"batt.png","name":"Batteri"},
         {"file":"lampa.png","name":"Lampa"},
@@ -129,13 +131,17 @@
           }
         },
         next: function () {
-          var thisid = Math.floor(Math.random() * this.circuits.length);
-          this.circuit = this.circuits[thisid];
+          if( this.circuitid > this.circuits.length){
+            this.circuitid = 0;
+          } else {
+            this.circuitid++;
+          }
+          this.circuit = this.circuits[this.circuitid];
           this.svar = "";
           this.tosvar = JSON.parse(JSON.stringify(this.svar));
           this.antal += this.poang;
           this.poang = 1;
-          this.questions.push(thisid);
+          this.questions.push(this.circuitid);
           this.save();
         }
       }
