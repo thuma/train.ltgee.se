@@ -59,7 +59,7 @@ var SaveAndRestore = {
           return 'https://train.ltgee.se/kodstatus.html#'+btoa(this.taskname+'-'+this.email+'-'+this.questions);
         },
         reset: function(){
-          localStorage.removeItem(this.taskname);
+          localStorage.removeItem(this.taskname+this.email);
           alert('Laddaom sidan för att återställa helt');
         }
       },
