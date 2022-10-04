@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="https://ifa.thure.org/schema.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <meta name="google-signin-client_id" content="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com">
+    <script src="jquery-3.3.1.slim.min.js"></script>
+    <script src="popper.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="vue.js"></script>
+    <title>Effekt 2</title>
+    <style>
+     pre {
+       margin:0;
+     }
+    </style>
+  </head>
+  <body>
+  <script src="https://accounts.google.com/gsi/client"></script>
+  <div id="g_id_onload"
+    data-client_id="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com"
+    data-context="signin"
+    data-callback="onSignIn">
+  </div>
+  <div class="g_id_signin"
+    data-type="standard"
+    data-shape="rectangular"
+    data-theme="outline"
+    data-text="signin_with"
+    data-size="large"
+    data-logo_alignment="left">
+  </div>
+  <div id="app" class="container" v-if="email">
+    <h1>Träning effekt 2</h1>
+    <p>
+    I denna övning så får du träna på att att räkna med Effektlagen och Ohms lag tillsammans.
+    När du jobbar med el så behöver du kunna räkna ut hur stor säkring som behövs eller hur stor kabel du behöver.
+    Läs på mer om 
+    <a target="_blank" href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatronik/elektronik/elektricitet/effekt-lagen/effekt">effekt</a> och 
+    <a target="_blank" href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatronik/elektronik/elektricitet/effekt-lagen">effektlagen</a>.
+    </p>
+    <table class="sh">
+      <tr>
+        <td class="l-d-corner"></td>
+        <td class="amp">I=<span v-if="!ask.I">{{ prefix(I) }}A</span></td>
+        <td class="conn"></td>
+        <td class="r-d-corner"></td>
+      </tr>
+      <tr>
+        <td class="bat vert"></td>
+        <td></td>
+        <td class="resistor vert">R=<span v-if="!ask.R">{{ prefix(R) }}Ω</td>
+        <td class="volt vert">U=<span v-if="!ask.U">{{ prefix(U) }}V</span></td>
+      </tr>
+      <tr>
+        <td class="r-u-corner"></td>
+        <td class="line"></td>
+        <td class="conn u-vert"></td>
+        <td class="l-u-corner"></td>
+      </tr>
+    </table>
+    <div>
+      <span v-if="!ask.P">Effekten i resistorn är {{ prefix(P) }}{{ namedata["P"].unitc }}.</span> 
+      Hur stor {{ namedata[askfor[0]].name }} och hur stor {{ namedata[askfor[1]].name }} är det i kretsen?
+      <div class="input-group mb-3">
+        <input v-model="svar" type="text" class="form-control" >
+        <div class="input-group-append">
+          <span class="input-group-text" >{{ namedata[askfor[0]].unitc }}</span>
+        </div>
+      </div>
+      <div class="input-group mb-3">
+        <input v-model="svarb" type="text" class="form-control" >
+        <div class="input-group-append">
+          <span class="input-group-text" >{{ namedata[askfor[1]].unitc }}</span>
+        </div>
+      </div>
+      <button v-on:click="check" class="btn btn-primary">Kontrollera svaren.</button><br>
+      <div v-if="antal >= 15" class="alert alert-success" >
+        Nu har du klarat ett träningsvarv. <br>
+        Lämna in denna länk på google classroom:<br>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+          </div>
+          <input id="correctlink" class="form-control" v-bind:value="handinlink()">
+        </div>
+      </div>
+      <div class="alert alert-success" v-if="this.right( this.kontroll, this[this.askfor[0]]) && this.right( this.kontrollb, this[this.askfor[1]])" >
+        Rätt!<br>
+        <button class="btn btn-primary" v-on:click="next"> Nästa övning </button>
+        <br>
+        <img widht="320" v-bind:src="successImage()">
+      </div>
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+    Vue.use(Success);
+    Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        taskname: "Effekt2",
+        I: 0.03,
+        R: 200,
+        antal: -1,
+        svar: "",
+        svarb: "",
+        poang: 1,
+        kontroll: "",
+        kontrollb: "",
+        raknare:"",
+        askfor: "PI",
+        questions: [],
+        namedata: {
+          P:{name:"effekt",unit:"Watt",unitc:"W"},
+          I:{name:"ström",unit:"Ampere",unitc:"A"},
+          R:{name:"resistans",unit:"Ohm",unitc:"Ω"},
+          U:{name:"spänning",unit:"Volt",unitc:"V"}
+        },
+      },
+      computed: {
+        ask: function(){
+          var out = {"P":false,"U":false,"I":false,"R":false}; 
+          if(this.askfor.indexOf("P")>-1) {
+            out.P=true;
+          }
+          if(this.askfor.indexOf("U")>-1) {
+            out.U=true;
+          }
+          if(this.askfor.indexOf("I")>-1) {
+            out.I=true;
+          }
+          if(this.askfor.indexOf("R")>-1) {
+            out.R=true;
+          }
+          return out;
+        },
+        U: function(){
+          return this.I*this.R;
+        },
+        P: function () {
+           return this.U*this.I;
+        },
+        rsvar: function () {
+           try{
+             return eval(this.raknare.split(",").join("."));
+           }
+           catch(e){
+             return ""
+           }
+        }
+      },
+      methods: {
+        right: function(a, b){
+          a = Number(a.replace(',','.'))
+          var max = b*1.01;
+          var min = b*0.91;
+          return (a < max && a > min);
+        },
+        prefix: function(count) {
+          if (count < 1){
+            return Number( count +'e+3').toLocaleString("sv-SE",{maximumFractionDigits:20,maximumSignificantDigits:3}) + " m";
+          }
+          if (count > 1000){
+            return Number( count +'e-3').toLocaleString("sv-SE",{maximumFractionDigits:20,maximumSignificantDigits:3}) + " k";
+          }
+          return count.toLocaleString("sv-SE",{maximumFractionDigits:20,maximumSignificantDigits:3});
+        },
+        check: function () {
+          this.kontroll = this.svar;
+          this.kontrollb = this.svarb;
+          if(this.right( this.kontroll, this[this.askfor[0]])){
+            if(this.right( this.kontrollb, this[this.askfor[1]])){
+              return
+            }
+          };
+
+          alert("Svaret är inte rätt");
+          this.poang = this.poang/2;
+          if (this.antal < 0){
+            this.antal = 0;
+          }
+        },
+        next: function () {
+          this.antal = this.antal + this.poang;
+          this.poang = 1;
+          this.svar = "";
+          this.kontroll = this.svar;
+          this.svarb = "";
+          this.kontrollb = this.svarb;
+          this.R = 1+Math.floor(Math.random() * 400);
+          this.I = Math.round(1 + Math.random() * 72) / this.R;
+          options = ["UI","UP","UR","PI","PR","IR"];
+          id = Math.round(Math.random() * options.length)
+          console.log(id);
+          this.askfor = options[id];
+          this.questions.push(this.askfor);
+          this.save();
+        }
+      }
+    })
+  </script>
+</html>
+
+
+
+
+
