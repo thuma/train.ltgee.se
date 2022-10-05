@@ -9,7 +9,7 @@
     <script src="popper.min.js"></script>
     <script src="bootstrap.min.js"></script>
     <script src="vue.js"></script>
-    <title>Elschemasymboler</title>
+    <title>Elschemasymboler med sensorer</title>
     <style>
      pre {
        margin:0;
@@ -36,7 +36,7 @@
       data-logo_alignment="left">
     </div>
   <div id="app" class="container" v-if="email">
-    <h1>Elschemasymboler</h1>
+    <h1>Elschemasymboler med sensorer</h1>
     <p> I denna övning får du träna på att känna igen de mest <a href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatronik/elektronik/elschema" target="_blank">grundläggande elschemasymbolerna</a>.
     </p>
     <img v-bind:src="'imgs/elsymboler/'+circuit.file">
@@ -106,13 +106,14 @@
         {"file":"fotocell.png","name":"Fotocell allmän symbol"},
         {"file":"sandare.png","name":"Fotocell sändare"},
         {"file":"mottagare.png","name":"Fotocell mottagare"},
+        {"file":"granslagesbrytare.png","name":"Gränslägesbrytare"},
         {"file":"plc.png","name":"Styrsystem"}
         ],
         circuit:{"file":"batt.png","name":"Batteri"},
         antal:-1,
         questions:[],
         poang: 1,
-        taskname: "El-Symboler-plc"
+        taskname: "El-Symboler-sensorer"
       },
       computed: {
         right: function () {
