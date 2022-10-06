@@ -199,7 +199,7 @@
           this.R = 1+Math.floor(Math.random() * 400);
           this.I = Math.round(1 + Math.random() * 72) / this.R;
           options = ["UI","UP","UR","PI","PR","IR"];
-          id = Math.round(Math.random() * options.length)
+          id = Math.round(Math.random() * (options.length - 1))
           console.log(id);
           this.askfor = options[id];
           this.questions.push(this.askfor);
