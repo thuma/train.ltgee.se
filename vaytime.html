@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="jquery-3.3.1.slim.min.js"></script>
+    <script src="popper.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="js/default.js"></script>
+    <script src="js/wavedrom.min.js"></script>
+    <script src="vue.js"></script>
+    <title>Väg tid diagram</title>
+  </head>
+  <body>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <div id="g_id_onload"
+      data-client_id="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com"
+      data-context="signin"
+      data-auto_select="true"
+      data-callback="onSignIn">
+    </div>
+    <div class="g_id_signin"
+      data-type="standard"
+      data-shape="rectangular"
+      data-theme="outline"
+      data-text="signin_with"
+      data-size="large"
+      data-logo_alignment="left">
+    </div>
+  <div id="app" class="container" v-if="email">
+    <h1>Väg tid diagram</h1>
+    <p>
+    I denna övning får du träna på hur olika funkterioner fungerar med ett väg tid diagram. Detta är för att du ska ha ett sätt att beskriva hur olika lösningar fungerar.
+    </p>
+    <div>
+      <img v-bind:src="'imgs/fbd/'+task.img">
+      <div id="wave0"></div>
+      <button>Start</button>
+      <button>Stopp</button>
+      <button>Fortsätt</button>
+      <div v-if="status == true" class="alert alert-success">
+        Grattis! Du klarade frågan!<br>
+        <button class="btn btn-primary" v-on:click="next">Nästa övning</button><br>
+        <img class="rounded" width="320" v-bind:src="successImage()">
+      </div>
+      <button class="btn btn-primary" v-on:click="kolla">Kolla om svaret är rätt.</button>
+      <div class="progress mt-2">
+        <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+      </div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>
+    <div v-if="antal >= 15" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="handinlink()">
+      </div>
+    </div>
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+  Vue.use(Success);
+  Vue.use(SaveAndRestore);
+  var app = new Vue({
+    el: '#app',
+    data: {
+      I: 1,
+      R: 1,
+      veta: "R",
+      questions: [],
+      svar: "",
+      tasks: [
+        {
+        img: "and.png",
+        signal : [
+          { name: "I1",  wave: "l.hlhl" },
+          { name: "I2",  wave: "l..h.l" },
+          { name: "Q1",  wave: "l...hl" },
+        ]},
+        {
+        img: "or.png",
+        signal : [
+          { name: "I1",  wave: "l.hlhl" },
+          { name: "I2",  wave: "l..h.l" },
+          { name: "Q1",  wave: "l.h..l" },
+        ]},
+        {
+        img: "not.png",
+        signal : [
+          { name: "I1",  wave: "l.hlhl" },
+          { name: "Q1",  wave: "l.hlhl" },
+        ]},
+        {
+        img: "xor.png",
+        signal : [
+          { name: "I1",  wave: "l.hlhl" },
+          { name: "I2",  wave: "l..h.l" },
+          { name: "Q1",  wave: "l.h.l." },
+        ]},
+        {
+        img: "ton.png",
+        signal : [
+          { name: "I1",  wave: "l.h....l..." },
+          { name: "Q1",  wave: "l...h..l..." },
+        ]},
+        {
+        img: "toff.png",
+        signal : [
+          { name: "I1",  wave: "l.h..l....." },
+          { name: "Q1",  wave: "l.h.....l.." },
+        ]},
+        {
+        img: "counter.png",
+        signal : [
+          { name: "I1",  wave: "l.p.....l....." },
+          { name: "I2",  wave: "l..........hl." },
+          { name: "Q1",  wave: "l....h.....l.." },
+        ]},
+        {
+        img: "minne.png",
+        signal : [
+          { name: "I1",  wave: "l..hl........." },
+          { name: "I2",  wave: "l........hl..." },
+          { name: "Q1",  wave: "l..h.....l...." },
+        ]},
+        {
+        img: "none.png",
+        signal : [
+          { name: "I1",  wave: "l.h..l.hl.." },
+          { name: "Q1",  wave: "l.h..l.hl.." },
+        ]},
+      ],
+      task: {
+        img: "a.png",
+        signal : [
+          { name: "I1",  wave: "l.h..l.hl.." },
+          { name: "Q1",  wave: "l.h..l.hl.." },
+        ]},
+      poang: 1,
+      ratt: "",
+      ksvar: "",
+      antal: -1,
+      taskname: "Vaytime"
+    },
+    computed: {
+      status: function () {
+        if (this.ratt == this.svar){
+          return true;
+        }
+        else {
+          return false;
+        }
+      },
+    },
+    watch: {
+      task: {
+        handler(newTask, oldTask) {
+          WaveDrom.RenderWaveForm(0, newTask, "wave");
+        },
+        deep: true
+      }
+    },
+    methods: {
+      kolla: function(){
+         if(!(this.task.signal[this.task.signal.length-1].wave == this.ratt)){
+           alert("Svaret är inte rätt");
+           this.poang = this.poang/2;
+         }
+         this.svar = this.task.signal[this.task.signal.length-1].wave;
+      },
+      next: function () {
+        this.questions.push(this.task.img);
+        id = Math.round(Math.random() * (this.tasks.length - 1))
+        var newtask =JSON.parse(JSON.stringify(this.tasks[id]))
+
+        this.ratt = newtask.signal[newtask.signal.length-1].wave;
+        newtask.signal[newtask.signal.length-1]={name:"Q1",wave:""}
+        this.task = newtask;
+        this.antal = this.antal + this.poang;
+        this.svar="";
+        this.poang=1;
+        this.save();
+      }
+    }
+  })
+  </script>
+</html>
+
