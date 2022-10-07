@@ -29,17 +29,22 @@
       data-size="large"
       data-logo_alignment="left">
     </div>
-  <div id="app" class="container" v-if="email">
+  <div id="app" class="container" :style="visa">
     <h1>Väg tid diagram</h1>
     <p>
-    I denna övning får du träna på hur olika funkterioner fungerar med ett väg tid diagram. Detta är för att du ska ha ett sätt att beskriva hur olika lösningar fungerar.
+    I denna övning får du träna på hur olika funkterioner fungerar med ett väg-tid-diagram. Detta är för att du ska ha ett sätt att beskriva hur olika lösningar fungerar.
     </p>
     <div>
       <img v-bind:src="'imgs/fbd/'+task.img">
       <div id="wave0"></div>
-      <button>Start</button>
-      <button>Stopp</button>
-      <button>Fortsätt</button>
+      <div class="btn-group">
+        <button type="button" class="btn btn-secondary" v-on:click="task.signal[task.signal.length-1].wave = task.signal[task.signal.length-1].wave.slice(0, -1)">&larr;</button>
+        <button type="button" class="btn btn-secondary" v-on:click="task.signal[task.signal.length-1].wave+='l'">Ner</button>
+        <button type="button" class="btn btn-secondary" v-on:click="task.signal[task.signal.length-1].wave+='h'">Upp</button>
+        <button type="button" class="btn btn-secondary" v-on:click="task.signal[task.signal.length-1].wave+='.'">&rarr;</button>
+      </div>
+      <br>
+      <br>
       <div v-if="status == true" class="alert alert-success">
         Grattis! Du klarade frågan!<br>
         <button class="btn btn-primary" v-on:click="next">Nästa övning</button><br>
@@ -74,6 +79,7 @@
       R: 1,
       veta: "R",
       questions: [],
+      loop: 0,
       svar: "",
       tasks: [
         {
@@ -93,8 +99,8 @@
         {
         img: "not.png",
         signal : [
-          { name: "I1",  wave: "l.hlhl" },
-          { name: "Q1",  wave: "l.hlhl" },
+          { name: "I1",  wave: "hlh.lhl" },
+          { name: "Q1",  wave: "lhl.hlh" },
         ]},
         {
         img: "xor.png",
@@ -137,7 +143,7 @@
         ]},
       ],
       task: {
-        img: "a.png",
+        img: "none.png",
         signal : [
           { name: "I1",  wave: "l.h..l.hl.." },
           { name: "Q1",  wave: "l.h..l.hl.." },
@@ -149,6 +155,15 @@
       taskname: "Vaytime"
     },
     computed: {
+      visa() {
+        if(this.email==""){
+          return {
+            display: "none"
+          };
+        } else {
+          return {};
+        }
+      },
       status: function () {
         if (this.ratt == this.svar){
           return true;
@@ -166,6 +181,14 @@
         deep: true
       }
     },
+    created() {
+        for (i = this.tasks.length -1; i > 0; i--) {
+          j = Math.floor(Math.random() * i);
+          k = this.tasks[i];
+          this.tasks[i] = this.tasks[j];
+          this.tasks[j] = k;
+        }
+    },
     methods: {
       kolla: function(){
          if(!(this.task.signal[this.task.signal.length-1].wave == this.ratt)){
@@ -176,11 +199,14 @@
       },
       next: function () {
         this.questions.push(this.task.img);
-        id = Math.round(Math.random() * (this.tasks.length - 1))
-        var newtask =JSON.parse(JSON.stringify(this.tasks[id]))
-
+        if( this.loop > (this.tasks.length - 2)){
+            this.loop = 0;
+          } else {
+            this.loop++;
+          }
+        var newtask =JSON.parse(JSON.stringify(this.tasks[this.loop]))
         this.ratt = newtask.signal[newtask.signal.length-1].wave;
-        newtask.signal[newtask.signal.length-1]={name:"Q1",wave:""}
+        newtask.signal[newtask.signal.length-1]={name:"Q1",wave:"l"}
         this.task = newtask;
         this.antal = this.antal + this.poang;
         this.svar="";
