@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="https://ifa.thure.org/schema.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="jquery-3.3.1.slim.min.js"></script>
+    <script src="popper.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="vue.js"></script>
+    <title>Seriekretsar</title>
+    <style>
+     pre {
+       margin:0;
+     }
+    </style>
+  </head>
+  <body>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <div id="g_id_onload"
+      data-client_id="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com"
+      data-context="signin"
+      data-auto_select="true"
+      data-callback="onSignIn">
+    </div>
+    <div class="g_id_signin"
+      data-type="standard"
+      data-shape="rectangular"
+      data-theme="outline"
+      data-text="signin_with"
+      data-size="large"
+      data-logo_alignment="left">
+    </div>
+  <div id="app" class="container" v-if="email">
+    <h1>Träning Seriekrets</h1>
+    <p> I denna övning så får du öva på hur motstånd som är kopplade i serie fungerar.
+    Detta är viktigt för att kunna förstå och räkna på hur en krets fungerar.
+    Läs mer om <a href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatronik/elektronik/elektricitet/elektrisk-krets/seriekrets" target="_blank">seriekretsar</a>.    
+    </p>
+    <table class="sh">
+      <tr>
+        <td></td>
+        <td>P1={{ display(csvar.P1)}}W</td>
+        <td>P2={{ display(csvar.P2)}}W</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td class="l-d-corner"></td>
+        <td class="resistor">R1={{ display(csvar.R1)}}Ω</td>
+        <td class="resistor">R2={{ display(csvar.R2)}}Ω</td>
+        <td class="r-d-corner"></td>
+      </tr>
+      <tr>
+        <td class="bat vert">U={{ display(csvar.U)}}V</td>
+        <td class="vert">P={{ display(csvar.P)}}W</td>
+        <td></td>
+        <td class="amp vert">I={{ display(csvar.I)}}A</td>
+      </tr>
+      <tr>
+        <td class="r-u-corner"></td>
+        <td class="line"></td>
+        <td class="line"></td>
+        <td class="l-u-corner"></td>
+      </tr>
+    </table>
+    <div>
+      <div v-for="svarvalue in allc">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" >
+          <div class="input-group-append">
+           <span class="input-group-text" >V</span>
+          </div>
+        </div>
+      </div>
+      <button v-on:click="check" class="btn btn-primary">Kontrollera svaren.</button><br>
+      <div v-if="status" class="alert alert-success" >
+        Rätt!<br>
+        <button class="btn btn-primary" v-on:click="next"> Nästa övning </button>
+        <br>
+        <img widht="320" v-bind:src="successImage()">
+      </div>
+    </div>
+    <div v-if="antal >= 15" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="handinlink()">
+      </div>
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+    Vue.use(Success);
+    Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        cdata: {
+          R1: 100,
+          R2: 200,
+          U: 30,
+        },
+        allc: ["U","U1","U2","I","I1","I2","R","R1","R2","P","P1","P2"],
+        tasks: [
+          ["U","U1","U2","I","I1","I2","R","R1","R2","P","P1","P2"],
+          ["U","U1","U2","I","I1","I2","R","R1","R2","P","P1","P2"],
+          ["U","U1","U2","I","I1","I2","R","R1","R2","P","P1","P2"],
+          ["U","U1","U2","I","I1","I2","R","R1","R2","P","P1","P2"],
+          ["U","U1","U2","I","I1","I2","R","R1","R2","P","P1","P2"],
+          ["U","U1","U2","I","I1","I2","R","R1","R2","P","P1","P2"],
+          ["U","U1","U2","I","I1","I2","R","R1","R2","P","P1","P2"],
+        ],
+        show: ["U","R1","R2"],
+        antal:-1,
+        poang: 1,
+        svar: {
+          "U":"",
+          "U1":"",
+          "U2":"",
+          "I":"",
+          "I1":"",
+          "I2":"",
+          "R":"",
+          "R1":"",
+          "R2":"",
+          "P":"",
+          "P1":"",
+          "P2":""
+          },
+        questions: [],
+        loop: 0,
+        taskname: "Serie2"
+      },
+      computed: {
+        askfor: function() {
+          var allad = {};
+          var that = this;
+          this.allc.forEach(
+              function(id){allad[id] = that.show.indexOf(id) < -1;}
+            );
+        },
+        csvar: function () {
+          var csvar = {};
+            csvar.R1 = this.cdata.R1;
+            csvar.R2 = this.cdata.R2;
+            csvar.R  = this.cdata.R1 + this.cdata.R2;
+            csvar.U = this.cdata.U;
+            csvar.I = csvar.U / csvar.R;
+            csvar.I1 = csvar.I;
+            csvar.I2 = csvar.I;
+            csvar.P = csvar.U * csvar.I;
+            csvar.U1 = csvar.R1 * csvar.I;
+            csvar.U2 = csvar.R2 * csvar.I;
+            csvar.P1 = csvar.U1 * csvar.I;
+            csvar.P2 = csvar.U2 * csvar.I;
+          return csvar; 
+        },
+        status: function(){
+          return false;
+        }
+      },
+      methods: {
+        check: function () {
+          if(!false){
+            alert("Spänningen stämmer inte.");
+            this.poang = this.poang/2;
+          }
+        },
+        compare: function(a, b){
+          b = b.replace(",",".")
+          var max = a*1.01;
+          var min = a*0.91;
+          return (b < max && b > min);
+        },
+        next: function () {
+          if( this.loop > this.tasks.length-2){
+            this.loop = 0;
+          } else {
+            this.loop++;
+          }
+          this.show = this.tasks[this.loop];
+          this.cdata.U  = Math.floor(Math.random() *  400);
+          this.cdata.R1 = Math.floor(Math.random() * 4000);
+          this.cdata.R2 = Math.floor(Math.random() * 4000);
+          this.antal = this.antal +  this.poang;
+          this.poang = 1;
+          this.questions.push(this.csvar.I);
+          this.save();
+        },
+        display: function(rawnumber) {
+          var i = this.I;
+          if ( rawnumber < 1){
+            return new Intl.NumberFormat('sv-SE', { maximumSignificantDigits: 3 }).format(Number( rawnumber + 'e+3')) + " m";
+          } else if ( rawnumber >= 1000){
+            return new Intl.NumberFormat('sv-SE', { maximumSignificantDigits: 3 }).format(Number( rawnumber + 'e-3')) + " k";
+          }
+          return new Intl.NumberFormat('sv-SE', { maximumSignificantDigits: 3 }).format(Number(rawnumber));
+        },
+      }
+    })
+  </script>
+</html>
+
