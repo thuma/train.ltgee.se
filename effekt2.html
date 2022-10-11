@@ -111,6 +111,7 @@
         I: 0.03,
         R: 200,
         antal: -1,
+        loop: 0,
         svar: "",
         svarb: "",
         poang: 1,
@@ -190,6 +191,12 @@
           }
         },
         next: function () {
+          var options = ["UI","UP","UR","PI","PR","IR"];
+          if( this.loop > (options.length - 2)){
+            this.loop = 0;
+          } else {
+            this.loop++;
+          }
           this.antal = this.antal + this.poang;
           this.poang = 1;
           this.svar = "";
@@ -198,10 +205,7 @@
           this.kontrollb = this.svarb;
           this.R = 1+Math.floor(Math.random() * 400);
           this.I = Math.round(1 + Math.random() * 72) / this.R;
-          options = ["UI","UP","UR","PI","PR","IR"];
-          id = Math.round(Math.random() * (options.length - 1))
-          console.log(id);
-          this.askfor = options[id];
+          this.askfor = options[this.loop];
           this.questions.push(this.askfor);
           this.save();
         }
