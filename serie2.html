@@ -234,7 +234,7 @@
           }
         },
         compare: function(a, b){
-          var k = Number(String(b).replace(",",".").replace("m","e-3").replace("k","e3"));
+          var k = Number(String(b).split(" ").join("").replace(",",".").replace("m","e-3").replace("k","e3"));
           var max = a*1.01;
           var min = a*0.91;
           return (k < max && k > min);
