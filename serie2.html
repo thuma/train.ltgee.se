@@ -42,35 +42,62 @@
     <table class="sh">
       <tr>
         <td></td>
-        <td>P1={{ display(csvar.P1)}}W</td>
-        <td>P2={{ display(csvar.P2)}}W</td>
+        <td><div v-if="askfor['P1']">P<sub>1</sub>={{ display(csvar.P1)}}W</div></td>
+        <td></td>
+        <td></td>
+        <td><div v-if="askfor['P2']">P<sub>2</sub>={{ display(csvar.P2)}}W</div></td>
         <td></td>
       </tr>
       <tr>
         <td class="l-d-corner"></td>
-        <td class="resistor">R1={{ display(csvar.R1)}}Ω</td>
-        <td class="resistor">R2={{ display(csvar.R2)}}Ω</td>
+        <td class="volt"><div v-if="askfor['R1']">R<sub>1</sub>={{ display(csvar.R1)}}Ω</div></td>
+        <td class="conn"></td>
+        <td class="line"></td>
+        <td class="volt"><div v-if="askfor['R2']">R<sub>2</sub>={{ display(csvar.R2)}}Ω</div></td>
         <td class="r-d-corner"></td>
       </tr>
       <tr>
-        <td class="bat vert">U={{ display(csvar.U)}}V</td>
-        <td class="vert">P={{ display(csvar.P)}}W</td>
+        <td class="conn r-vert"></td>
+        <td class="resistor"><div v-if="askfor['U1']">U<sub>1</sub>={{ display(csvar.U1)}}V</div></td>
+        <td class="conn u-vert"></td>
+        <td class="amp"><div v-if="askfor['I2']">I<sub>2</sub>={{ display(csvar.I2)}}A</div></td>
+        <td class="resistor"><div v-if="askfor['U2']">U<sub>2</sub>={{ display(csvar.U2)}}V</div></td>
+        <td class="conn vert"></td>
+      </tr>
+      <tr>
+        <td class="amp vert"><div v-if="askfor['I1']">I<sub>1</sub>={{ display(csvar.I1)}}A</div></td>
         <td></td>
-        <td class="amp vert">I={{ display(csvar.I)}}A</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="line vert"></td>
+      </tr>
+      <tr>
+        <td class="bat vert"><div v-if="askfor['U']">U={{ display(csvar.U)}}V</div></td>
+        <td class="vert"><div v-if="askfor['P']">P={{ display(csvar.P)}}W</div></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="line vert"></td>
       </tr>
       <tr>
         <td class="r-u-corner"></td>
+        <td class="line"></td>
+        <td class="amp"><div v-if="askfor['I']">I={{ display(csvar.I)}}A</div></td>
         <td class="line"></td>
         <td class="line"></td>
         <td class="l-u-corner"></td>
       </tr>
     </table>
     <div>
-      <div v-for="svarvalue in allc">
-        <div class="input-group mb-3">
+      <div v-for="svarvalue in allc" v-if="!askfor[svarvalue]">
+        <div class="input-group mb-3" style="width: 320px;">
+          <div class="input-group-prepend">
+            <span class="input-group-text" >{{svarvalue[0]}}<sub>{{svarvalue[1]}}</sub></span>
+           </div>
           <input type="text" class="form-control" >
           <div class="input-group-append">
-           <span class="input-group-text" >V</span>
+           <span class="input-group-text" >{{units[svarvalue[0]]}}</span>
           </div>
         </div>
       </div>
@@ -111,14 +138,18 @@
           U: 30,
         },
         allc: ["U","U1","U2","I","I1","I2","R","R1","R2","P","P1","P2"],
+        units: {"U":"V","I":"A","R":"Ω","P":"W"},
         tasks: [
-          ["U","U1","U2","I","I1","I2","R","R1","R2","P","P1","P2"],
-          ["U","U1","U2","I","I1","I2","R","R1","R2","P","P1","P2"],
-          ["U","U1","U2","I","I1","I2","R","R1","R2","P","P1","P2"],
-          ["U","U1","U2","I","I1","I2","R","R1","R2","P","P1","P2"],
-          ["U","U1","U2","I","I1","I2","R","R1","R2","P","P1","P2"],
-          ["U","U1","U2","I","I1","I2","R","R1","R2","P","P1","P2"],
-          ["U","U1","U2","I","I1","I2","R","R1","R2","P","P1","P2"],
+          ["U","R1","R2"],
+          ["U1","U2","I"],
+          ["U","U2","I1"],
+          ["I","R","R1"],
+          ["I1","R1","R2"],
+          ["I2","P1","P2"],
+          ["U","P1","P2"],
+          ["I","P1","P2"],
+          ["R","P1","P2"],
+          ["U","R1","P1"],
         ],
         show: ["U","R1","R2"],
         antal:-1,
@@ -146,8 +177,9 @@
           var allad = {};
           var that = this;
           this.allc.forEach(
-              function(id){allad[id] = that.show.indexOf(id) < -1;}
+              function(id){allad[id] = that.show.indexOf(id) > -1;}
             );
+          return allad;
         },
         csvar: function () {
           var csvar = {};
