@@ -50,18 +50,18 @@
       </tr>
       <tr>
         <td class="l-d-corner"></td>
-        <td class="volt"><div v-if="askfor['R1']">R<sub>1</sub>={{ display(csvar.R1)}}Ω</div></td>
+        <td class="volt"><div v-if="askfor['U1']">U<sub>1</sub>={{ display(csvar.U1)}}V</div></td>
         <td class="conn"></td>
         <td class="line"></td>
-        <td class="volt"><div v-if="askfor['R2']">R<sub>2</sub>={{ display(csvar.R2)}}Ω</div></td>
+        <td class="volt"><div v-if="askfor['U2']"></div>U<sub>2</sub>={{ display(csvar.U2)}}V</div></td>
         <td class="r-d-corner"></td>
       </tr>
       <tr>
         <td class="conn r-vert"></td>
-        <td class="resistor"><div v-if="askfor['U1']">U<sub>1</sub>={{ display(csvar.U1)}}V</div></td>
+        <td class="resistor"><div v-if="askfor['R1']">R<sub>1</sub>={{ display(csvar.R1)}}Ω</div></td>
         <td class="conn u-vert"></td>
         <td class="amp"><div v-if="askfor['I2']">I<sub>2</sub>={{ display(csvar.I2)}}A</div></td>
-        <td class="resistor"><div v-if="askfor['U2']">U<sub>2</sub>={{ display(csvar.U2)}}V</div></td>
+        <td class="resistor"><div v-if="askfor['R2']">R<sub>2</sub>={{ display(csvar.R2)}}Ω</div></div></td>
         <td class="conn vert"></td>
       </tr>
       <tr>
@@ -219,6 +219,7 @@
           listan.forEach(function(kolla){
             if(!that.compare(that.csvar[kolla],that.svarat[kolla])){
               klart = false && klart;
+              console.log(kolla);
             }
           });
           return klart;
