@@ -39,51 +39,47 @@
     Detta är viktigt för att kunna förstå och räkna på hur en krets fungerar.
     Läs mer om <a href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatronik/elektronik/elektricitet/elektrisk-krets/seriekrets" target="_blank">seriekretsar</a>.    
     </p>
-    <table class="sh">
+    <table class="sh" style="color: blue;">
       <tr>
         <td></td>
-        <td><div v-if="askfor['P1']">P<sub>1</sub>={{ display(csvar.P1)}}W</div></td>
         <td></td>
         <td></td>
-        <td><div v-if="askfor['P2']">P<sub>2</sub>={{ display(csvar.P2)}}W</div></td>
+        <td>P<sub>1</sub><span v-if="askfor['P1']">={{ display(csvar.P1)}}W</span></td>
+        <td></td>
+        <td>R<span v-if="askfor['R']">={{ display(csvar.R)}}Ω</spanv></td>
+        <td></td>
+        <td>P<sub>2</sub><span v-if="askfor['P2']">={{ display(csvar.P2)}}W</span></td>
         <td></td>
       </tr>
       <tr>
+        <td></td>
+        <td></td>
         <td class="l-d-corner"></td>
-        <td class="volt"><div v-if="askfor['U1']">U<sub>1</sub>={{ display(csvar.U1)}}V</div></td>
-        <td class="conn"></td>
-        <td class="line"></td>
-        <td class="volt"><div v-if="askfor['U2']"></div>U<sub>2</sub>={{ display(csvar.U2)}}V</div></td>
+        <td class="volt">U<sub>1</sub><span v-if="askfor['U1']">={{ display(csvar.U1)}}V</span></td>
+        <td class="r-d-corner"></td>
+        <td></td>
+        <td class="l-d-corner"></td>
+        <td class="volt">U<sub>2</sub><span v-if="askfor['U2']"></div>={{ display(csvar.U2)}}V</span></td>
         <td class="r-d-corner"></td>
       </tr>
       <tr>
-        <td class="conn r-vert"></td>
-        <td class="resistor"><div v-if="askfor['R1']">R<sub>1</sub>={{ display(csvar.R1)}}Ω</div></td>
+        <td class="l-d-corner"></td>
+        <td class="amp">I<sub>1</sub><span v-if="askfor['I1']">={{ display(csvar.I1)}}A</span></td>
         <td class="conn u-vert"></td>
-        <td class="amp"><div v-if="askfor['I2']">I<sub>2</sub>={{ display(csvar.I2)}}A</div></td>
-        <td class="resistor"><div v-if="askfor['R2']">R<sub>2</sub>={{ display(csvar.R2)}}Ω</div></div></td>
+        <td class="resistor">R<sub>1</sub><span v-if="askfor['R1']">={{ display(csvar.R1)}}Ω</span></td>
+        <td class="conn u-vert"></td>
+        <td class="amp">I<sub>2</sub><span v-if="askfor['I2']">={{ display(csvar.I2)}}A</span></td>
+        <td class="conn u-vert"></td>
+        <td class="resistor">R<sub>2</sub><span v-if="askfor['R2']">={{ display(csvar.R2)}}Ω</span></div></td>
         <td class="conn vert"></td>
-      </tr>
-      <tr>
-        <td class="amp vert"><div v-if="askfor['I1']">I<sub>1</sub>={{ display(csvar.I1)}}A</div></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td class="line vert"></td>
-      </tr>
-      <tr>
-        <td class="bat vert"><div v-if="askfor['U']">U={{ display(csvar.U)}}V</div></td>
-        <td class="vert"><div v-if="askfor['P']">P={{ display(csvar.P)}}W</div></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td class="line vert"></td>
       </tr>
       <tr>
         <td class="r-u-corner"></td>
         <td class="line"></td>
-        <td class="amp"><div v-if="askfor['I']">I={{ display(csvar.I)}}A</div></td>
+        <td class="bat">U<span v-if="askfor['U']">={{ display(csvar.U)}}V</span></td>
+        <td class="line">P<span v-if="askfor['P']">={{ display(csvar.P)}}W</span></td>
+        <td class="amp">I<span v-if="askfor['I']">={{ display(csvar.I)}}A</span></td>
+        <td class="line"></td>
         <td class="line"></td>
         <td class="line"></td>
         <td class="l-u-corner"></td>
@@ -97,7 +93,10 @@
            </div>
           <input type="text" class="form-control" v-model="svar[svarvalue]">
           <div class="input-group-append">
-           <span class="input-group-text" >{{units[svarvalue[0]]}}</span>
+            <span class="input-group-text" >{{units[svarvalue[0]]}}
+              <span v-if="svarat[svarvalue] && compare(csvar[svarvalue],svarat[svarvalue])" style="color:green">&nbsp;Rätt</span>
+              <span v-else-if="svarat[svarvalue]" style="color:red">&nbsp;Fel</span>
+            </span>
           </div>
         </div>
       </div>
