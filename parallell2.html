@@ -12,9 +12,9 @@
     <script src="vue.js"></script>
     <title>Seriekretsar</title>
     <style>
-     pre {
-       margin:0;
-     }
+        pre {
+            margin:0;
+        }
     </style>
   </head>
   <body>
@@ -37,7 +37,8 @@
     <h1>Träning Parallellkrets</h1>
     <p> I denna övning så får du öva på hur motstånd som är kopplade parallellt fungerar.
     Detta är viktigt för att kunna förstå och räkna på hur en krets fungerar.
-    Läs mer om <a href="https://el.ltgee.se" target="_blank">om parallellkretsar</a>.    
+    Läs mer om <a href="https://el.ltgee.se" target="_blank">om parallellkretsar</a>.
+    Svara med minst 3 värdesiffror. 
     </p>
     <table class="sh" style="color: blue;">
       <tr>
@@ -119,7 +120,7 @@
       </div>
     </div>
     <div class="progress mt-2">
-      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/7 * 100)+"%"}'></div>
     </div>
     <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>
   </div>
