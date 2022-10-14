@@ -35,7 +35,7 @@
     I denna övning får du träna på hur olika funkterioner fungerar med ett väg-tid-diagram. Detta är för att du ska ha ett sätt att beskriva hur olika lösningar fungerar.
     </p>
     <div>
-      <img v-bind:src="'imgs/fbd/'+task.img">
+      <img style="width: 100%;" v-bind:src="'imgs/fbd/'+task.img">
       <div id="wave0"></div>
       <div class="btn-group">
         <button type="button" class="btn btn-secondary" v-on:click="task.signal[task.signal.length-1].wave = task.signal[task.signal.length-1].wave.slice(0, -1)">&larr;</button>
