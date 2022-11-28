@@ -10,7 +10,7 @@
     <script src="popper.min.js"></script>
     <script src="bootstrap.min.js"></script>
     <script src="vue.js"></script>
-    <title>Seriekretsar</title>
+    <title>Parallellkrets</title>
     <style>
         pre {
             margin:0;
@@ -43,25 +43,11 @@
     <table class="sh" style="color: blue;">
       <tr>
         <td></td>
-        <td></td>
-        <td></td>
         <td>P<sub>1</sub><span v-if="askfor['P1']">={{ display(csvar.P1)}}W</span></td>
-        <td></td>
-        <td>R<span v-if="askfor['R']">={{ display(csvar.R)}}Ω</spanv></td>
-        <td></td>
-        <td>P<sub>2</sub><span v-if="askfor['P2']">={{ display(csvar.P2)}}W</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td></td>
         <td class="l-d-corner"></td>
         <td class="volt">U<sub>1</sub><span v-if="askfor['U1']">={{ display(csvar.U1)}}V</span></td>
         <td class="r-d-corner"></td>
         <td></td>
-        <td class="l-d-corner"></td>
-        <td class="volt">U<sub>2</sub><span v-if="askfor['U2']"></div>={{ display(csvar.U2)}}V</span></td>
-        <td class="r-d-corner"></td>
       </tr>
       <tr>
         <td class="l-d-corner"></td>
@@ -69,9 +55,23 @@
         <td class="conn u-vert"></td>
         <td class="resistor">R<sub>1</sub><span v-if="askfor['R1']">={{ display(csvar.R1)}}Ω</span></td>
         <td class="conn u-vert"></td>
+        <td class="r-d-corner"></td>
+      </tr>
+      <tr>
+        <td class="vert line"></td>
+        <td>P<sub>2</sub><span v-if="askfor['P2']">={{ display(csvar.P2)}}W</span></td>
+        <td class="l-d-corner"></td>
+        <td class="volt">U<sub>2</sub><span v-if="askfor['U2']">={{ display(csvar.U2)}}V</span></td>
+        <td class="r-d-corner"></td>
+        <td class="line vert"></td>
+	<td>R<span v-if="askfor['R']">={{ display(csvar.R)}}Ω</span></td>
+      </tr>
+      <tr>
+        <td class="conn r-vert"></td>
         <td class="amp">I<sub>2</sub><span v-if="askfor['I2']">={{ display(csvar.I2)}}A</span></td>
         <td class="conn u-vert"></td>
-        <td class="resistor">R<sub>2</sub><span v-if="askfor['R2']">={{ display(csvar.R2)}}Ω</span></div></td>
+        <td class="resistor">R<sub>2</sub><span v-if="askfor['R2']">={{ display(csvar.R2)}}Ω</span></td>
+        <td class="conn u-vert"></td>
         <td class="conn vert"></td>
       </tr>
       <tr>
@@ -79,10 +79,7 @@
         <td class="line"></td>
         <td class="bat">U<span v-if="askfor['U']">={{ display(csvar.U)}}V</span></td>
         <td class="line">P<span v-if="askfor['P']">={{ display(csvar.P)}}W</span></td>
-        <td class="amp">I<span v-if="askfor['I']">={{ display(csvar.I)}}A</span></td>
-        <td class="line"></td>
-        <td class="line"></td>
-        <td class="line"></td>
+        <td class="amp">I<span v-if="askfor['I']">={{ display(csvar.I)}}A</span></span></td>
         <td class="l-u-corner"></td>
       </tr>
     </table>
@@ -141,15 +138,15 @@
         units: {"U":"V","I":"A","R":"Ω","P":"W"},
         tasks: [
           ["U","R1","R2"],
-          ["U1","U2","I"],
-          ["U","U2","I1"],
+          ["U1","R2","I"],
+          ["R2","U2","I1"],
           ["I","R","R1"],
           ["I1","R1","R2"],
           ["I2","P1","P2"],
           ["U","P1","P2"],
           ["I","P1","P2"],
           ["R","P1","P2"],
-          ["U","R1","P1"],
+          ["U","R1","P"],
         ],
         show: ["U","R1","R2"],
         antal:-1,
@@ -184,7 +181,7 @@
           },
         questions: [],
         loop: 0,
-        taskname: "Serie2"
+        taskname: "parallell2"
       },
       computed: {
         askfor: function() {
@@ -199,17 +196,17 @@
           var csvar = {};
             csvar.R1 = this.cdata.R1;
             csvar.R2 = this.cdata.R2;
-            csvar.R  = this.cdata.R1 + this.cdata.R2;
             csvar.U = this.cdata.U;
-            csvar.I = csvar.U / csvar.R;
-            csvar.I1 = csvar.I;
-            csvar.I2 = csvar.I;
+            csvar.I1 = csvar.U/csvar.R1;
+            csvar.I2 = csvar.U/csvar.R2;
+            csvar.I = csvar.I1 + csvar.I2;
+	    csvar.R  = csvar.U/csvar.I;
             csvar.P = csvar.U * csvar.I;
-            csvar.U1 = csvar.R1 * csvar.I;
-            csvar.U2 = csvar.R2 * csvar.I;
-            csvar.P1 = csvar.U1 * csvar.I;
-            csvar.P2 = csvar.U2 * csvar.I;
-          return csvar; 
+            csvar.U1 = csvar.U;
+            csvar.U2 = csvar.U;
+            csvar.P1 = csvar.U1 * csvar.I1;
+            csvar.P2 = csvar.U2 * csvar.I2;
+          return csvar;
         },
         status: function(){
           var filterdata = this.askfor;
