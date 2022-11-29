@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="https://ifa.thure.org/schema.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="jquery-3.3.1.slim.min.js"></script>
+    <script src="popper.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="vue.js"></script>
+    <title>Kombinerad krets</title>
+    <style>
+        pre {
+            margin:0;
+        }
+    </style>
+  </head>
+  <body>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <div id="g_id_onload"
+      data-client_id="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com"
+      data-context="signin"
+      data-auto_select="true"
+      data-callback="onSignIn">
+    </div>
+    <div class="g_id_signin"
+      data-type="standard"
+      data-shape="rectangular"
+      data-theme="outline"
+      data-text="signin_with"
+      data-size="large"
+      data-logo_alignment="left">
+    </div>
+  <div id="app" class="container" v-if="email">
+    <h1>Träning Parallellkrets</h1>
+    <p> I denna övning så får du öva på hur motstånd som är kopplade parallellt och i serie samtidigt fungerar.
+    Detta är viktigt för att kunna förstå och räkna på hur olika krets fungerar.
+    Läs mer om <a href="https://el.ltgee.se" target="_blank">om kombinerade kretsar</a>.
+    Svara med minst 3 värdesiffror.
+    </p>
+    <table class="sh" style="color: blue;">
+      <tr>
+        <td></td>
+        <td>P<sub>1</sub><span v-if="askfor['P1']">={{ display(csvar.P1)}}W</span></td>
+        <td class="l-d-corner"></td>
+        <td class="volt">U<sub>1</sub><span v-if="askfor['U1']">={{ display(csvar.U1)}}V</span></td>
+        <td class="r-d-corner"></td>
+        <td>R<span v-if="askfor['R']">={{ display(csvar.R)}}Ω</span></td>
+      </tr>
+      <tr>
+        <td class="l-d-corner"></td>
+        <td class="amp">I<sub>1</sub><span v-if="askfor['I1']">={{ display(csvar.I1)}}A</span></td>
+        <td class="conn u-vert"></td>
+        <td class="resistor">R<sub>1</sub><span v-if="askfor['R1']">={{ display(csvar.R1)}}Ω</span></td>
+        <td class="conn u-vert"></td>
+        <td class="r-d-corner"></td>
+	<td class="l-d-corner"></td>
+	<td class="volt">U<sub>3</sub><span v-if="askfor['U3']">={{ display(csvar.U3)}}V</span></td>
+	<td class="r-d-corner"></td>
+	<td>P<sub>3</sub></td>
+      </tr>
+      <tr>
+        <td class="vert line"></td>
+        <td>P<sub>2</sub><span v-if="askfor['P2']">={{ display(csvar.P2)}}W</span></td>
+        <td class="l-d-corner"></td>
+        <td class="volt">U<sub>2</sub><span v-if="askfor['U2']">={{ display(csvar.U2)}}V</span></td>
+        <td class="r-d-corner"></td>
+        <td class="conn r-vert"></td>
+	<td class="conn u-vert"></td>
+	<td class="resistor">R<sub>3</sub><span v-if="askfor['R3']">={{ display(csvar.R3)}}Ω</span></td>
+	<td class="conn u-vert"></td>
+	<td class="r-d-corner"></td>
+
+      </tr>
+      <tr>
+        <td class="conn r-vert"></td>
+        <td class="amp">I<sub>2</sub><span v-if="askfor['I2']">={{ display(csvar.I2)}}A</span></td>
+        <td class="conn u-vert"></td>
+        <td class="resistor">R<sub>2</sub><span v-if="askfor['R2']">={{ display(csvar.R2)}}Ω</span></td>
+        <td class="conn u-vert"></td>
+        <td class="l-u-corner"></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td class="line vert"></td>
+      </tr>
+      <tr>
+        <td class="r-u-corner"></td>
+        <td class="line"></td>
+	<td class="line"></td>
+	<td class="line"></td>
+        <td class="bat">U<span v-if="askfor['U']">={{ display(csvar.U)}}V</span></td>
+        <td class="line">P<span v-if="askfor['P']">={{ display(csvar.P)}}W</span></td>
+        <td class="amp">I<span v-if="askfor['I']">={{ display(csvar.I)}}A</span></span></td>
+	<td class="line"></td>
+	<td class="line"></td>
+        <td class="l-u-corner"></td>
+      </tr>
+    </table>
+    <div>
+      <div v-for="svarvalue in allc" v-if="!askfor[svarvalue]">
+        <div class="input-group mb-3" style="width: 320px;">
+          <div class="input-group-prepend">
+            <span class="input-group-text">{{svarvalue[0]}}<sub>{{svarvalue[1]}}</sub></span>
+           </div>
+          <input type="text" class="form-control" v-model="svar[svarvalue]">
+          <div class="input-group-append">
+            <span class="input-group-text" >{{units[svarvalue[0]]}}
+              <span v-if="svarat[svarvalue] && compare(csvar[svarvalue],svarat[svarvalue])" style="color:green">&nbsp;Rätt</span>
+              <span v-else-if="svarat[svarvalue]" style="color:red">&nbsp;Fel</span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <button v-on:click="check" class="btn btn-primary">Kontrollera svaren.</button><br>
+      <div v-if="status" class="alert alert-success" >
+        Rätt!<br>
+        <button class="btn btn-primary" v-on:click="next"> Nästa övning </button>
+        <br>
+        <img widht="320" v-bind:src="successImage()">
+      </div>
+    </div>
+    <div v-if="antal >= 15" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="handinlink()">
+      </div>
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/7 * 100)+"%"}'></div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+    Vue.use(Success);
+    Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        cdata: {
+          R1: 100,
+          R2: 200,
+          U: 30,
+        },
+        allc: ["U","U1","U2","U3","I","I1","I2","R","R1","R2","R3","P","P1","P2","P3"],
+        units: {"U":"V","I":"A","R":"Ω","P":"W"},
+        tasks: [
+          ["U","R1","U3","R3"],
+          ["R2","I","R3"],
+          ["R2","U2","I1","R3"],
+          ["I","R","I1","R3"],
+          ["I1","R1","R2","R3"],
+          ["I1","P1","R2","P3"],
+          ["U","P1","P2","P3"],
+          ["I","P1","P2","P3"],
+          ["R","P1","P2","P3"],
+          ["U3","R2","P","I"],
+        ],
+        show: ["U","R1","U3","R3"],
+        antal:-1,
+        poang: 1,
+        svar: {
+          "U":"",
+          "U1":"",
+          "U2":"",
+          "U3":"",
+          "I":"",
+          "I1":"",
+          "I2":"",
+          "R":"",
+          "R1":"",
+          "R2":"",
+	  "R3":"",
+          "P":"",
+          "P1":"",
+          "P2":"",
+          "P3":""
+          },
+        svarat: {
+          "U":"",
+          "U1":"",
+          "U2":"",
+          "U3":"",
+          "I":"",
+          "I1":"",
+          "I2":"",
+          "R":"",
+          "R1":"",
+          "R2":"",
+	  "R3":"",
+          "P":"",
+          "P1":"",
+          "P2":"",
+          "P3":""
+          },
+        questions: [],
+        loop: 0,
+	email: "asads",
+        taskname: "parallell2"
+      },
+      computed: {
+        askfor: function() {
+          var allad = {};
+          var that = this;
+          this.allc.forEach(
+              function(id){allad[id] = that.show.indexOf(id) > -1;}
+            );
+          return allad;
+        },
+        csvar: function () {
+          var csvar = {};
+            csvar.R1 = this.cdata.R1;
+            csvar.R2 = this.cdata.R2;
+            csvar.R3 = this.cdata.R3;
+            csvar.U = this.cdata.U;
+            csvar.R = (csvar.R1*csvar.R2)/(csvar.R1+csvar.R2)+this.cdata.R3;
+            csvar.I = csvar.U/csvar.R
+            csvar.U3 = csvar.I * csvar.R3;
+            csvar.U1 = csvar.U-csvar.U3;
+            csvar.U2 = csvar.U-csvar.U3;
+            csvar.I1 = csvar.U1/csvar.R1;
+            csvar.I2 = csvar.U2/csvar.R2;
+            csvar.P = csvar.U * csvar.I;
+            csvar.P1 = csvar.U1 * csvar.I1;
+            csvar.P2 = csvar.U2 * csvar.I2;
+            csvar.P3 = csvar.U3 * csvar.I;
+          return csvar;
+        },
+        status: function(){
+          var filterdata = this.askfor;
+          var listan = this.allc.filter(function(data){return !filterdata[data]});
+          var that = this;
+          var klart = true;
+          listan.forEach(function(kolla){
+            if(!that.compare(that.csvar[kolla],that.svarat[kolla])){
+              klart = false && klart;
+              console.log(kolla);
+            }
+          });
+          return klart;
+        }
+      },
+      methods: {
+        check: function () {
+          this.svarat = JSON.parse(JSON.stringify(this.svar));
+          if(!this.status){
+            alert("Något värde stämmer inte");
+            this.poang = this.poang/2;
+          }
+        },
+        compare: function(a, b){
+          var k = Number(String(b).split(" ").join("").replace(",",".").replace("m","e-3").replace("k","e3"));
+          var max = a*1.01;
+          var min = a*0.91;
+          return (k < max && k > min);
+        },
+        next: function () {
+          if( this.loop > this.tasks.length-2){
+            this.loop = 0;
+          } else {
+            this.loop++;
+          }
+          this.svar = {
+            "U":"",
+            "U1":"",
+            "U2":"",
+            "I":"",
+            "I1":"",
+            "I2":"",
+            "R":"",
+            "R1":"",
+            "R2":"",
+            "P":"",
+            "P1":"",
+            "P2":""
+          };
+          this.svarat = JSON.parse(JSON.stringify(this.svar));
+          this.show = this.tasks[this.loop];
+          this.cdata.U  = Math.floor(Math.random() *  400);
+          this.cdata.R1 = Math.floor(Math.random() * 4000);
+          this.cdata.R2 = Math.floor(Math.random() * 4000);
+          this.cdata.R3 = Math.floor(Math.random() * 4000);
+          this.antal = this.antal +  this.poang;
+          this.poang = 1;
+          this.questions.push(this.csvar.I);
+          this.save();
+        },
+        display: function(rawnumber) {
+          var i = this.I;
+          if ( rawnumber < 1){
+            return new Intl.NumberFormat('sv-SE', { maximumSignificantDigits: 3 }).format(Number( rawnumber + 'e+3')) + " m";
+          } else if ( rawnumber >= 1000){
+            return new Intl.NumberFormat('sv-SE', { maximumSignificantDigits: 3 }).format(Number( rawnumber + 'e-3')) + " k";
+          }
+          return new Intl.NumberFormat('sv-SE', { maximumSignificantDigits: 3 }).format(Number(rawnumber));
+        },
+      }
+    })
+  </script>
+</html>
+
