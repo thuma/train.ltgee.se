@@ -106,7 +106,7 @@
         <img widht="320" v-bind:src="successImage()">
       </div>
     </div>
-    <div v-if="antal >= 15" class="alert alert-success" >
+    <div v-if="antal >= 8" class="alert alert-success" >
       Nu har du klarat ett träningsvarv. <br>
       Lämna in denna länk på google classroom:<br>
       <div class="input-group mb-3">
@@ -117,7 +117,7 @@
       </div>
     </div>
     <div class="progress mt-2">
-      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/7 * 100)+"%"}'></div>
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/8 * 100)+"%"}'></div>
     </div>
     <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>
   </div>
