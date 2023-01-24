@@ -269,11 +269,11 @@
         display: function(rawnumber) {
           var i = this.I;
           if ( rawnumber < 1){
-            return new Intl.NumberFormat('sv-SE', { maximumSignificantDigits: 3 }).format(Number( rawnumber + 'e+3')) + " m";
+            return new Intl.NumberFormat('sv-SE', { maximumSignificantDigits: 4 }).format(Number( rawnumber + 'e+3')) + " m";
           } else if ( rawnumber >= 1000){
-            return new Intl.NumberFormat('sv-SE', { maximumSignificantDigits: 3 }).format(Number( rawnumber + 'e-3')) + " k";
+            return new Intl.NumberFormat('sv-SE', { maximumSignificantDigits: 4 }).format(Number( rawnumber + 'e-3')) + " k";
           }
-          return new Intl.NumberFormat('sv-SE', { maximumSignificantDigits: 3 }).format(Number(rawnumber));
+          return new Intl.NumberFormat('sv-SE', { maximumSignificantDigits: 4 }).format(Number(rawnumber));
         },
       }
     })
