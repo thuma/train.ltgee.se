@@ -261,9 +261,10 @@
           };
           this.svarat = JSON.parse(JSON.stringify(this.svar));
           this.show = this.tasks[this.loop];
-          this.cdata.U  = 48 + Math.floor(Math.random() *  950);
-          this.cdata.R1 = Math.floor(Math.random() * 2000);
-          this.cdata.R2 = Math.floor(Math.random() * 3000);
+          this.cdata.R1 = 50 + Math.floor(Math.random() * 4000);
+          this.cdata.R2 = 50 + Math.floor(Math.random() * 4000);
+          var virtualI = (30 + Math.floor(Math.random() * 2000))/1000;
+          this.cdata.U  = virtualI * (this.cdata.R1 + this.cdata.R2);
           this.antal = this.antal +  this.poang;
           this.poang = 1;
           this.questions.push(this.csvar.I);
