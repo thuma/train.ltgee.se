@@ -261,9 +261,9 @@
           };
           this.svarat = JSON.parse(JSON.stringify(this.svar));
           this.show = this.tasks[this.loop];
-          this.cdata.U  = Math.floor(Math.random() *  400);
-          this.cdata.R1 = Math.floor(Math.random() * 4000);
-          this.cdata.R2 = Math.floor(Math.random() * 4000);
+          this.cdata.U  = 48 + Math.floor(Math.random() *  950);
+          this.cdata.R1 = Math.floor(Math.random() * 2000);
+          this.cdata.R2 = Math.floor(Math.random() * 3000);
           this.antal = this.antal +  this.poang;
           this.poang = 1;
           this.questions.push(this.csvar.I);
