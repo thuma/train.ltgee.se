@@ -36,7 +36,7 @@
   <div id="app" class="container" v-if="email">
     <h1>Träning effekt</h1>
     <p>
-    I denna övning så får du träna på att att räkna med Effekt.
+    I denna övning så får du träna på att att räkna med Effekt, ström och spänning.
     När du jobbar med el så behöver du kunna räkna ut hur stor säkring som behövs eller hur stor kabel du behöver.
     Läs på mer om 
     <a target="_blank" href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatronik/elektronik/elektricitet/effekt-lagen/effekt">effekt</a> och 
@@ -93,7 +93,8 @@
     <div class="progress mt-2">
       <div class="progress-bar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
     </div>
-    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>  </div>
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>
+  </div>
   </body>
   <script src="common.js"></script>
   <script>
