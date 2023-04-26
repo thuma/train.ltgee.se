@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <meta name="google-signin-client_id" content="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com">
+    <script src="jquery-3.3.1.slim.min.js"></script>
+    <script src="popper.min.js"></script>
+    <script src="js/function-plot.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="vue.js"></script>
+    <title>Avläsning fasförskjutning</title>
+    <style>
+     pre {
+       margin:0;
+     }
+    </style>
+  </head>
+  <body>
+  <script src="https://accounts.google.com/gsi/client"></script>
+  <div id="g_id_onload"
+    data-client_id="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com"
+    data-context="signin"
+    data-callback="onSignIn">
+  </div>
+  <div class="g_id_signin"
+    data-type="standard"
+    data-shape="rectangular"
+    data-theme="outline"
+    data-text="signin_with"
+    data-size="large"
+    data-logo_alignment="left">
+  </div>
+  <div id="app" class="container" v-if="email">
+    <h1>Avläsning fasförskjutning</h1>
+    <p>
+    I denna övning ska du träna dig på att läsa ut fasförskjutning i en induktiv växelströmskrets.
+    Läs mer om <a href="https://el.ltgee.se/docs/fas/">Fasförskjutning</a>.
+    </p>
+    <div id="kurva"></div>
+    <div>
+      <span v-if="askfor=='ut'">Vad är är toppvärdet?</span>
+      <span v-if="askfor=='t'">Vad är periodtiden?</span> 
+      <div class="input-group mb-3">
+        <input v-model="svar" type="text" class="form-control" >
+        <div class="input-group-append">
+          <span class="input-group-text" v-if="askfor=='ut'" >V</span>
+          <span class="input-group-text" v-if="askfor=='t'" >s</span>
+        </div>
+      </div>
+      <button v-on:click="check" class="btn btn-primary">Kontrollera svaren.</button><br>
+      <div v-if="antal >= 15" class="alert alert-success" >
+        Nu har du klarat ett träningsvarv. <br>
+        Lämna in denna länk på google classroom:<br>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+          </div>
+          <input id="correctlink" class="form-control" v-bind:value="handinlink()">
+        </div>
+      </div>
+      <div class="alert alert-success" v-if="this.right( this.kontroll, this[this.askfor])" >
+        Rätt!<br>
+        <button class="btn btn-primary" v-on:click="next"> Nästa övning </button>
+        <br>
+        <img widht="320" v-bind:src="successImage()">
+      </div>
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+    Vue.use(Success);
+    Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        taskname: "Avläsningsinus",
+        U: 10,
+        f: 10,
+        R: 2,
+        antal: -1,
+        flytt: 0,
+        fip: 1.0,
+        kurvor: 3,
+        svar: "",
+        poang: 1,
+        kontroll: "",
+        raknare:"",
+        askfor: "U",
+        questions: [],
+      },
+      computed: {
+        ut: function(){
+          return this.U*1.4142135623730950488016887242097;
+        },
+        t: function(){
+          return 1/this.f;
+        }
+      },
+      methods: {
+        rita: function(){
+          functionPlot({
+            target: "#kurva",
+            width: 800,
+            height: 600,
+            xAxis: { domain: [  0, this.t*this.kurvor ]},
+            yAxis: { domain: [(this.ut+10)*-1, this.ut+10 ] },
+            grid: true,
+            data: [
+              {fn:"sin(x/"+this.t+"*6,283185)*"+this.ut},
+              {fn:"sin((x+"+this.fip+")/"+this.t+"*6,283185)*"+(this.ut/this.R)}
+            ]
+          });
+        },
+        right: function(a, b){
+          a = Number(a.replace(',','.'))
+          var max = b*1.05;
+          var min = b*0.95;
+          return (a < max && a > min);
+        },
+        prefix: function(count) {
+          if (count < 1){
+            return Number( count +'e+3').toLocaleString("sv-SE",{maximumFractionDigits:20,maximumSignificantDigits:3}) + " m";
+          }
+          if (count > 1000){
+            return Number( count +'e-3').toLocaleString("sv-SE",{maximumFractionDigits:20,maximumSignificantDigits:3}) + " k";
+          }
+          return count.toLocaleString("sv-SE",{maximumFractionDigits:20,maximumSignificantDigits:3});
+        },
+        check: function () {
+          this.kontroll = this.svar;
+          if(this.right( this.kontroll, this[this.askfor])){
+            return
+          }
+          alert("Svaret är inte rätt");
+          this.poang = this.poang/2;
+          if (this.antal < 0){
+            this.antal = 0;
+          }
+        },
+        next: function () {
+          this.antal = this.antal + this.poang;
+          this.poang = 1;
+          this.svar = "";
+          this.kontroll = this.svar;
+          this.U = 1+Math.floor(Math.random() * 200);
+          this.f = 1+Math.floor(Math.random() * 200);
+          this.flytt = Math.random();
+          this.fip = Math.random()*Math.PI/2;
+          this.kurvor = 2+Math.floor(Math.random() * 3)
+          options = ["ut","t"];
+          id = Math.round(Math.random() * 1)
+          this.askfor = options[id];
+          this.questions.push(this.askfor);
+          this.save();
+          this.rita();
+        }
+      }
+    });
+
+  </script>
+  <a href="#" onclick="app.email='guest'">Gästinloggning</a>
+</html>
+
+
+
+
+
