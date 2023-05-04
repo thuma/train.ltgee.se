@@ -83,7 +83,7 @@
     var app = new Vue({
       el: '#app',
       data: {
-        taskname: "Avläsningsinus",
+        taskname: "Avläsningfasforskjotning",
         U: 10,
         f: 10,
         R: 2,
@@ -107,23 +107,31 @@
         },
         fit: function(){
           return this.t/360 * this.fip;
+        },
+      },
+      watch: {
+        email(newEmail, oldEmail) {
+          this.rita();
         }
       },
       methods: {
         rita: function(){
-          window.ritad = functionPlot({
-            target: "#kurva",
-            width: 800,
-            height: 600,
-            xAxis: { domain: [  0, this.t*this.kurvor ]},
-            yAxis: { domain: [(this.ut+10)*-1, this.ut+10 ] },
-            grid: true,
-            tip: {xLine: true, yLine: true},
-            data: [
-              {fn:"sin(x/"+this.t+"*6,283185)*"+this.ut},
-              {fn:"sin((x-"+this.fit+")/"+this.t+"*6,283185)*"+(this.ut/this.R)},
-            ]
-          });
+          var boxelm = document.getElementById("kurva");
+          if(this.email.length>3){
+            window.ritad = functionPlot({
+              target: boxelm,
+              width: 800,
+              height: 600,
+              xAxis: { domain: [  0, this.t*this.kurvor ]},
+              yAxis: { domain: [(this.ut+10)*-1, this.ut+10 ] },
+              grid: true,
+              tip: {xLine: true, yLine: true},
+              data: [
+                {fn:"sin(x/"+this.t+"*6,283185)*"+this.ut},
+                {fn:"sin((x-"+this.fit+")/"+this.t+"*6,283185)*"+(this.ut/this.R)},
+              ]
+            });
+          }
         },
         right: function(a, b){
           a = Number(a.replace(',','.'))
