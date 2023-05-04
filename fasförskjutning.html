@@ -41,12 +41,14 @@
     </p>
     <div id="kurva"></div>
     <div>
-      <span v-if="askfor=='ut'">Vad är är toppvärdet?</span>
+      <span v-if="askfor=='fip'">Hur mång graders fasförskjutning är det?</span>
+      <span v-if="askfor=='fit'">Hur lång är fasförskjutningen i tid?</span>
       <span v-if="askfor=='t'">Vad är periodtiden?</span> 
       <div class="input-group mb-3">
         <input v-model="svar" type="text" class="form-control" >
         <div class="input-group-append">
-          <span class="input-group-text" v-if="askfor=='ut'" >V</span>
+          <span class="input-group-text" v-if="askfor=='fip'" >grader</span>
+          <span class="input-group-text" v-if="askfor=='fit'" >s</span>
           <span class="input-group-text" v-if="askfor=='t'" >s</span>
         </div>
       </div>
@@ -94,7 +96,7 @@
         kontroll: "",
         raknare:"",
         askfor: "U",
-        questions: [],
+        questions: []
       },
       computed: {
         ut: function(){
@@ -102,20 +104,24 @@
         },
         t: function(){
           return 1/this.f;
+        },
+        fit: function(){
+          return this.t/360 * this.fip;
         }
       },
       methods: {
         rita: function(){
-          functionPlot({
+          window.ritad = functionPlot({
             target: "#kurva",
             width: 800,
             height: 600,
             xAxis: { domain: [  0, this.t*this.kurvor ]},
             yAxis: { domain: [(this.ut+10)*-1, this.ut+10 ] },
             grid: true,
+            tip: {xLine: true, yLine: true},
             data: [
               {fn:"sin(x/"+this.t+"*6,283185)*"+this.ut},
-              {fn:"sin((x+"+this.fip+")/"+this.t+"*6,283185)*"+(this.ut/this.R)}
+              {fn:"sin((x-"+this.fit+")/"+this.t+"*6,283185)*"+(this.ut/this.R)},
             ]
           });
         },
@@ -153,9 +159,9 @@
           this.U = 1+Math.floor(Math.random() * 200);
           this.f = 1+Math.floor(Math.random() * 200);
           this.flytt = Math.random();
-          this.fip = Math.random()*Math.PI/2;
+          this.fip = Math.random()*90;
           this.kurvor = 2+Math.floor(Math.random() * 3)
-          options = ["ut","t"];
+          options = ["fip","t"];
           id = Math.round(Math.random() * 1)
           this.askfor = options[id];
           this.questions.push(this.askfor);
