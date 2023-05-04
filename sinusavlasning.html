@@ -33,7 +33,7 @@
     data-size="large"
     data-logo_alignment="left">
   </div>
-  <div id="app" class="container" v-if="email">
+  <div id="app" class="container" v-bind:class="{ 'd-none': !email}">
     <h1>Avläsning av sinuskurva</h1>
     <p>
     I denna övning ska du träna dig på att läsa ut toppvärde och periodtid i en växelströmskrets.
@@ -102,19 +102,28 @@
           return 1/this.f;
         }
       },
+      watch: {
+        email(newEmail, oldEmail) {
+          this.rita();
+        }
+      },
       methods: {
         rita: function(){
-          functionPlot({
-            target: "#kurva",
-            width: 800,
-            height: 600,
-            xAxis: { domain: [  0, this.t*this.kurvor ]},
-            yAxis: { domain: [(this.ut+10)*-1, this.ut+10 ] },
-            grid: true,
-            data: [
-              {fn:"sin((x-"+this.flytt+")/"+this.t+"*6,283185)*"+this.ut}
-            ]
-          });
+          var boxelm = document.getElementById("kurva");
+          if(this.email.length>3){
+            functionPlot({
+              target: boxelm,
+              width: 800,
+              height: 600,
+              xAxis: { domain: [  0, this.t*this.kurvor ]},
+              yAxis: { domain: [(this.ut+10)*-1, this.ut+10 ] },
+              grid: true,
+              tip: {xLine: true, yLine: true},
+              data: [
+                {fn:"sin((x-"+this.flytt+")/"+this.t+"*6,283185)*"+this.ut}
+              ]
+            });
+          }
         },
         right: function(a, b){
           a = Number(a.replace(',','.'))

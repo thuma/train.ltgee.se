@@ -33,7 +33,7 @@
     data-size="large"
     data-logo_alignment="left">
   </div>
-  <div id="app" class="container" v-if="email">
+  <div id="app" class="container" v-bind:class="{ 'd-none': !email}">
     <h1>Periodtid och frekvens</h1>
     <p>
     I denna övning ska du träna dig på att periodtid och frekvens i en växelströmskrets. Läs mer om <a href="https://el.ltgee.se/docs/acv/">Periodtid och frekvens</a>
