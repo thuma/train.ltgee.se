@@ -1,0 +1,98 @@
+table.sh {
+    border-collapse: collapse;
+}
+
+table.sh tr td {
+ width:99px;
+ height:99px;
+ padding:0px;
+ text-align: center;
+ vertical-align: bottom;
+}
+
+table.sh tr td.vert {
+	transform: rotate(90deg);
+}
+
+table.sh tr td.r-vert {
+	transform: rotate(-90deg);
+}
+
+table.sh tr td.u-vert {
+	transform: rotate(180deg);
+}
+
+table.sh tr td.bat {
+	background-image:url("../imgs/elschema/batt.png");
+}
+
+table.sh tr td.power {
+	background-image:url("../imgs/elschema/power.png");
+}
+
+table.sh tr td.l-d-corner {
+	background-image:url("../imgs/elschema/corner.png");
+}
+
+table.sh tr td.r-d-corner {
+	background-image:url("../imgs/elschema/corner.png");
+    transform: rotate(90deg);
+}
+
+table.sh tr td.l-u-corner {
+	background-image:url("../imgs/elschema/corner.png");
+    transform: rotate(180deg);
+}
+
+table.sh tr td.r-u-corner {
+	background-image:url("../imgs/elschema/corner.png");
+    transform: rotate(270deg);
+}
+
+table.sh tr td.line {
+	background-image:url("../imgs/elschema/horiz.png");
+}
+
+table.sh tr td.resistor {
+	background-image:url("../imgs/elschema/resistor.png");
+}
+
+table.sh tr td.spole {
+	background-image:url("../imgs/elschema/spole.png");
+}
+
+table.sh tr td.cond {
+	background-image:url("../imgs/elschema/cond.png");
+}
+
+table.sh tr td.fuse {
+	background-image:url("../imgs/elschema/fuse.png");
+}
+
+table.sh tr td.breaker {
+	background-image:url("../imgs/elschema/breaker.png");
+}
+
+table.sh tr td.conn {
+	background-image:url("../imgs/elschema/connection.png");
+}
+
+table.sh tr td.lamp {
+	background-image:url("../imgs/elschema/lamp.png");
+}
+
+table.sh tr td.korsning {
+	background-image:url("../imgs/elschema/korsning.png");
+}
+
+table.sh tr td.ohm {
+	background-image:url("../imgs/elschema/ohm.png");
+}
+
+table.sh tr td.volt {
+	background-image:url("../imgs/elschema/volt.png");
+}
+
+table.sh tr td.amp {
+	background-image:url("../imgs/elschema/amp.png");
+}
