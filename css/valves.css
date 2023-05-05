@@ -1,0 +1,78 @@
+table.pvalve { 
+	border-collapse: collapse;
+	empty-cells: show;
+	}
+table.pvalve td { 
+	background-size: cover;
+	padding: 0px;
+	}
+table.pvalve td.valve { 
+	border-width:2px;
+	border-style: solid;
+	}
+table.pvalve td.control {
+	border-width:0px;
+	width:40px;
+	height:40px;
+	}
+table.pvalve td.right{
+	transform: rotate(180deg);
+	}
+table.pvalve td.valve{
+	height:80px;
+	width:80px;
+}
+table.pvalve td.control.button {
+	background-image: url("../imgs/valves/button.png");
+}
+table.pvalve td.control.penaumatic {
+	background-image: url("../imgs/valves/pneumatic.png");
+}
+table.pvalve td.control.roll {
+	background-image: url("../imgs/valves/roll.png");
+}
+table.pvalve td.control.spring {
+	background-image: url("../imgs/valves/spring.png");
+}
+table.pvalve td.control.pilot {
+	background-image: url("../imgs/valves/pilot.png");
+}
+table.pvalve td.control.coil {
+	background-image: url("../imgs/valves/coil.png");
+}
+table.pvalve td.valve.v4a {
+	background-image: url("../imgs/valves/4a.png");
+}
+table.pvalve td.valve.v4b {
+	background-image: url("../imgs/valves/4b.png");
+}
+table.pvalve td.valve.v4x {
+	background-image: url("../imgs/valves/4x.png");
+}
+table.pvalve td.valve.v5a {
+	background-image: url("../imgs/valves/5a.png");
+}
+table.pvalve td.valve.v5b {
+	background-image: url("../imgs/valves/5b.png");
+}
+table.pvalve td.valve.v5x {
+	background-image: url("../imgs/valves/5x.png");
+}
+table.pvalve td.valve.v5f {
+	background-image: url("../imgs/valves/5f.png");
+}
+table.pvalve td.valve.v3a {
+	background-image: url("../imgs/valves/3a.png");
+}
+table.pvalve td.valve.v3b {
+	background-image: url("../imgs/valves/3b.png");
+}
+table.pvalve td.valve.v3x {
+	background-image: url("../imgs/valves/3x.png");
+}
+table.pvalve td.valve.v2c {
+	background-image: url("../imgs/valves/2c.png");
+}
+table.pvalve td.valve.v2o {
+	background-image: url("../imgs/valves/2o.png");
+}
