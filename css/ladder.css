@@ -1,0 +1,110 @@
+
+table.ladder {
+    border-collapse: collapse;
+    
+}
+
+.ladder-frame {
+    border: 2px;
+    margin: 0px;
+    padding: 0px;
+    border-style: hidden solid hidden solid;
+    display: inline-block;
+}
+
+table.ladder tr td {
+ width:80px;
+ height:80px;
+ padding:0px;
+ text-align: center;
+ vertical-align: bottom;
+ background-size: contain;
+ margin:0;
+ font-family: Arial, "Helvetica Neue", Helvetica, sans-serif; 
+}
+
+table.ladder tr td.plus {
+    background-image:url("../imgs/ladder/%2B.png");
+}
+
+table.ladder tr td.L-down {
+    background-image:url("../imgs/ladder/L.png");
+}
+
+table.ladder tr td.L-up {
+    background-image:url("../imgs/ladder/L.png");
+    transform: rotate(90deg);
+}
+
+table.ladder tr td.L-down-right {
+    background-image:url("../imgs/ladder/L.png");
+    transform: rotate(-90deg);
+}
+
+table.ladder tr td.L-up-right {
+    background-image:url("../imgs/ladder/L.png");
+    transform: rotate(180deg);
+}
+
+table.ladder tr td.T-down {
+    background-image:url("../imgs/ladder/T.png");
+}
+
+table.ladder tr td.T-left {
+    background-image:url("../imgs/ladder/T.png");
+    transform: rotate(90deg);
+}
+
+table.ladder tr td.T-up {
+    background-image:url("../imgs/ladder/T.png");
+    transform: rotate(180deg);
+}
+
+table.ladder tr td.T-right {
+    background-image:url("../imgs/ladder/T.png");
+    transform: rotate(-90deg);
+}
+
+table.ladder tr td.line {
+    background-image:url("../imgs/ladder/line.png");
+}
+
+table.ladder tr td.coil {
+    background-image:url("../imgs/ladder/coil.png");
+}
+
+table.ladder tr td.fe {
+    background-image:url("../imgs/ladder/fe.png");
+}
+
+table.ladder tr td.nc {
+    background-image:url("../imgs/ladder/nc.png");
+}
+
+table.ladder tr td.nccoil {
+    background-image:url("../imgs/ladder/nccoil.png");
+}
+
+table.ladder tr td.ncoil {
+    background-image:url("../imgs/ladder/ncoil.png");
+}
+
+table.ladder tr td.no {
+    background-image:url("../imgs/ladder/no.png");
+}
+
+table.ladder tr td.pcoil {
+    background-image:url("../imgs/ladder/pcoil.png");
+}
+
+table.ladder tr td.pe {
+    background-image:url("../imgs/ladder/pe.png");
+}
+
+table.ladder tr td.set {
+    background-image:url("../imgs/ladder/set.png");
+}
+
+table.ladder tr td.reset {
+    background-image:url("../imgs/ladder/reset.png");
+}
