@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/elschema.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="vue.js"></script>
+    <style>
+     pre {
+       margin:0;
+     }
+    </style>
+  </head>
+  <body>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <div id="g_id_onload"
+      data-client_id="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com"
+      data-context="signin"
+      data-auto_select="true"
+      data-callback="onSignIn">
+    </div>
+    <div class="g_id_signin"
+      data-type="standard"
+      data-shape="rectangular"
+      data-theme="outline"
+      data-text="signin_with"
+      data-size="large"
+      data-logo_alignment="left">
+    </div>
+    <div id="app" class="container" v-if="email">
+    <h1>Förklara logiska grindar AND, OR, NOT samt XOR</h1>
+    <p>
+    I denna övning ska du träda på att beskriva de tre grundläggande grindarna AND, OR och NOT samt grinden XOR.
+    Du ska känna igen symbolen och beskriva hur grindarna fungerar.
+    Dessa grindar är grunden i hur olika styrsystem fungera. Det är därför viktigt att kunna dem utantill för att 
+    enkelt komma ihåg dem när du ska programmera så att du snabbt kan ta reda på vilken grind du vill använda.
+    Den beskrivning av grinden du skriver ska vara med egna ord, du kommer sedan att få tolka andra elevers beskrivningar.
+    Det viktiga är att du skriver så att du förstår, då blir det ofta lättare för andra elever att också förstå.
+    Läs mer om de <a href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatroniska-system/styrsystem/programmering/logiska-grindar" target="_blank">grundläggande grindarna</a>.
+    </p>
+    <div>
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Beskriv funktionen på bilden</h5>
+          <table>
+            <tr>
+              <td>
+                <span v-if="fraga=='not'">A</span>
+                <span v-else="">A<br>B</span>
+              </td>
+              <td>
+                <img style="height: 80px;" v-bind:src="'imgs/ieclogic/'+fraga+'.png'" >
+              </td>
+              <td>
+              Y
+              </td>
+            </tr>
+          </table>
+          <textarea type="text" v-model="svar" class="form-control"></textarea>
+        </div>
+        <button v-on:click="check" class="btn btn-primary">Spara förklaringen</button><br>
+      </div>
+      <div v-if="right" class="alert alert-success">
+        Klart!<br>
+        <button class="btn btn-primary" v-on:click="next">Nästa grind</button><br>
+        <img class="rounded" width="320" v-bind:src="successImage()">
+      </div>
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/4 * 100)+"%"}'></div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>
+    <div v-if="antal >= 15" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="handinlink()">
+      </div>
+    </div>
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+    Vue.use(Success);
+    Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        fraga: "and",
+        fragor: ["and","or","not","xor"],
+        svar: "",
+        antal: -1,
+        kontroll: "",
+        poang: 1,
+        questions: [],
+        taskname: "logikinteraktiv"
+        },
+      computed: {
+        right: function(){
+          return true;
+        },
+        image: function() {
+          try {
+            return this.imgs[Math.round(this.antal)];
+          }
+          catch(e) {
+            return "https://media.giphy.com/media/nXxOjZrbnbRxS/giphy.gif";
+          }
+        }
+      },
+      methods: {
+        check: function () {
+          this.kontroll = this.svar;
+          if(this.right){
+            return
+          }
+          alert("Det gick inte att lämna in svar");
+        },
+        next: function () {
+          this.svar = "";
+          this.kontroll = "";
+          this.poang = 1;
+          this.antal = this.antal + this.poang;
+          if(this.fragor.length > this.antal){
+            this.fraga = this.fragor[this.antal];
+          } else {
+            this.fraga = "";
+          }
+          this.questions.push(this.fraga);
+          this.save();
+        }
+      }
+    })
+  </script>
+  <a href="#" onclick="app.email='guest'">Gästinloggning</a>
+</html>
