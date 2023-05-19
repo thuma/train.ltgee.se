@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/elschema.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="vue.js"></script>
+    <style>
+     pre {
+       margin:0;
+     }
+    </style>
+  </head>
+  <body>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <div id="g_id_onload"
+      data-client_id="895135418381-m1fmm24b5h76upit18r43f8su4pptld9.apps.googleusercontent.com"
+      data-context="signin"
+      data-auto_select="true"
+      data-callback="onSignIn">
+    </div>
+    <div class="g_id_signin"
+      data-type="standard"
+      data-shape="rectangular"
+      data-theme="outline"
+      data-text="signin_with"
+      data-size="large"
+      data-logo_alignment="left">
+    </div>
+    <div id="app" class="container" v-if="email">
+    <h1>Förklara logiska grindar AND, OR, NOT samt XOR</h1>
+    <p>
+    I denna övning ska du träda på att beskriva de tre grundläggande grindarna AND, OR och NOT samt grinden XOR.
+    Du ska känna igen symbolen och beskriva hur grindarna fungerar.
+    Dessa grindar är grunden i hur olika styrsystem fungera. Det är därför viktigt att kunna dem utantill för att 
+    enkelt komma ihåg dem när du ska programmera så att du snabbt kan ta reda på vilken grind du vill använda.
+    Den beskrivning av grinden du skriver ska vara med egna ord, du kommer sedan att få tolka andra elevers beskrivningar.
+    Det viktiga är att du skriver så att du förstår, då blir det ofta lättare för andra elever att också förstå.
+    Läs mer om de <a href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatroniska-system/styrsystem/programmering/logiska-grindar" target="_blank">grundläggande grindarna</a>.
+    </p>
+      <div class="card" v-if="antal < exempel.length">
+        <div class="card-body">
+          <h5 class="card-title">Välj den funktion som texten beskriver bäst</h5>
+          <table>
+            <tr>
+              <td colspan="12">{{fraga.beskrivning}}</td>
+            </tr>
+            <tr>
+              <template v-for="grind in fragor">
+              <td>
+                <span v-if="grind=='not'">A</span>
+                <span v-else="">A<br>B</span>
+              </td>
+              <td>
+                <button class="btn" v-bind:class="{ 'btn-outline-primary': (vald!==grind), 'btn-primary': (vald==grind)}" v-on:click="vald=grind">
+                  <img style="height: 80px;" v-bind:src="'imgs/ieclogic/'+grind+'.png'" >
+                </button>
+              </td>
+              <td>
+              Y
+              </td>
+              </template>
+            </tr>
+          </table>
+          <textarea type="text" v-model="svar" class="form-control"></textarea>
+        </div>
+        <button v-on:click="check" class="btn btn-primary">Spara förklaringen</button><br>
+      </div>
+      <div v-else="">
+        <h2>Nu har du svarat på alla förklaringar nu är det dags för uppföljning.</h2>
+      </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/exempel.length * 100)+"%"}'></div>
+    </div>
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+    Vue.use(Success);
+    Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      mounted: function(){
+        this.getdata("http://127.0.0.1:6588/exemepel");
+      },
+      data: {
+        fraga: {"beskrivning": "", "elev": "marhar0323", "id": 1, "typ": "and", "uppgift":"logik"},
+        fragor: ["and","or","not","xor"],
+        svar: "",
+        vald: "",
+        antal: -1,
+        kontroll: "",
+        poang: 1,
+        questions: [],
+        exempel: [],
+        taskname: "logikinteraktiv"
+        },
+      computed: {
+        right: function(){
+          return true;
+        },
+        image: function() {
+          try {
+            return this.imgs[Math.round(this.antal)];
+          }
+          catch(e) {
+            return "https://media.giphy.com/media/nXxOjZrbnbRxS/giphy.gif";
+          }
+        }
+      },
+      methods: {
+        check: function () {
+          this.kontroll = this.svar;
+          if(this.vald=""){
+            alert("Du måste välja grind.");
+          }
+          app.postdata("http://127.0.0.1:6588/svar", {
+            "id":this.fraga.id,
+            "elev":this.email,
+            "uppgift":this.taskname,
+            "typ":this.fraga.typ,
+            "feedback":this.svar,
+            "svar":this.vald}
+            );
+          if(this.right){
+            return
+          }
+          alert("Det gick inte att lämna in svar");
+        },
+        postdata: async function(url, data){
+          const response = await fetch(url, {
+            method: "POST",
+            mode: "cors",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+          const jsonData = await response.json();
+          if(jsonData.hasOwnProperty("id")){
+            this.next();
+          }
+        },
+        getdata: async function(url){
+          const response = await fetch(url, {
+            method: "GET",
+            mode: "cors"
+          });
+          const jsonData = await response.json();
+          this.exempel = jsonData.exempel;
+          this.next();
+        },
+        next: function () {
+          this.svar = "";
+          this.kontroll = "";
+          this.poang = 1;
+          this.vald = "";
+          this.antal = this.antal + this.poang;
+          if(this.exempel.length > this.antal){
+            this.fraga = this.exempel[this.antal];
+          }
+          this.questions.push(this.fraga);
+          this.save();
+        }
+      }
+    })
+  </script>
+  <a href="#" onclick="app.email='guest'">Gästinloggning</a>
+</html>
