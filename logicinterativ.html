@@ -40,8 +40,7 @@
     Det viktiga är att du skriver så att du förstår, då blir det ofta lättare för andra elever att också förstå.
     Läs mer om de <a href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatroniska-system/styrsystem/programmering/logiska-grindar" target="_blank">grundläggande grindarna</a>.
     </p>
-    <div>
-      <div class="card">
+      <div class="card" v-if="antal<4">
         <div class="card-body">
           <h5 class="card-title">Beskriv funktionen på bilden</h5>
           <table>
@@ -62,25 +61,11 @@
         </div>
         <button v-on:click="check" class="btn btn-primary">Spara förklaringen</button><br>
       </div>
-      <div v-if="right" class="alert alert-success">
-        Klart!<br>
-        <button class="btn btn-primary" v-on:click="next">Nästa grind</button><br>
-        <img class="rounded" width="320" v-bind:src="successImage()">
+      <div v-else="">
+        <h2>Nu har du skapat 4 förklaringar som kommer att kontrolleras av andra elever.</h2>
       </div>
-    </div>
     <div class="progress mt-2">
       <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/4 * 100)+"%"}'></div>
-    </div>
-    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>
-    <div v-if="antal >= 15" class="alert alert-success" >
-      Nu har du klarat ett träningsvarv. <br>
-      Lämna in denna länk på google classroom:<br>
-      <div class="input-group mb-3">
-        <div class="input-group-prepend">
-          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
-        </div>
-        <input id="correctlink" class="form-control" v-bind:value="handinlink()">
-      </div>
     </div>
   </div>
   </body>
@@ -116,10 +101,27 @@
       methods: {
         check: function () {
           this.kontroll = this.svar;
+          app.postdata("http://127.0.0.1:6588/exemepel",
+            {"elev":this.email, "uppgift":this.taskname,
+            "typ":this.fraga,"beskrivning":this.svar})
           if(this.right){
             return
           }
           alert("Det gick inte att lämna in svar");
+        },
+        postdata: async function(url, data){
+          const response = await fetch(url, {
+            method: "POST",
+            mode: "cors",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+          const jsonData = await response.json();
+          if(jsonData.hasOwnProperty("id")){
+            this.next();
+          }
         },
         next: function () {
           this.svar = "";
