@@ -40,11 +40,11 @@
     Det viktiga är att du skriver så att du förstår, då blir det ofta lättare för andra elever att också förstå.
     Läs mer om de <a href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatroniska-system/styrsystem/programmering/logiska-grindar" target="_blank">grundläggande grindarna</a>.
     </p>
-      <div class="card" v-if="antal < exempel.length">
+      <div class="card" v-if="antal <= exempel.length">
         <div class="card-body">
           <h5 class="card-title">Välj den funktion som texten beskriver bäst</h5>
           <table>
-            <tr>
+            <tr v-if="fraga.hasOwnProperty('beskrivning')">
               <td colspan="12">{{fraga.beskrivning}}</td>
             </tr>
             <tr>
@@ -86,7 +86,7 @@
         this.getdata("http://127.0.0.1:6588/exempel");
       },
       data: {
-        fraga: {"beskrivning": "", "elev": "marhar0323", "id": 1, "typ": "and", "uppgift":"logik"},
+        fraga: {},
         fragor: ["and","or","not","xor"],
         svar: "",
         vald: "",
@@ -151,6 +151,7 @@
           });
           const jsonData = await response.json();
           this.exempel = jsonData.exempel;
+          this.next();
         },
         next: function () {
           this.svar = "";
