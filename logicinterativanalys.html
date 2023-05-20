@@ -83,7 +83,7 @@
     var app = new Vue({
       el: '#app',
       mounted: function(){
-        this.getdata("http://127.0.0.1:6588/exemepel");
+        this.getdata("http://127.0.0.1:6588/exempel");
       },
       data: {
         fraga: {"beskrivning": "", "elev": "marhar0323", "id": 1, "typ": "and", "uppgift":"logik"},
@@ -113,8 +113,9 @@
       methods: {
         check: function () {
           this.kontroll = this.svar;
-          if(this.vald=""){
+          if(this.vald==""){
             alert("Du måste välja grind.");
+            return
           }
           app.postdata("http://127.0.0.1:6588/svar", {
             "id":this.fraga.id,
@@ -150,7 +151,6 @@
           });
           const jsonData = await response.json();
           this.exempel = jsonData.exempel;
-          this.next();
         },
         next: function () {
           this.svar = "";
@@ -161,8 +161,6 @@
           if(this.exempel.length > this.antal){
             this.fraga = this.exempel[this.antal];
           }
-          this.questions.push(this.fraga);
-          this.save();
         }
       }
     })

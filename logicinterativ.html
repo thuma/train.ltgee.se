@@ -60,6 +60,7 @@
           <textarea type="text" v-model="svar" class="form-control"></textarea>
         </div>
         <button v-on:click="check" class="btn btn-primary">Spara förklaringen</button><br>
+        <div v-for="ettsvar in currentsvar" v-bind:class="{'alert-success':(ettsvar.svar==fraga), 'alert-danger':(ettsvar.svar!==fraga)}" class="alert">{{ettsvar.feedback}}</div>
       </div>
       <div v-else="">
         <h2>Nu har du skapat 4 förklaringar som kommer att kontrolleras av andra elever.</h2>
@@ -75,6 +76,10 @@
     Vue.use(SaveAndRestore);
     var app = new Vue({
       el: '#app',
+      mounted: function(){
+        this.getdata("http://127.0.0.1:6588/svar");
+        this.getdata("http://127.0.0.1:6588/exempel");
+      },
       data: {
         fraga: "and",
         fragor: ["and","or","not","xor"],
@@ -83,7 +88,9 @@
         kontroll: "",
         poang: 1,
         questions: [],
-        taskname: "logikinteraktiv"
+        taskname: "logikinteraktiv",
+        exempel: [],
+        esvar: []
         },
       computed: {
         right: function(){
@@ -96,12 +103,23 @@
           catch(e) {
             return "https://media.giphy.com/media/nXxOjZrbnbRxS/giphy.gif";
           }
+        },
+        currentsvar: function(){
+          console.log(this.exempel);
+          const t = this;
+          q = this.exempel.find(q => q.typ==t.fraga && q.elev==t.email && q.uppgift == t.taskname);
+          console.log(q);
+          if(typeof q !== "undefined"){
+            this.svar = q.beskrivning;
+            return this.esvar.filter(s => s.id == q.id);
+          }
+          return [];
         }
       },
       methods: {
         check: function () {
           this.kontroll = this.svar;
-          app.postdata("http://127.0.0.1:6588/exemepel",
+          app.postdata("http://127.0.0.1:6588/exempel",
             {"elev":this.email, "uppgift":this.taskname,
             "typ":this.fraga,"beskrivning":this.svar})
           if(this.right){
@@ -123,6 +141,19 @@
             this.next();
           }
         },
+        getdata: async function(url){
+          const response = await fetch(url, {
+            method: "GET",
+            mode: "cors"
+          });
+          const jsonData = await response.json();
+          if(jsonData.hasOwnProperty("svar")){
+            this.esvar = jsonData.svar;
+          }
+          if(jsonData.hasOwnProperty("exempel")){
+            this.exempel = jsonData.exempel;
+          }
+        },
         next: function () {
           this.svar = "";
           this.kontroll = "";
@@ -133,8 +164,6 @@
           } else {
             this.fraga = "";
           }
-          this.questions.push(this.fraga);
-          this.save();
         }
       }
     })
