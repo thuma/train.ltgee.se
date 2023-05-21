@@ -40,7 +40,7 @@
     Det viktiga är att du skriver så att du förstår, då blir det ofta lättare för andra elever att också förstå.
     Läs mer om de <a href="https://sites.google.com/educ.goteborg.se/mekatronik/mekatroniska-system/styrsystem/programmering/logiska-grindar" target="_blank">grundläggande grindarna</a>.
     </p>
-      <div class="card" v-if="antal <= exempel.length">
+      <div class="card" v-if="antal < exempel.length">
         <div class="card-body">
           <h5 class="card-title">Välj den funktion som texten beskriver bäst</h5>
           <table>
@@ -86,7 +86,6 @@
         this.getdata("http://127.0.0.1:6588/exempel");
       },
       data: {
-        fraga: {},
         fragor: ["and","or","not","xor"],
         svar: "",
         vald: "",
@@ -98,6 +97,13 @@
         taskname: "logikinteraktiv"
         },
       computed: {
+        fraga: function(){
+          try{
+            return this.exempel[this.antal]
+          } catch (e){
+            return {}
+          }
+        },
         right: function(){
           return true;
         },
@@ -151,7 +157,6 @@
           });
           const jsonData = await response.json();
           this.exempel = jsonData.exempel;
-          this.next();
         },
         next: function () {
           this.svar = "";
@@ -159,9 +164,6 @@
           this.poang = 1;
           this.vald = "";
           this.antal = this.antal + this.poang;
-          if(this.exempel.length > this.antal){
-            this.fraga = this.exempel[this.antal];
-          }
         }
       }
     })
