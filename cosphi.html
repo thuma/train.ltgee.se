@@ -8,10 +8,13 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <script src="bootstrap.min.js"></script>
     <script src="vue.js"></script>
-    <title>Kombinerad krets</title>
+    <title>Cosphis </title>
     <style>
         pre {
-            margin:0;
+            margin: 0;
+        }
+        input {
+            text-align: right;
         }
     </style>
   </head>
@@ -29,12 +32,12 @@
         <td></td>
         <td></td>
         <td class="l-d-corner"></td>
-        <td class="volt">U</td>
+        <td class="volt"></td>
         <td class="r-d-corner"></td>
       </tr>
       <tr>
         <td class="l-d-corner"></td>
-        <td class="amp">I</td>
+        <td class="amp"></td>
         <td class="conn u-vert"></td>
         <td class="spole"></td>
         <td class="conn u-vert"></td>
@@ -46,24 +49,25 @@
         <td></td>
         <td></td>
         <td></td>
-      	<td class="line vert"></td>
+        <td class="line vert"></td>
       </tr>
       <tr>
         <td class="r-u-corner"></td>
         <td class="line"></td>
-        <td class="power">AC 50Hz</td>
+        <td class="power"></td>
         <td class="line"></td>
         <td class="line"></td>
         <td class="l-u-corner"></td>
       </tr>
     </table>
     <div>
-      <div v-for="svarvalue in allc" v-if="!askfor[svarvalue]">
+      <div v-for="svarvalue in allc">
         <div class="input-group mb-3" style="width: 320px;">
           <div class="input-group-prepend">
             <span class="input-group-text">{{svarvalue[0]}}<sub>{{svarvalue[1]}}</sub></span>
            </div>
-          <input type="text" class="form-control" v-model="svar[svarvalue]">
+          <input type="text" class="form-control" v-model="svar[svarvalue]" v-if="!askfor[svarvalue]">
+          <input type="text" class="form-control" v-model="csvar[svarvalue]" v-if="askfor[svarvalue]" disabled>
           <div class="input-group-append">
             <span class="input-group-text" >{{units[svarvalue[0]]}}
               <span v-if="svarat[svarvalue] && compare(csvar[svarvalue],svarat[svarvalue])" style="color:green">&nbsp;Rätt</span>
@@ -104,65 +108,53 @@
       el: '#app',
       data: {
         cdata: {
-          R1: 100,
-          R2: 200,
-          U: 30,
+          I: 2,
+          Z: 130,
+          R: 100,
         },
-        allc: ["U","I","S","P","Q","UR","UX","R","Z","Xl","𝛗"],
-        units: {"𝛗":"°","U":"V","I":"A","S":"VA","Q":"VAr","R":"Ω","Z":"Ω","X":"Ω","P":"W"},
+        allc: ["U","I","S","P","Q","UR","UX","R","Z","Xl","φ"],
+        units: {"φ":"°","U":"V","I":"A","S":"VA","Q":"VAr","R":"Ω","Z":"Ω","X":"Ω","P":"W"},
         tasks: [
-          ["U","R1","U3","R3"],
-          ["R2","I","R3","R1"],
-          ["R2","U2","I1","R3"],
-          ["I","R","I1","R3"],
-          ["I1","R1","R2","R3"],
-          ["I1","P1","R2","P3"],
-          ["U","P1","P2","P3"],
-          ["I","P1","P2","P3"],
-          ["R","P1","P2","P3"],
-          ["U3","R2","P","I"],
+          ["U","I","P"],
+          ["S","P","R"],
+          ["U","P","R"],
+          ["U","φ","Z"],
+          ["UR","φ","R"],
+          ["I","R","Z"],
+          ["φ","S","U"],
         ],
-        show: ["U","R1","U3","R3"],
+        show: ["U","I","P"],
         antal:-1,
         poang: 1,
         svar: {
           "U":"",
-          "U1":"",
-          "U2":"",
-          "U3":"",
           "I":"",
-          "I1":"",
-          "I2":"",
-          "R":"",
-          "R1":"",
-          "R2":"",
-	  "R3":"",
+          "S":"",
           "P":"",
-          "P1":"",
-          "P2":"",
-          "P3":""
+          "Q":"",
+          "UR":"",
+          "UX":"",
+          "R":"",
+          "Z":"",
+          "Xl":"",
+          "φ":""
           },
         svarat: {
           "U":"",
-          "U1":"",
-          "U2":"",
-          "U3":"",
           "I":"",
-          "I1":"",
-          "I2":"",
-          "R":"",
-          "R1":"",
-          "R2":"",
-	  "R3":"",
+          "S":"",
           "P":"",
-          "P1":"",
-          "P2":"",
-          "P3":""
+          "Q":"",
+          "UR":"",
+          "UX":"",
+          "R":"",
+          "Z":"",
+          "Xl":"",
+          "φ":""
           },
         questions: [],
         loop: 0,
-	email: "asads",
-        taskname: "kombinerad2"
+        taskname: "cosphi"
       },
       computed: {
         askfor: function() {
@@ -175,21 +167,17 @@
         },
         csvar: function () {
           var csvar = {};
-            csvar.R1 = this.cdata.R1;
-            csvar.R2 = this.cdata.R2;
-            csvar.R3 = this.cdata.R3;
-            csvar.U = this.cdata.U;
-            csvar.R = (csvar.R1*csvar.R2)/(csvar.R1+csvar.R2)+this.cdata.R3;
-            csvar.I = csvar.U/csvar.R
-            csvar.U3 = csvar.I * csvar.R3;
-            csvar.U1 = csvar.U-csvar.U3;
-            csvar.U2 = csvar.U-csvar.U3;
-            csvar.I1 = csvar.U1/csvar.R1;
-            csvar.I2 = csvar.U2/csvar.R2;
-            csvar.P = csvar.U * csvar.I;
-            csvar.P1 = csvar.U1 * csvar.I1;
-            csvar.P2 = csvar.U2 * csvar.I2;
-            csvar.P3 = csvar.U3 * csvar.I;
+          csvar["U"] = this.cdata.I * this.cdata.Z ;
+          csvar["I"] = this.cdata.I;
+          csvar["S"] = csvar["U"] * this.cdata.I;
+          csvar["P"] = this.cdata.R * this.cdata.I;
+          csvar["Q"] = Math.sqrt(csvar["S"]**2 - csvar["P"]**2);
+          csvar["φ"] = this.cdata.R / this.cdata.Z;
+          csvar["UR"] = csvar["U"] * csvar["φ"];
+          csvar["UX"] = Math.sqrt(csvar["U"]**2 - csvar["UR"]**2);
+          csvar["R"] = this.cdata.R;
+          csvar["Z"] = this.cdata.Z;
+          csvar["Xl"] = Math.sqrt(csvar["Z"]**2 - csvar["R"]**2);
           return csvar;
         },
         status: function(){
@@ -216,8 +204,8 @@
         },
         compare: function(a, b){
           var k = Number(String(b).split(" ").join("").replace(",",".").replace("m","e-3").replace("k","e3"));
-          var max = a*1.01;
-          var min = a*0.91;
+          var max = a*1.1;
+          var min = a*0.90;
           return (k < max && k > min);
         },
         next: function () {
@@ -228,25 +216,22 @@
           }
           this.svar = {
             "U":"",
-            "U1":"",
-            "U2":"",
             "I":"",
-            "I1":"",
-            "I2":"",
-            "R":"",
-            "R1":"",
-            "R2":"",
+            "S":"",
             "P":"",
-            "P1":"",
-            "P2":""
+            "Q":"",
+            "UR":"",
+            "UX":"",
+            "R":"",
+            "Z":"",
+            "Xl":"",
+            "φ":""
           };
           this.svarat = JSON.parse(JSON.stringify(this.svar));
           this.show = this.tasks[this.loop];
-          this.cdata.R1 = 50 + Math.floor(Math.random() * 4000);
-          this.cdata.R2 = 50 + Math.floor(Math.random() * 4000);
-          this.cdata.R3 = 50 + Math.floor(Math.random() * 2000);
-          var virtualI = (30 + Math.floor(Math.random() * 2000))/1000;
-          this.cdata.U  = virtualI * ((1/(1/this.cdata.R1 + 1/this.cdata.R2))+this.cdata.R3);
+          this.cdata.I = 0.5 + Math.floor(Math.random() * 4);
+          this.cdata.R = 50 + Math.floor(Math.random() * 200);
+          this.cdata.Z = this.cdata.R + Math.floor(Math.random() * 400);
           this.antal = this.antal +  this.poang;
           this.poang = 1;
           this.questions.push(this.csvar.I);
