@@ -46,6 +46,12 @@ var SaveAndRestore = {
         save: function() {
           localStorage.setItem(this.taskname+this.email,JSON.stringify(this.$data))
         },
+        getemail: function(){
+          return window.localStorage["email"];
+        },
+        setemail: function(){
+          localStorage.setItem("email", this.email);
+        },
         restore: function () {
           if(window.localStorage[this.taskname+this.email]){
             var myApp = this;
@@ -64,7 +70,17 @@ var SaveAndRestore = {
       },
       created: function () {
          this.next();
-      }
+      },
+      mounted: function(){
+        try {
+          this.email = window.location.href.split("?")[1].split("email=")[1].split("&")[0]
+        } catch (error) {
+          cmail = this.getemail();
+          this.email = prompt("Fyll i din e-post adress:", cmail);
+        }
+        this.setemail();
+        this.restore();
+      },
     })
   }
 }

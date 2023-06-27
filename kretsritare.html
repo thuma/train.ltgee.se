@@ -62,8 +62,8 @@
       },
       computed: {
         vallista: function(){
-          var bas = ["amp","volt","ohm","line","resistor","lamp","bat","power","fuse","breaker","cond","spole"];
-          var alla = ["","korsning","l-d-corner","r-d-corner","l-u-corner","r-u-corner","conn","conn vert","conn r-vert","conn u-vert"];
+          var bas = ["amp","volt","ohm","line","resistor","lamp","bat","power","fuse","breaker","cond","spole",];
+          var alla = ["","terminal","terminal-d","terminal-l","terminal-r","ground","ground-r","ground-d","ground-l","korsning","l-d-corner","r-d-corner","l-u-corner","r-u-corner","conn","conn vert","conn r-vert","conn u-vert"];
           bas.forEach(function(item){alla.push("vert "+ item);alla.push(item)})
           return alla;
         },

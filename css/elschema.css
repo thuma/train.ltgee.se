@@ -10,6 +10,10 @@ table.sh tr td {
  vertical-align: bottom;
 }
 
+table.sh tr td.empty {
+  vertical-align: middle;
+}
+
 table.sh tr td.vert {
 	transform: rotate(90deg);
 }
@@ -24,6 +28,41 @@ table.sh tr td.u-vert {
 
 table.sh tr td.bat {
 	background-image:url("../imgs/elschema/batt.png");
+}
+
+table.sh tr td.terminal {
+  background-image:url("../imgs/elschema/terminal.png");
+}
+
+table.sh tr td.terminal-l {
+  background-image:url("../imgs/elschema/terminal-l.png");
+}
+
+table.sh tr td.terminal-r {
+  background-image:url("../imgs/elschema/terminal-r.png");
+}
+
+table.sh tr td.terminal-d {
+  background-image:url("../imgs/elschema/terminal-d.png");
+}
+
+table.sh tr td.ground {
+  background-image:url("../imgs/elschema/ground.png");
+  transform: rotate(90deg);
+}
+
+table.sh tr td.ground-l {
+  background-image:url("../imgs/elschema/ground.png");
+}
+
+table.sh tr td.ground-r {
+	background-image:url("../imgs/elschema/ground.png");
+  transform: rotate(180deg);
+}
+
+table.sh tr td.ground-d {
+	background-image:url("../imgs/elschema/ground.png");
+  transform: rotate(270deg);
 }
 
 table.sh tr td.power {
