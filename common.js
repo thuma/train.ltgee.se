@@ -84,10 +84,3 @@ var SaveAndRestore = {
     })
   }
 }
-
-function onSignIn(result) {
-  console.log(result);
-  var profile = JSON.parse(atob(result.credential.split(".")[1]));
-  app.email = profile.email;
-  app.restore();
-}
