@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/elschema.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="vue.js"></script>
+    <title>Transformatoreffekt beräkningar</title>
+    <style>
+     pre {
+       margin:0;
+     }
+     input {
+      text-align: right;
+     }
+    </style>
+  </head>
+  <body>
+
+  <div id="app" class="container" v-if="email">
+    <h1>Transformatoreffekt beräkninga</h1>
+    <p>
+    I denna övning så får du träna på att att räkna på effekter, strömmar och spänningar på transformatorer.
+    När du jobbar med el så behöver du förstå varför transformatorer finns och hur de fungerar.
+    Läs på mer om <a target="_blank" href="https://el.ltgee.se/docs/transformatorn/">transformatorn</a>.
+    </p>
+    <table class="sh">
+      <tbody>
+        <tr>
+          <td class="l-d-corner"></td>
+          <td class="amp">I<sub>p</sub></td>
+          <td class="r-d-corner"></td>
+          <td class="l-d-corner"></td>
+          <td class="amp">I<sub>s</sub></td>
+          <td class="r-d-corner"></td>
+        </tr>
+        <tr>
+          <td class="vert power">U<sub>p</sub></td>
+          <td class=""></td>
+          <td class="vert spole">P</td>
+          <td class="vert spole" style="
+            transform: rotate(270deg);
+            "></td>
+          <td class=""></td>
+          <td class="vert lamp">U<sub>s</sub></td>
+        </tr>
+        <tr>
+          <td class="r-u-corner"></td>
+          <td class="line"></td>
+          <td class="l-u-corner"></td>
+          <td class="r-u-corner"></td>
+          <td class="line"></td>
+          <td class="l-u-corner"></td>
+        </tr>
+      </tbody>
+    </table>
+    <div>
+      <div v-for="svarvalue in allc">
+        <div class="input-group mb-3" style="width: 320px;">
+          <div class="input-group-prepend">
+            <span class="input-group-text">{{svarvalue[0]}}<sub>{{svarvalue[1]}}</sub></span>
+           </div>
+          <input type="text" class="form-control" v-model="svar[svarvalue]" v-if="askfor.includes(svarvalue)">
+          <input type="text" class="form-control" v-model="csvar[svarvalue]" v-if="!askfor.includes(svarvalue)" disabled>
+          <div class="input-group-append">
+            <span class="input-group-text" >{{units[svarvalue]}}
+              <span v-if="kontroll[svarvalue] && right(kontroll[svarvalue],csvar[svarvalue])" style="color:green">&nbsp;Rätt</span>
+              <span v-else-if="kontroll[svarvalue]" style="color:red">&nbsp;Fel</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <button v-on:click="check" class="btn btn-primary">Kontrollera svaren.</button><br>
+      <div v-if="antal >= 15" class="alert alert-success" >
+        Nu har du klarat ett träningsvarv. <br>
+        Lämna in denna länk på google classroom:<br>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+          </div>
+          <input id="correctlink" class="form-control" v-bind:value="handinlink()">
+        </div>
+      </div>
+      <div class="alert alert-success" v-if="this.status" >
+        Rätt!<br>
+        <button class="btn btn-primary" v-on:click="next"> Nästa övning </button>
+        <br>
+        <img widht="320" v-bind:src="successImage()">
+      </div>
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+    Vue.use(Success);
+    Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        taskname: "Transformatoreffekt",
+        antal: -1,
+        loop: 0,
+        svar: {
+          'UP':"",
+          'US':"",
+          'IP':"",
+          'P':"",
+          'IS':""
+          },
+        poang: 1,
+        kontroll: {
+          'UP':"",
+          'US':"",
+          'IP':"",
+          'P':"",
+          'IS':""
+          },
+        askfor: ["UP"],
+        questions: [],
+        basdata: {UP:30, US:60, IP:1},
+        units: {
+          'UP':"V",
+          'US':"V",
+          'IP':"A",
+          'P':"W",
+          'IS':"A",
+        }
+      },
+      computed: {
+        csvar: function(){
+          data = {};
+          data["UP"] = this.basdata.UP;
+          data["US"] = this.basdata.US;
+          data["IP"] = this.basdata.IP;
+          data["P"] = data.UP * data.IP;
+          data["IS"] = data.P/data.US;
+          return data;
+        },
+        allc: function(){
+          return Object.keys(this.csvar);
+        },
+        status: function(){
+        var svar = true;
+          for(const key in this.kontroll){
+            if(this.askfor.includes(key)){
+              svar = svar && this.right(this.kontroll[key], this.csvar[key]);
+              console.log(this.kontroll[key], this.csvar[key], svar);
+            }
+          }
+          return svar
+        }
+      },
+      methods: {
+        right: function(a, b){
+          a = Number(a.replace(',','.'))
+          var max = b*1.05;
+          var min = b*0.95;
+          return (a < max && a > min);
+        },
+        prefix: function(count) {
+          if (count < 1){
+            return Number( count +'e+3').toLocaleString("sv-SE",{maximumFractionDigits:20,maximumSignificantDigits:3}) + " m";
+          }
+          if (count > 1000){
+            return Number( count +'e-3').toLocaleString("sv-SE",{maximumFractionDigits:20,maximumSignificantDigits:3}) + " k";
+          }
+          return count.toLocaleString("sv-SE",{maximumFractionDigits:20,maximumSignificantDigits:3});
+        },
+        check: function () {
+          this.kontroll = JSON.parse(JSON.stringify(this.svar));
+          if(this.status){
+            return
+          }
+          alert("Svaret är inte rätt");
+          this.poang = this.poang/2;
+          if (this.antal < 0){
+            this.antal = 0;
+          }
+        },
+        next: function () {
+          var options = [["UP","P"],["US","P"],["IP","IS"],["IP","US"],["IS","UP"],["P","UP"]];
+          if( this.loop > (options.length - 2)){
+            this.loop = 0;
+          } else {
+            this.loop++;
+          }
+          this.antal = this.antal + this.poang;
+          this.poang = 1;
+          this.svar = {
+            'UP':"",
+            'US':"",
+            'IP':"",
+            'P':"",
+            'IS':""
+          };
+          this.kontroll = JSON.parse(JSON.stringify(this.svar));
+          this.svarb = "";
+          this.kontrollb = this.svarb;
+          this.basdata.UP = 1 + Math.floor(Math.random() * 230);
+          this.basdata.US = 1 + Math.floor(Math.random() * 230);
+          this.basdata.IP = (1 + Math.floor(Math.random() * 400))/100;
+          this.askfor = options[this.loop];
+          this.questions.push(this.askfor);
+          this.save();
+        }
+      }
+    })
+  </script>
+  
+</html>
+
+
+
+
+
