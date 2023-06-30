@@ -44,12 +44,18 @@
         class="list-group-item list-group-item-action"
         ><table class="sh"><tr><td v-bind:class="bild"></td></tr></table></button>
     </ul><br>
-    	<div class="input-group mb-3">
-	  <input type="text" class="form-control" v-bind:value="url" id="url">
-	  <div class="input-group-append">
-	    <button class="btn btn-outline-secondary" type="button" v-on:click="copy">Kopiera</button> 
-	  </div>
-    	</div>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" v-bind:value="url" id="url">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button" v-on:click="copy('url')">Kopiera</button> 
+        </div>
+      </div>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" v-bind:value="json" id="json">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button" v-on:click="copy('json')">Kopiera</button> 
+        </div>
+      </div>
     </div>
   </body>
   <script src="common.js"></script>
@@ -70,12 +76,15 @@
         url: function(){
           window.location.hash = window.btoa(JSON.stringify(this.tabell));
           return 'https://train.ltgee.se/kretsritare.html#'+window.btoa(JSON.stringify(this.tabell));
+        },
+        json: function(){
+          return JSON.stringify(this.tabell);
         }
       },
       created: function(){
-      	if(window.location.hash) {
-	  this.tabell = JSON.parse(window.atob(window.location.hash.replace("#","")));
-	}
+        if(window.location.hash) {
+        this.tabell = JSON.parse(window.atob(window.location.hash.replace("#","")));
+        }
       },
       methods: {
         rita: function(text){
@@ -103,11 +112,11 @@
           this.vald.i = -1;
           this.vald.j = -1;
         },
-        copy: function() {
-  		let copyText = document.getElementById("url");
-  		copyText.select();
-  		document.execCommand("copy");
-	}
+        copy: function(id) {
+          let copyText = document.getElementById(id);
+          copyText.select();
+          document.execCommand("copy");
+        }
       }
     })
   </script>

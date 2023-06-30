@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/elschema.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
-
     <script src="bootstrap.min.js"></script>
     <script src="vue.js"></script>
     <title>Potential</title>
@@ -100,21 +99,50 @@
         topsvar: "",
         questions: [],
         taskname: "potential",
-        names: ["B","C","D","E","F","G"]
+        circuits: [
+          {logic: {},
+          circuit: [  
+            [{"bild":"l-d-corner","text":""},{"bild":"line","text":""},{"bild":"conn","text":""},{"bild":"terminal-l","text":"A"}],
+            [{"bild":"vert bat","text":"U_1"},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L1}"},{"bild":"","text":""}],
+            [{"bild":"conn r-vert","text":""},{"bild":"terminal-l","text":"D"},{"bild":"conn r-vert","text":""},{"bild":"terminal-l","text":"B"}],
+            [{"bild":"vert bat","text":"U_2 "},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L2}"},{"bild":"","text":""}],
+            [{"bild":"conn r-vert","text":""},{"bild":"line","text":""},{"bild":"conn u-vert","text":""},{"bild":"terminal-l","text":"C"}],
+            [{"bild":"ground","text":""},{"bild":"","text":""},{"bild":"","text":""},{"bild":"","text":""}]
+          ]},
+          {logic: {},
+          circuit: [
+            [{"bild":"l-d-corner","text":""},{"bild":"line","text":""},{"bild":"conn","text":""},{"bild":"terminal-l","text":"A"}],
+            [{"bild":"vert bat","text":"U_1"},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L1}"},{"bild":"","text":""}],
+            [{"bild":"conn r-vert","text":""},{"bild":"ground-l","text":"D"},{"bild":"conn r-vert","text":""},{"bild":"terminal-l","text":"B"}],
+            [{"bild":"vert bat","text":"U_2 "},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L2}"},{"bild":"","text":""}],
+            [{"bild":"r-u-corner","text":""},{"bild":"line","text":""},{"bild":"conn u-vert","text":""},{"bild":"terminal-l","text":"C"}],
+            [{"bild":"","text":""},{"bild":"","text":""},{"bild":"","text":""},{"bild":"","text":""}],[{"bild":"","text":""}]
+          ]},
+          {logic: {},
+          circuit: [
+            [{"bild":"l-d-corner","text":""},{"bild":"line","text":""},{"bild":"conn","text":""},{"bild":"terminal-l","text":"A"}],
+            [{"bild":"vert bat","text":"U_1"},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L1}"},{"bild":"","text":""}],
+            [{"bild":"conn r-vert","text":""},{"bild":"terminal-l","text":"B"},{"bild":"conn r-vert","text":""},{"bild":"ground-l","text":""}],
+            [{"bild":"vert bat","text":"U_2 "},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L2}"},{"bild":"","text":""}],
+            [{"bild":"r-u-corner","text":""},{"bild":"line","text":""},{"bild":"conn u-vert","text":""},{"bild":"terminal-l","text":"C"}],
+            [{"bild":"","text":""},{"bild":"","text":""},{"bild":"","text":""},{"bild":"","text":""}],[{"bild":"","text":""}]
+          ]},
+          {logic: {},
+          circuit: [
+            [[{"bild":"l-d-corner","text":""},{"bild":"line","text":""},{"bild":"conn","text":""},{"bild":"terminal-l","text":"A"}],
+            [{"bild":"vert bat","text":"U_1"},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L1}"},{"bild":"","text":""}],
+            [{"bild":"conn r-vert","text":""},{"bild":"terminal-l","text":"E"},{"bild":"conn r-vert","text":""},{"bild":"terminal-l","text":"B"}],
+            [{"bild":"vert bat","text":"U_2 "},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L2}"},{"bild":"","text":""}],
+            [{"bild":"conn r-vert","text":""},{"bild":"terminal-l","text":"F"},{"bild":"conn r-vert","text":""},{"bild":"terminal-l","text":"C"}],
+            [{"bild":"vert bat","text":"U_3"},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L2}"},{"bild":"","text":""}],
+            [{"bild":"r-u-corner","text":""},{"bild":"line","text":""},{"bild":"korsning","text":""},{"bild":"terminal-l","text":"D"}],
+            [{"bild":"","text":""},{"bild":"","text":""},{"bild":"ground","text":""}]]
+          ]},
+        ]
       },
       computed: {
-        cols: function () {
-          return this.resistanser.length;
-        },
-        uright: function(){
-          var u = 0;
-          for(var i = this.fraga; i > 0; i++){
-            u = u + this.resistanser[i];
-          }
-          return u;
-        },
         status: function(){
-          return (this.uright && this.rtot == this.rsvar)
+          return false
         }
       },
       methods: {
@@ -139,12 +167,15 @@
           this.questions.push(this.resistanser);
           this.save();
         },
-        rdisplay: function (r) {
-          if (r >= 1000){
-            return Number( r +'e-3') + " kΩ";
+        prefix: function(count) {
+          if (count < 1){
+            return Number( count +'e+3').toLocaleString("sv-SE",{maximumFractionDigits:20,maximumSignificantDigits:3}) + " m";
           }
-          return r + " Ω";
-        }
+          if (count > 1000){
+            return Number( count +'e-3').toLocaleString("sv-SE",{maximumFractionDigits:20,maximumSignificantDigits:3}) + " k";
+          }
+          return count.toLocaleString("sv-SE",{maximumFractionDigits:20,maximumSignificantDigits:3});
+        },
       }
     })
   </script>
