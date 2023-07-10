@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <script src="bootstrap.min.js"></script>
     <script src="vue.js"></script>
+    <link rel="stylesheet" href="css/katex.min.css">
+    <script src="katex.min.js"></script>
     <title>Potential</title>
     <style>
      pre {
@@ -23,36 +25,12 @@
     Detta är viktigt för att kunna förstå och hur ritningar fungerar.
     </p>
     <table class="sh">
-      <tr>
-        <td class="l-d-corner"></td>
-        <td class="line"></td>
-        <td class="r-d-corner"></td>
-      </tr>
-      <tr>
-        <td class="conn vert">&nbsp;&nbsp;&nbsp;&nbsp;A</td>
-        <td></td>
-        <td class="bat vert"></td>
-      </tr>
-      <template v-for="r,index in resistanser">
-      <tr>
-        <td class="resistor vert"></td>
-        <td></td>
-        <td class="line vert"></td>
-      </tr>
-      <tr>
-        <td class="conn vert">&nbsp;&nbsp;&nbsp;&nbsp;{{names[index]}}</td>
-        <td></td>
-        <td class="line vert"></td>
-      </tr>
-      </template>
-      <tr>
-        <td class="r-u-corner"></td>
-        <td class="line"></td>
-        <td class="l-u-corner"></td>
+      <tr v-for="(row, i) in fraga.circuit">
+        <td v-for="(col, j) in row" v-bind:class="col.bild" v-html="rita(col.text)"></td>
       </tr>
     </table>
     <div><br>
-      Vad är potentialen i punkt {{ names[fraga] }}?<br>
+      Vad är potentialen i punkt?<br>
       <div class="input-group mb-3">
         <input v-model="psvar" type="text" class="form-control" >
         <div class="input-group-append">
@@ -95,10 +73,10 @@
         psvar: "",
         antal:-1,
         poang: 1,
-        fraga: 0,
         topsvar: "",
         questions: [],
         taskname: "potential",
+        circuitid: 0,
         circuits: [
           {logic: {},
           circuit: [  
@@ -129,23 +107,44 @@
           ]},
           {logic: {},
           circuit: [
-            [[{"bild":"l-d-corner","text":""},{"bild":"line","text":""},{"bild":"conn","text":""},{"bild":"terminal-l","text":"A"}],
+            [{"bild":"l-d-corner","text":""},{"bild":"line","text":""},{"bild":"conn","text":""},{"bild":"terminal-l","text":"A"}],
             [{"bild":"vert bat","text":"U_1"},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L1}"},{"bild":"","text":""}],
             [{"bild":"conn r-vert","text":""},{"bild":"terminal-l","text":"E"},{"bild":"conn r-vert","text":""},{"bild":"terminal-l","text":"B"}],
             [{"bild":"vert bat","text":"U_2 "},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L2}"},{"bild":"","text":""}],
             [{"bild":"conn r-vert","text":""},{"bild":"terminal-l","text":"F"},{"bild":"conn r-vert","text":""},{"bild":"terminal-l","text":"C"}],
             [{"bild":"vert bat","text":"U_3"},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L2}"},{"bild":"","text":""}],
             [{"bild":"r-u-corner","text":""},{"bild":"line","text":""},{"bild":"korsning","text":""},{"bild":"terminal-l","text":"D"}],
-            [{"bild":"","text":""},{"bild":"","text":""},{"bild":"ground","text":""}]]
+            [{"bild":"","text":""},{"bild":"","text":""},{"bild":"ground","text":""}]
           ]},
         ]
       },
       computed: {
         status: function(){
           return false
+        },
+        fraga: function(){
+          return this.circuits[this.circuitid];
+        }
+      },
+      created() {
+        for (i = this.circuits.length -1; i > 0; i--) {
+          j = Math.floor(Math.random() * i);
+          k = this.circuits[i];
+          this.circuits[i] = this.circuits[j];
+          this.circuits[j] = k;
         }
       },
       methods: {
+        rita: function(text){
+          if(text){
+            try {
+              return window.katex.renderToString(text);
+            } catch (e) {
+              return "Formatfel";
+            }
+          }
+          return "";
+        },
         check: function () {
           this.topsvar = this.psvar;
           if(!(this.uright == this.torsvar)){
@@ -154,16 +153,14 @@
           }
         },
         next: function () {
-          this.psvar = "";
-          this.topsvar = "";
-          count = 2+Math.floor(Math.random()*3);
-          this.fraga = Math.floor(Math.random() * count);
+          if( this.circuitid > this.circuits.length-2){
+            this.circuitid = 0;
+          } else {
+            this.circuitid++;
+          }
           this.antal = this.antal + this.poang;
           this.poang = 1;
           this.resistanser = [];
-          for( var i = 0; i > count; i++){
-            this.resistanser.push((1+Math.floor(Math.random()*20)));
-          }
           this.questions.push(this.resistanser);
           this.save();
         },
