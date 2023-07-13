@@ -30,9 +30,14 @@
       </tr>
     </table>
     <div><br>
-      Vad är potentialen i punkt?<br>
-      <div class="input-group mb-3">
-        <input v-model="psvar" type="text" class="form-control" >
+      <div v-for="spanning in fraga.logic.show">{{spanning.substring(0,1)}}
+        <sub>{{spanning.substring(1)}}</sub> = {{prefix(csvar[spanning])}} V</div>
+      Vad är potentialen i punkterna?<br>
+      <div class="input-group mb-3" v-for="punkt in fraga.logic.askfor">
+        <div class="input-group-prepend">
+          <span class="input-group-text">{{punkt}}</span>
+        </div>
+        <input v-model="svar[punkt]" type="text" class="form-control" >
         <div class="input-group-append">
           <span class="input-group-text" >V</span>
         </div>
@@ -68,9 +73,10 @@
     var app = new Vue({
       el: '#app',
       data: {
-        resistanser: [100],
-        I:1,
-        psvar: "",
+        resistanser: [100, 100, 100],
+        spanningar:[1,2,3],
+        svar: {"A":"","B":"","C":"","D":"","E":"","F":""},
+        kontroll: {"A":"","B":"","C":"","D":"","E":"","F":""},
         antal:-1,
         poang: 1,
         topsvar: "",
@@ -78,25 +84,25 @@
         taskname: "potential",
         circuitid: 0,
         circuits: [
-          {logic: {},
+          {logic: {"id":"1", "show":["U1","U2","UL1","UL2"], "askfor":["A","B","C","D"], "bat":2,"lamps":2},
           circuit: [  
             [{"bild":"l-d-corner","text":""},{"bild":"line","text":""},{"bild":"conn","text":""},{"bild":"terminal-l","text":"A"}],
             [{"bild":"vert bat","text":"U_1"},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L1}"},{"bild":"","text":""}],
             [{"bild":"conn r-vert","text":""},{"bild":"terminal-l","text":"D"},{"bild":"conn r-vert","text":""},{"bild":"terminal-l","text":"B"}],
-            [{"bild":"vert bat","text":"U_2 "},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L2}"},{"bild":"","text":""}],
+            [{"bild":"vert bat","text":"U_2"},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L2}"},{"bild":"","text":""}],
             [{"bild":"conn r-vert","text":""},{"bild":"line","text":""},{"bild":"conn u-vert","text":""},{"bild":"terminal-l","text":"C"}],
             [{"bild":"ground","text":""},{"bild":"","text":""},{"bild":"","text":""},{"bild":"","text":""}]
           ]},
-          {logic: {},
+          {logic: {"id":"2", "show":["U1","U2","UL1","UL2"], "askfor":["A","B","C"], "bat":2,"lamps":2},
           circuit: [
             [{"bild":"l-d-corner","text":""},{"bild":"line","text":""},{"bild":"conn","text":""},{"bild":"terminal-l","text":"A"}],
             [{"bild":"vert bat","text":"U_1"},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L1}"},{"bild":"","text":""}],
-            [{"bild":"conn r-vert","text":""},{"bild":"ground-l","text":"D"},{"bild":"conn r-vert","text":""},{"bild":"terminal-l","text":"B"}],
+            [{"bild":"conn r-vert","text":""},{"bild":"ground-l","text":""},{"bild":"conn r-vert","text":""},{"bild":"terminal-l","text":"B"}],
             [{"bild":"vert bat","text":"U_2 "},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L2}"},{"bild":"","text":""}],
             [{"bild":"r-u-corner","text":""},{"bild":"line","text":""},{"bild":"conn u-vert","text":""},{"bild":"terminal-l","text":"C"}],
             [{"bild":"","text":""},{"bild":"","text":""},{"bild":"","text":""},{"bild":"","text":""}],[{"bild":"","text":""}]
           ]},
-          {logic: {},
+          {logic: {"id":"3", "show":["U1","U2","UL1","UL2"], "askfor":["A","B","C"], "bat":2,"lamps":2},
           circuit: [
             [{"bild":"l-d-corner","text":""},{"bild":"line","text":""},{"bild":"conn","text":""},{"bild":"terminal-l","text":"A"}],
             [{"bild":"vert bat","text":"U_1"},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L1}"},{"bild":"","text":""}],
@@ -105,7 +111,13 @@
             [{"bild":"r-u-corner","text":""},{"bild":"line","text":""},{"bild":"conn u-vert","text":""},{"bild":"terminal-l","text":"C"}],
             [{"bild":"","text":""},{"bild":"","text":""},{"bild":"","text":""},{"bild":"","text":""}],[{"bild":"","text":""}]
           ]},
-          {logic: {},
+          {logic: {
+              "id": "4", 
+              "show": ["U1","U2","U3","UL1","UL2","UL3"],
+              "askfor": ["A","B","C","D","E","F"], 
+              "bat": 3,
+              "lamps": 3
+            },
           circuit: [
             [{"bild":"l-d-corner","text":""},{"bild":"line","text":""},{"bild":"conn","text":""},{"bild":"terminal-l","text":"A"}],
             [{"bild":"vert bat","text":"U_1"},{"bild":"","text":""},{"bild":"vert lamp","text":"U_{L1}"},{"bild":"","text":""}],
@@ -120,10 +132,81 @@
       },
       computed: {
         status: function(){
-          return false
+          var that = this;
+          function kolla(storhet){
+            return !that.compare(
+              that.csvar[storhet],
+              that.kontroll[storhet]
+              ); 
+          }
+          var fel = this.fraga.logic.askfor.filter(kolla)
+          return fel.length === 0;
         },
         fraga: function(){
           return this.circuits[this.circuitid];
+        },
+        U: function(){
+          var U = 0;
+          for(var i = 0; i < this.fraga.logic.bat; i++){
+            U = U + this.spanningar[i];
+          }
+          return U;
+        },
+        Rtot: function(){
+          var R = 0;
+          for(var i = 0; i < this.fraga.logic.lamps; i++){
+            R = R + this.resistanser[i];
+          }
+          return R;
+        },
+        I: function(){
+          return this.U/this.Rtot;
+        },
+        csvar: function(){
+          var data = {};
+          if(this.fraga.logic.id === "1"){
+            data["A"] = this.U;
+            data["B"] = this.U - this.resistanser[0]*this.I;
+            data["C"] = 0;
+            data["D"] = this.spanningar[1];
+            data["U1"] = this.spanningar[0];
+            data["U2"] = this.spanningar[1];
+            data["UL1"] = this.resistanser[0]*this.I;
+            data["UL2"] = this.resistanser[1]*this.I;
+          }
+          if(this.fraga.logic.id === "2"){
+            data["U1"] = this.spanningar[0];
+            data["U2"] = this.spanningar[1];
+            data["UL1"] = this.resistanser[0]*this.I;
+            data["UL2"] = this.resistanser[1]*this.I;
+            data["A"] = data["U1"];
+            data["B"] = data["U1"] - data["UL1"];
+            data["C"] = data["U2"]*-1;
+          }
+          if(this.fraga.logic.id === "3"){
+            data["U1"] = this.spanningar[0];
+            data["U2"] = this.spanningar[1];
+            data["UL1"] = this.resistanser[0]*this.I;
+            data["UL2"] = this.resistanser[1]*this.I;
+            data["A"] = data["UL1"];
+            data["B"] = data["UL1"] - data["U1"];
+            data["C"] = data["UL2"] * -1;
+          }
+          if(this.fraga.logic.id === "4"){
+            data["U1"] = this.spanningar[0];
+            data["U2"] = this.spanningar[1];
+            data["U3"] = this.spanningar[2];
+            data["UL1"] = this.resistanser[0]*this.I;
+            data["UL2"] = this.resistanser[1]*this.I;
+            data["UL3"] = this.resistanser[2]*this.I;
+            data["A"] = this.U;
+            data["B"] = this.U - data["UL1"]
+            data["C"] = this.U - data["UL1"] - data["UL2"]
+            data["D"] = 0;
+            data["E"] = data["U2"] + data["U3"]
+            data["F"] = data["U3"];
+          }
+          return data;
         }
       },
       created() {
@@ -145,12 +228,32 @@
           }
           return "";
         },
-        check: function () {
-          this.topsvar = this.psvar;
-          if(!(this.uright == this.torsvar)){
-            alert("Resistansen stämmer inte.");
-            this.poang = this.poang/2;
+        compare: function(a, b){
+          var k = Number(String(b).
+            split(" ").join("").
+            replace(",",".").
+            replace("m","e-3").
+            replace("k","e3"));
+          if (a<0) {
+            var max = a * 0.95;
+            var min = a * 1.05;
+          }        
+          else {
+            var max = a * 1.05;
+            var min = a * 0.95;
           }
+          console.log(k, max, min);
+          return (k <= max && k >= min);
+        },
+        check: function () {
+          this.kontroll = JSON.parse(JSON.stringify(this.svar));
+          if(!this.status){
+            window.alert("Något svar är fel.");
+          }
+        },
+        getRandomInt: function(min, max) {
+          max = max - min;
+          return min + Math.floor(Math.random() * max);
         },
         next: function () {
           if( this.circuitid > this.circuits.length-2){
@@ -160,8 +263,18 @@
           }
           this.antal = this.antal + this.poang;
           this.poang = 1;
-          this.resistanser = [];
+          this.resistanser = [
+            this.getRandomInt(100,1200),
+            this.getRandomInt(100,1200),
+            this.getRandomInt(100,1200)
+            ];
+          this.spanningar = [
+            this.getRandomInt(4, 96),
+            this.getRandomInt(4, 96),
+            this.getRandomInt(4, 96)
+            ];
           this.questions.push(this.resistanser);
+          this.svar = {"A":"","B":"","C":"","D":"","E":"","F":""};
           this.save();
         },
         prefix: function(count) {
