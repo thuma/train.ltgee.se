@@ -170,10 +170,11 @@
           csvar["U"] = this.cdata.I * this.cdata.Z ;
           csvar["I"] = this.cdata.I;
           csvar["S"] = csvar["U"] * this.cdata.I;
-          csvar["P"] = this.cdata.R * this.cdata.I;
+          csvar["P"] = this.cdata.R * this.cdata.I * this.cdata.I;
           csvar["Q"] = Math.sqrt(csvar["S"]**2 - csvar["P"]**2);
-          csvar["φ"] = this.cdata.R / this.cdata.Z;
-          csvar["UR"] = csvar["U"] * csvar["φ"];
+          csvar["cosφ"] = this.cdata.R / this.cdata.Z;
+          csvar["φ"] = this.radians_to_degrees(Math.acos(this.cdata.R / this.cdata.Z));
+          csvar["UR"] = csvar["U"] * csvar["cosφ"];
           csvar["UX"] = Math.sqrt(csvar["U"]**2 - csvar["UR"]**2);
           csvar["R"] = this.cdata.R;
           csvar["Z"] = this.cdata.Z;
@@ -195,6 +196,16 @@
         }
       },
       methods: {
+        radians_to_degrees: function (radians)
+          {
+          var pi = Math.PI;
+          return radians * (180/pi);
+        },
+        degrees_to_radians: function (degrees)
+        {
+            var pi = Math.PI;
+            return degrees * (pi/180);
+        },
         check: function () {
           this.svarat = JSON.parse(JSON.stringify(this.svar));
           if(!this.status){
@@ -231,7 +242,7 @@
           this.show = this.tasks[this.loop];
           this.cdata.I = 0.5 + Math.floor(Math.random() * 4);
           this.cdata.R = 50 + Math.floor(Math.random() * 200);
-          this.cdata.Z = this.cdata.R + Math.floor(Math.random() * 400);
+          this.cdata.Z = this.cdata.R * (Math.random()*0.9+1);
           this.antal = this.antal +  this.poang;
           this.poang = 1;
           this.questions.push(this.csvar.I);
