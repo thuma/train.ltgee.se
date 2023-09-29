@@ -31,7 +31,7 @@
         <input v-model="svar" type="text" class="form-control" >
         <div class="input-group-append">
           <span class="input-group-text" v-if="askfor=='ut'" >V</span>
-          <span class="input-group-text" v-if="askfor=='t'" >s</span>
+          <span class="input-group-text" v-if="askfor=='t'" >ms</span>
         </div>
       </div>
       <button v-on:click="check" class="btn btn-primary">Kontrollera svaren.</button><br>
@@ -83,7 +83,7 @@
           return this.U*1.4142135623730950488016887242097;
         },
         t: function(){
-          return 1/this.f;
+          return 1/this.f*1000;
         }
       },
       watch: {
