@@ -25,7 +25,7 @@
     I denna övning ska du träna dig på att läsa ut fasförskjutning i en induktiv växelströmskrets.
     Läs mer om <a href="https://el.ltgee.se/docs/fas/">Fasförskjutning</a>.
     </p>
-    <div id="kurva"></div>
+    <div id="kurva"></div>ms - på tidsaxeln.
     <div>
       <span v-if="askfor=='fip'">Hur mång graders fasförskjutning är det?</span>
       <span v-if="askfor=='fit'">Hur lång är fasförskjutningen i tid?</span>
@@ -34,8 +34,8 @@
         <input v-model="svar" type="text" class="form-control" >
         <div class="input-group-append">
           <span class="input-group-text" v-if="askfor=='fip'" >grader</span>
-          <span class="input-group-text" v-if="askfor=='fit'" >s</span>
-          <span class="input-group-text" v-if="askfor=='t'" >s</span>
+          <span class="input-group-text" v-if="askfor=='fit'" >ms</span>
+          <span class="input-group-text" v-if="askfor=='t'" >ms</span>
         </div>
       </div>
       <button v-on:click="check" class="btn btn-primary">Kontrollera svaren.</button><br>
@@ -89,7 +89,7 @@
           return this.U*1.4142135623730950488016887242097;
         },
         t: function(){
-          return 1/this.f;
+          return 1/this.f*1000;
         },
         fit: function(){
           return this.t/360 * this.fip;
