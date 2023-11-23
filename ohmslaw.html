@@ -27,13 +27,13 @@
       <table class="sh">
         <tr>
           <td class="l-d-corner"></td>
-          <td class="resistor">R=<span v-if="!(veta == 'R')">{{R}}</span><span v-else="">...</span>Ohm</td>
+          <td class="resistor">R=<span v-if="!(veta == 'R')">{{R}}</span><span v-else="">...</span> Ω</td>
           <td class="r-d-corner"></td>
         </tr>
         <tr>
-          <td class="bat vert">U=<span v-if="!(veta == 'U')">{{U}}</span><span v-else="">...</span>V</td>
+          <td class="bat vert">U=<span v-if="!(veta == 'U')">{{U}}</span><span v-else="">...</span> V</td>
           <td class=""></td>
-          <td class="amp vert">I=<span v-if="!(veta == 'I')">{{I}}</span><span v-else="">...</span>A</td>
+          <td class="amp vert">I=<span v-if="!(veta == 'I')">{{I}}</span><span v-else="">...</span> A</td>
         </tr>
         <tr>
           <td class="r-u-corner"></td>
@@ -41,13 +41,13 @@
           <td class="l-u-corner"></td>
         </tr>
       </table>
-      <div v-if="veta == 'I'">Kretesen ovan har en spänning på {{U}} Volt och en resistans på {{R}} Ohm vad är Strömmen?</div>
+      <div v-if="veta == 'I'">Kretesen ovan har en spänning på {{U}} Volt och en resistans på {{R}} Ω vad är Strömmen?</div>
       <div v-if="veta == 'R'">Kretesen ovan har en spänning på {{U}} Volt och en Ström på {{I}} A vad är Resistansen?</div>
       <div v-if="veta == 'U'"> Kretesen ovan har en resistans på {{R}} Ohm och en Ström på {{I}} A vad är Spänningen?</div>
       <table>
         <tr v-if="veta == 'U'"><td>U=</td><td><input class="form-control" type="number" v-model="svar"></td><td>V</td></tr>
         <tr v-if="veta == 'I'"><td>I=</td><td><input class="form-control" type="number" v-model="svar"></td><td>A</td></tr>
-        <tr v-if="veta == 'R'"><td>R=</td><td><input class="form-control" type="number" v-model="svar"></td><td>Ohm</td></tr>
+        <tr v-if="veta == 'R'"><td>R=</td><td><input class="form-control" type="number" v-model="svar"></td><td>Ω</td></tr>
       </table>
       <div v-if="status == true" class="alert alert-success">
         Grattis! Du klarade frågan!<br>
