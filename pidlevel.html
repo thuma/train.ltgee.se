@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>PID - Nivåreglering</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    </head>
+    <body>
+    <script type="importmap">
+    {
+        "imports": {
+        "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+        }
+    }
+    </script>
+    <div>
+        <canvas id="myChart"></canvas>
+    </div>
+    <div id="app">
+        <table>
+            <tr>
+               <td>
+                <div style="position: relative;width:200px;height:400px;background-color:white;    border-style: groove;">
+                    <div :style="{height: level+'%'}" style="position: absolute; bottom:0px;width:100%;background-color:blue;"></div>
+                </div>
+               </td> 
+               <td>
+        <div class="input-group mb-3">
+            <span class="input-group-text">P</span>
+            <input class="form-control" v-model="P">
+            <span class="input-group-text">faktor</span>
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">I</span>
+            <input class="form-control" v-model="I">
+            <span class="input-group-text">sekunder</span>
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">D</span>
+            <input class="form-control" v-model="D">
+            <span class="input-group-text">sekunder</span>
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">Pv</span>
+            <input class="form-control" disabled="true" v-model="level">
+            <span class="input-group-text">%</span>
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">Sp</span>
+            <input class="form-control" v-model="SP">
+            <span class="input-group-text">%</span>
+        </div>
+        Utflöde
+        <input type="range" min="0" max="100" value="50" class="slider" v-model="load">
+                </td>
+            </tr>    
+        </table>
+        <button type="button" :onclick="rensa">Rensa trend</button>
+    </div>
+      
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      
+    <script>
+    const ctx = document.getElementById('myChart');
+    
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+        labels: [],
+        datasets: [
+            {   label: 'Pv',
+                data: [],
+                borderWidth: 1,
+                tension: 0.4
+            },
+            {   label: 'Sp',
+                data: [],
+                borderWidth: 1,
+                tension: 0.4
+            },
+            {   label: 'Cv',
+                data: [],
+                borderWidth: 1,
+                tension: 0.4
+            }],
+        },
+        options: {
+            animation: false,
+            pointStyle: false,
+            interaction: {
+                intersect: false,
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: 100
+                }
+            }
+        }
+    });
+    </script>
+
+    <script type="module">
+    import { createApp } from 'vue'
+
+    createApp({
+        data() {
+            return {
+                volym_l: 5000,
+                maxflow_ls: 60,
+                maxinflow_ls: 140,
+                level_l: 1000,
+                P: 1,
+                I: 1,
+                D: 1,
+                oldPV: 20,
+                SP: 50,
+                out: 0,
+                istore: 0,
+                load: 0,
+                PV_trend: [],
+                SP_trend: [],
+                out_trend: [],
+                namn: []
+            }
+        },
+        computed: {
+            outflow: function(){
+                return this.maxflow_ls*Number(this.load)/100;
+            },
+            level: function(){
+                return (100*this.level_l/this.volym_l).toPrecision(4);  
+            },
+            inflow: function() {
+                return this.out/100 * this.maxinflow_ls;
+            }
+        },
+        methods: {
+            rensa(){
+                this.PV_trend=[];
+                this.SP_trend=[];
+                this.out_trend=[];
+                this.namn=[];
+            },
+            runpid(){
+                var pval = (this.SP-this.level)*this.P
+                var ival = pval/10*(1/Number(this.I));
+                this.istore = ival + this.istore;
+                
+                var dfuture = (this.level-this.oldPV)*this.D*10;
+
+                if(this.istore > 100){this.istore = 100}
+                if(this.istore < 0){this.istore = 0}
+
+                this.out = pval + this.istore + dfuture;
+
+                if(this.out > 100){this.out = 100}
+                if(this.out < 0){this.out = 0}
+                this.level_l = this.level_l - this.outflow/10;
+                this.level_l = this.level_l + this.inflow/10;
+                if(this.level_l<0){
+                    this.level_l = 0;
+                }
+                this.PV_trend.push(this.level);
+                this.SP_trend.push(Number(this.SP));
+                this.out_trend.push(Number(this.out));
+                this.namn.push("");
+                window.chart.data.datasets[0].data = JSON.parse(JSON.stringify(this.PV_trend));
+                window.chart.data.datasets[1].data = JSON.parse(JSON.stringify(this.SP_trend));
+                window.chart.data.datasets[2].data = JSON.parse(JSON.stringify(this.out_trend));
+                chart.data.labels = JSON.parse(JSON.stringify(this.namn));
+                window.chart.update();
+                this.oldPV = this.level;
+            }
+        },
+        created() {
+            window.setInterval(() => {
+                this.runpid();
+             }, 100);
+        },
+    }).mount('#app')
+    </script>
+    </body>
+</html>
