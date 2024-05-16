@@ -118,11 +118,12 @@
                 SP: 50,
                 out: 0,
                 istore: 0,
-                load: 0,
+                load: 5,
                 PV_trend: [],
                 SP_trend: [],
                 out_trend: [],
-                namn: []
+                namn: [],
+                dead_level: [50,50,50,50,50,50,50,50,50,50,50,50,50]
             }
         },
         computed: {
@@ -144,11 +145,13 @@
                 this.namn=[];
             },
             runpid(){
+                this.dead_level.push(this.level);
+                const dlevel = this.dead_level.shift();
                 var pval = (this.SP-this.level)*this.P
                 var ival = pval/10*(1/Number(this.I));
                 this.istore = ival + this.istore;
                 
-                var dfuture = (this.level-this.oldPV)*this.D*10;
+                var dfuture = (dlevel-this.oldPV)*this.D*10;
 
                 if(this.istore > 100){this.istore = 100}
                 if(this.istore < 0){this.istore = 0}
@@ -162,7 +165,7 @@
                 if(this.level_l<0){
                     this.level_l = 0;
                 }
-                this.PV_trend.push(this.level);
+                this.PV_trend.push(dlevel);
                 this.SP_trend.push(Number(this.SP));
                 this.out_trend.push(Number(this.out));
                 this.namn.push("");
