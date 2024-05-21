@@ -18,6 +18,9 @@
         <canvas id="myChart"></canvas>
     </div>
     <div id="app">
+        <button type="button" class="btn btn-secondary" :onclick="rensa">Rensa trend</button>
+        <button type="button" class="btn btn-secondary" :onclick="stop_start">Man/Auto</button>
+        <button type="button" class="btn btn-secondary" :onclick="paus">Pausa</button>
         <table>
             <tr>
                <td>
@@ -47,16 +50,20 @@
             <span class="input-group-text">%</span>
         </div>
         <div class="input-group mb-3">
+            <span class="input-group-text">Cv</span>
+            <input class="form-control" :disabled=auto v-model="out">
+            <span class="input-group-text">%</span>
+        </div>
+        <div class="input-group mb-3">
             <span class="input-group-text">Sp</span>
             <input class="form-control" v-model="SP">
             <span class="input-group-text">%</span>
         </div>
         Utflöde
-        <input type="range" min="0" max="100" value="50" class="slider" v-model="load">
+        <input type="range" min="0" max="100" class="slider" v-model="load">
                 </td>
             </tr>    
         </table>
-        <button type="button" :onclick="rensa">Rensa trend</button>
     </div>
       
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -108,27 +115,30 @@
         data() {
             return {
                 volym_l: 5000,
-                maxflow_ls: 60,
-                maxinflow_ls: 140,
+                maxflow_ls: 350,
+                maxinflow_ls: 400,
                 level_l: 1000,
                 P: 1,
                 I: 1,
                 D: 1,
-                oldPV: 20,
+                oldD: 20,
                 SP: 50,
                 out: 0,
                 istore: 0,
-                load: 5,
+                load: 20,
                 PV_trend: [],
                 SP_trend: [],
                 out_trend: [],
-                namn: [],
-                dead_level: [50,50,50,50,50,50,50,50,50,50,50,50,50]
+                namn: [0],
+                dead_level: [],
+                dead_times: 12,
+                auto: true,
+                pausa: false,
             }
         },
         computed: {
             outflow: function(){
-                return this.maxflow_ls*Number(this.load)/100;
+                return this.maxflow_ls*Number(this.load)/100*Math.pow(this.level/100, 2);
             },
             level: function(){
                 return (100*this.level_l/this.volym_l).toPrecision(4);  
@@ -138,26 +148,38 @@
             }
         },
         methods: {
+            paus(){
+                this.pausa = !this.pausa;
+            },
+            stop_start(){
+                this.auto = !this.auto;
+            },
             rensa(){
                 this.PV_trend=[];
                 this.SP_trend=[];
                 this.out_trend=[];
-                this.namn=[];
+                this.namn=[0];
             },
             runpid(){
+                if(this.pausa){
+                    return
+                }
                 this.dead_level.push(this.level);
                 const dlevel = this.dead_level.shift();
-                var pval = (this.SP-this.level)*this.P
-                var ival = pval/10*(1/Number(this.I));
-                this.istore = ival + this.istore;
+                if(this.auto){
+                    var pval = (this.SP-dlevel)*this.P
+                    var ival = pval/10*(1/Number(this.I));
+                    this.istore = ival + this.istore;
+                    
+                    var dfuture = (pval-this.oldD)*this.D*10;
+
+                    if(this.istore > 100){this.istore = 100}
+                    if(this.istore < 0){this.istore = 0}
+
+                    this.out = (pval + this.istore + dfuture).toPrecision(4);
+                    this.oldD = pval;
+                }
                 
-                var dfuture = (dlevel-this.oldPV)*this.D*10;
-
-                if(this.istore > 100){this.istore = 100}
-                if(this.istore < 0){this.istore = 0}
-
-                this.out = pval + this.istore + dfuture;
-
                 if(this.out > 100){this.out = 100}
                 if(this.out < 0){this.out = 0}
                 this.level_l = this.level_l - this.outflow/10;
@@ -168,16 +190,19 @@
                 this.PV_trend.push(dlevel);
                 this.SP_trend.push(Number(this.SP));
                 this.out_trend.push(Number(this.out));
-                this.namn.push("");
+                this.namn.push((Number(this.namn[this.namn.length-1])+0.1).toPrecision(4));
                 window.chart.data.datasets[0].data = JSON.parse(JSON.stringify(this.PV_trend));
                 window.chart.data.datasets[1].data = JSON.parse(JSON.stringify(this.SP_trend));
                 window.chart.data.datasets[2].data = JSON.parse(JSON.stringify(this.out_trend));
                 chart.data.labels = JSON.parse(JSON.stringify(this.namn));
                 window.chart.update();
-                this.oldPV = this.level;
+                
             }
         },
         created() {
+            for(var i = 0; i < this.dead_times; i++){
+                this.dead_level.push(this.level);
+            }
             window.setInterval(() => {
                 this.runpid();
              }, 100);
