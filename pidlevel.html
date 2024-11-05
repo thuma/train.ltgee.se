@@ -19,13 +19,116 @@
     </div>
     <div id="app">
         <button type="button" class="btn btn-secondary" :onclick="rensa">Rensa trend</button>
-        <button type="button" class="btn btn-secondary" :onclick="stop_start">Man/Auto</button>
-        <button type="button" class="btn btn-secondary" :onclick="paus">Pausa</button>
+        <button v-if="auto" type="button" class="btn btn-secondary" :onclick="stop_start">Manuell styrning</button>
+        <button v-if="!auto" type="button" class="btn btn-secondary" :onclick="stop_start">Starta PID</button>
+        <button v-if="!pausa" type="button" class="btn btn-secondary" :onclick="paus">Pausa</button>
+        <button v-if="pausa" type="button" class="btn btn-secondary" :onclick="paus">Starta</button>
         <table>
             <tr>
                <td>
-                <div style="position: relative;width:200px;height:400px;background-color:white;    border-style: groove;">
-                    <div :style="{height: level+'%'}" style="position: absolute; bottom:0px;width:100%;background-color:blue;"></div>
+                    <svg
+                       width="62.484493mm"
+                       height="78.038681mm"
+                       viewBox="0 0 62.484493 78.038681"
+                       version="1.1"
+                       id="svg1"
+                       xmlns:xlink="http://www.w3.org/1999/xlink"
+                       xmlns="http://www.w3.org/2000/svg"
+                       xmlns:svg="http://www.w3.org/2000/svg">
+                      <g
+                         id="layer1"
+                         transform="translate(-85.247202,-26.19375)">
+                        <path
+                           id="path405"
+                           d="m 127.5,29 v 28 h 20 v -28 h -20 z"
+                           style="fill:blue;stroke:#000000;stroke-width:0.499999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                        <path
+                            id="path405fill"
+                            v-bind:d="'m 127.5,29 v '+((100-level)*28/100)+' h 20 v -'+((100-level)*28/100)+' h -20 z'"
+                            style="fill:lightgray;stroke:none" />
+                        <path
+                           id="path406"
+                           d="m 124.98223,31.443315 h -5.00098"
+                           style="fill:none;stroke:#000000;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                        <path
+                           id="path407"
+                           d="M 137.48255,63.944377 V 58.9434"
+                           style="fill:none;stroke:#000000;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                        <path
+                           id="path264"
+                           d="m 126.53681,88.982674 v 14.999756 h 19.99968 V 88.982674"
+                           style="fill:none;stroke:#000000;stroke-width:0.499999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                        <path
+                           id="path1692"
+                           d="m 92.997963,57.391539 c 4.14091,0 7.499347,3.35844 7.499347,7.500761 0,4.142319 -3.358437,7.49935 -7.499347,7.49935 -4.14231,0 -7.50076,-3.357031 -7.50076,-7.49935 0,-4.142321 3.35845,-7.500761 7.50076,-7.500761 z"
+                           style="fill:none;stroke:#000000;stroke-width:0.499999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                        <path
+                           id="path1693"
+                           d="m 85.497203,64.8923 7.50076,-7.500761 7.499347,7.500761"
+                           style="fill:none;stroke:#000000;stroke-width:0.499999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                        <path
+                           id="path1694"
+                           d="M 93.122143,50.019185 V 55.01876"
+                           style="fill:none;stroke:#000000;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                        <path
+                           id="path1695"
+                           d="m 92.997963,74.891429 v 5.00098 h 37.816277 v 21.223951 l 0.0499,-0.26095"
+                           style="fill:none;stroke:#000000;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                        <path
+                           style="fill:#000000;stroke:#000000;stroke-width:0.252544;stroke-opacity:1"
+                           d="M 120.21334,31.379922 H 93.106678 v -0.143485"
+                           id="path3" />
+                        <path
+                           style="fill:#000000;stroke:#000000;stroke-width:0.22051;stroke-opacity:1"
+                           d="m 93.106678,49.975431 v -18.477573 0"
+                           id="path4" />
+                        <path
+                           id="path2880"
+                           d="m 137.45578,76.43351 2.49978,4.99957 H 134.956 l 4.99956,-10.00054 H 134.956 Z"
+                           style="fill:none;stroke:#000000;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                        <path
+                           id="path2881"
+                           d="M 137.57961,88.93349 V 83.93286"
+                           style="fill:none;stroke:#000000;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                        <path
+                           id="path2882"
+                           d="M 137.45578,68.93275 V 63.93319"
+                           style="fill:none;stroke:#000000;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                        <text
+                           xml:space="preserve"
+                           style="font-size:3.175px;fill:#000000;stroke:#000000;stroke-width:0.264583;stroke-opacity:1"
+                           x="102.84434"
+                           y="65.828377"
+                           id="text6"><tspan
+                             id="tspan6"
+                             style="stroke-width:0.264583"
+                             x="102.84434"
+                             y="65.828377">{{out}}%</tspan></text>
+                        <rect
+                           style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;stroke-opacity:1"
+                           id="rect6"
+                           width="8.8037958"
+                           height="1.8007762"
+                           x="102.04399"
+                           y="67.128929" />
+                        <rect
+                           style="fill:blue;stroke:none;"
+                           id="rect6fill"
+                           v-bind:width="out/100*8.8037958"
+                           height="1.8007762"
+                           x="102.04399"
+                           y="67.128929" />
+                        <rect
+                           style="fill:blue;stroke:none;"
+                           id="flow"
+                           width="3"
+                           v-bind:height="load/100*10"
+                           x="136"
+                           y="89" />
+                      </g>
+                    </svg>
+
+                    <!--<div :style="{height: level+'%'}" style="position: absolute; bottom:0px;width:100%;background-color:blue;"></div>-->
                 </div>
                </td> 
                <td>
@@ -129,11 +232,11 @@
                 PV_trend: [],
                 SP_trend: [],
                 out_trend: [],
-                namn: [0],
+                tidsaxel: [0],
                 dead_level: [],
                 dead_times: 12,
                 auto: true,
-                pausa: false,
+                pausa: true,
             }
         },
         computed: {
@@ -158,7 +261,7 @@
                 this.PV_trend=[];
                 this.SP_trend=[];
                 this.out_trend=[];
-                this.namn=[0];
+                this.tidsaxel=[0];
             },
             runpid(){
                 if(this.pausa){
@@ -190,11 +293,11 @@
                 this.PV_trend.push(dlevel);
                 this.SP_trend.push(Number(this.SP));
                 this.out_trend.push(Number(this.out));
-                this.namn.push((Number(this.namn[this.namn.length-1])+0.1).toPrecision(4));
+                this.tidsaxel.push((Number(this.tidsaxel[this.tidsaxel.length-1])+0.1).toPrecision(4));
                 window.chart.data.datasets[0].data = JSON.parse(JSON.stringify(this.PV_trend));
                 window.chart.data.datasets[1].data = JSON.parse(JSON.stringify(this.SP_trend));
                 window.chart.data.datasets[2].data = JSON.parse(JSON.stringify(this.out_trend));
-                chart.data.labels = JSON.parse(JSON.stringify(this.namn));
+                chart.data.labels = JSON.parse(JSON.stringify(this.tidsaxel));
                 window.chart.update();
                 
             }
