@@ -14,18 +14,10 @@
         }
     }
     </script>
-    <div>
-        <canvas id="myChart"></canvas>
-    </div>
-    <div id="app">
-        <button type="button" class="btn btn-secondary" :onclick="rensa">Rensa trend</button>
-        <button v-if="auto" type="button" class="btn btn-secondary" :onclick="stop_start">Manuell styrning</button>
-        <button v-if="!auto" type="button" class="btn btn-secondary" :onclick="stop_start">Starta PID</button>
-        <button v-if="!pausa" type="button" class="btn btn-secondary" :onclick="paus">Pausa</button>
-        <button v-if="pausa" type="button" class="btn btn-secondary" :onclick="paus">Starta</button>
-        <table>
-            <tr>
-               <td>
+    <div class="container-lg" id="top">
+        <div id="app">
+            <div class="row">
+                <div class="col col-lg-6">
                     <svg
                        width="62.484493mm"
                        height="78.038681mm"
@@ -127,53 +119,59 @@
                            y="89" />
                       </g>
                     </svg>
-
-                    <!--<div :style="{height: level+'%'}" style="position: absolute; bottom:0px;width:100%;background-color:blue;"></div>-->
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-secondary" :onclick="rensa">Rensa trend</button>
+                        <button v-if="auto" type="button" class="btn btn-outline-secondary" :onclick="stop_start">Manuell styrning</button>
+                        <button v-if="!auto" type="button" class="btn btn-outline-secondary" :onclick="stop_start">Starta PID</button>
+                        <button v-if="!pausa" type="button" class="btn btn-outline-secondary" :onclick="paus">Pausa</button>
+                        <button v-if="pausa" type="button" class="btn btn-outline-secondary" :onclick="paus">Starta</button>
+                    </div>
                 </div>
-               </td> 
-               <td>
-        <div class="input-group mb-3">
-            <span class="input-group-text">P</span>
-            <input class="form-control" v-model="P">
-            <span class="input-group-text">faktor</span>
+                <!--<div :style="{height: level+'%'}" style="position: absolute; bottom:0px;width:100%;background-color:blue;"></div>-->
+                <div class="col col-lg-6">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">P</span>
+                        <input class="form-control" v-model="P">
+                        <span class="input-group-text">faktor</span>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">I</span>
+                        <input class="form-control" v-model="I">
+                        <span class="input-group-text">sekunder</span>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">D</span>
+                        <input class="form-control" v-model="D">
+                        <span class="input-group-text">sekunder</span>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Pv</span>
+                        <input class="form-control" disabled="true" v-model="level">
+                        <span class="input-group-text">%</span>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Cv</span>
+                        <input class="form-control" :disabled=auto v-model="out">
+                        <span class="input-group-text">%</span>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Sp</span>
+                        <input class="form-control" v-model="SP">
+                        <span class="input-group-text">%</span>
+                    </div>
+                    Utflöde
+                    <input type="range" min="0" max="100" class="slider" v-model="load">
+                </div>
+            </div>
         </div>
-        <div class="input-group mb-3">
-            <span class="input-group-text">I</span>
-            <input class="form-control" v-model="I">
-            <span class="input-group-text">sekunder</span>
+        <div id="trend">
+            <canvas id="myChart"></canvas>
         </div>
-        <div class="input-group mb-3">
-            <span class="input-group-text">D</span>
-            <input class="form-control" v-model="D">
-            <span class="input-group-text">sekunder</span>
-        </div>
-        <div class="input-group mb-3">
-            <span class="input-group-text">Pv</span>
-            <input class="form-control" disabled="true" v-model="level">
-            <span class="input-group-text">%</span>
-        </div>
-        <div class="input-group mb-3">
-            <span class="input-group-text">Cv</span>
-            <input class="form-control" :disabled=auto v-model="out">
-            <span class="input-group-text">%</span>
-        </div>
-        <div class="input-group mb-3">
-            <span class="input-group-text">Sp</span>
-            <input class="form-control" v-model="SP">
-            <span class="input-group-text">%</span>
-        </div>
-        Utflöde
-        <input type="range" min="0" max="100" class="slider" v-model="load">
-                </td>
-            </tr>    
-        </table>
     </div>
-      
-      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       
     <script>
     const ctx = document.getElementById('myChart');
-    
     var chart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -209,6 +207,10 @@
             }
         }
     });
+    addEventListener("resize", chartfit);
+    function chartfit(){
+        chart.resize();
+    }
     </script>
 
     <script type="module">
