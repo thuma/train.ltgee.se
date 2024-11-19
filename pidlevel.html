@@ -125,6 +125,8 @@
                         <button v-if="!auto" type="button" class="btn btn-outline-secondary" :onclick="stop_start">Starta PID</button>
                         <button v-if="!pausa" type="button" class="btn btn-outline-secondary" :onclick="paus">Pausa</button>
                         <button v-if="pausa" type="button" class="btn btn-outline-secondary" :onclick="paus">Starta</button>
+                        <button v-if="!loadsim" type="button" class="btn btn-outline-secondary" :onclick="load_man">Starta störning</button>
+                        <button v-if="loadsim" type="button" class="btn btn-outline-secondary" :onclick="load_man">Stoppa störning</button>
                     </div>
                 </div>
                 <!--<div :style="{height: level+'%'}" style="position: absolute; bottom:0px;width:100%;background-color:blue;"></div>-->
@@ -159,60 +161,29 @@
                         <input class="form-control" v-model="SP">
                         <span class="input-group-text">%</span>
                     </div>
-                    Utflöde
-                    <input type="range" min="0" max="100" class="slider" v-model="load">
+                    <div>
+                        <label class="form-label">Utflöde</label>
+                        <input type="range" min="0" max="100" class="form-range" v-model="load">
+                    </div>
                 </div>
             </div>
-        </div>
-        <div id="trend">
-            <canvas id="myChart"></canvas>
+            <div id="trend" v-once="">
+                <canvas id="myChart"></canvas>
+            </div>
+            <div>
+                    <div>
+                        <label class="form-label">Diagramets maxbredd [{{trendsize}} minuter]</label>
+                        <input type="range" min="1" max="10" class="form-range" v-model="trendsize">
+                    </div>
+                    <div>
+                        <label class="form-label">Scrolla i diagrrammet [{{trendposition/10}}s]</label>
+                        <input type="range" min="0" v-bind:max="trendposmax" class="form-range" v-model="trendposition">
+                    </div>
+            </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       
-    <script>
-    const ctx = document.getElementById('myChart');
-    var chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-        labels: [],
-        datasets: [
-            {   label: 'Pv',
-                data: [],
-                borderWidth: 1,
-                tension: 0.4
-            },
-            {   label: 'Sp',
-                data: [],
-                borderWidth: 1,
-                tension: 0.4
-            },
-            {   label: 'Cv',
-                data: [],
-                borderWidth: 1,
-                tension: 0.4
-            }],
-        },
-        options: {
-            animation: false,
-            pointStyle: false,
-            interaction: {
-                intersect: false,
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    suggestedMax: 100
-                }
-            }
-        }
-    });
-    addEventListener("resize", chartfit);
-    function chartfit(){
-        chart.resize();
-    }
-    </script>
-
     <script type="module">
     import { createApp } from 'vue'
 
@@ -231,6 +202,8 @@
                 out: 0,
                 istore: 0,
                 load: 20,
+                trendsize:2,
+                trendposition:0,
                 PV_trend: [],
                 SP_trend: [],
                 out_trend: [],
@@ -239,6 +212,7 @@
                 dead_times: 12,
                 auto: true,
                 pausa: true,
+                loadsim: false,
             }
         },
         computed: {
@@ -250,9 +224,23 @@
             },
             inflow: function() {
                 return this.out/100 * this.maxinflow_ls;
+            },
+            trendlen: function(){
+                return this.PV_trend.length;
+            },
+            trendposmax: function(){
+                const maxpos = this.trendlen-(this.trendsize*600);
+                if (maxpos > 0){
+                    return maxpos;
+                }
+                return 0;
             }
+            
         },
         methods: {
+            load_man(){
+                this.loadsim = !this.loadsim;
+            },
             paus(){
                 this.pausa = !this.pausa;
             },
@@ -295,14 +283,78 @@
                 this.PV_trend.push(dlevel);
                 this.SP_trend.push(Number(this.SP));
                 this.out_trend.push(Number(this.out));
-                this.tidsaxel.push((Number(this.tidsaxel[this.tidsaxel.length-1])+0.1).toPrecision(4));
-                window.chart.data.datasets[0].data = JSON.parse(JSON.stringify(this.PV_trend));
-                window.chart.data.datasets[1].data = JSON.parse(JSON.stringify(this.SP_trend));
-                window.chart.data.datasets[2].data = JSON.parse(JSON.stringify(this.out_trend));
-                chart.data.labels = JSON.parse(JSON.stringify(this.tidsaxel));
-                window.chart.update();
+                this.tidsaxel.push((Number(this.tidsaxel[this.tidsaxel.length-1])+0.1));
+
+                if(this.loadsim){
+                    let speed=3;
+                    let scale=45;
+                    this.load = 5+Math.abs(Math.sin(Number(this.tidsaxel.slice(-1))/speed)*scale);
+                }
+
+                let start
+                let end
+
+                if(Number(this.trendposition)+10>this.trendposmax){
+                    start = Number(this.trendsize)*-600;
+                    end = this.trendlen;
+                    this.trendposition = this.trendposmax;
+                } else {
+                    start = this.trendposition;
+                    end = Number(this.trendsize)*600;
+                }
                 
+                function totime(sec){
+                    return sec.toPrecision(4)+"s";
+                }
+
+                window.chart.data.datasets[0].data = JSON.parse(JSON.stringify(this.PV_trend)).splice(start, end);
+                window.chart.data.datasets[1].data = JSON.parse(JSON.stringify(this.SP_trend)).splice(start, end);
+                window.chart.data.datasets[2].data = JSON.parse(JSON.stringify(this.out_trend)).splice(start, end);
+                chart.data.labels = JSON.parse(JSON.stringify(this.tidsaxel)).splice(start, end).map(totime);
+                window.chart.update();
             }
+        },
+        mounted() {
+            const ctx = document.getElementById('myChart');
+            window.chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                labels: [],
+                datasets: [
+                    {   label: 'Pv',
+                        data: [],
+                        borderWidth: 1,
+                        tension: 0.4
+                    },
+                    {   label: 'Sp',
+                        data: [],
+                        borderWidth: 1,
+                        tension: 0.4
+                    },
+                    {   label: 'Cv',
+                        data: [],
+                        borderWidth: 1,
+                        tension: 0.4
+                    }],
+                },
+                options: {
+                    animation: false,
+                    pointStyle: false,
+                    interaction: {
+                        intersect: false,
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: 100
+                        }
+                    }
+                }
+            });
+            function chartfit(){
+                window.chart.resize();
+            }
+            addEventListener("resize", chartfit);
         },
         created() {
             for(var i = 0; i < this.dead_times; i++){
@@ -311,6 +363,7 @@
             window.setInterval(() => {
                 this.runpid();
              }, 100);
+
         },
     }).mount('#app')
     </script>
