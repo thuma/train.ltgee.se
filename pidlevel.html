@@ -173,7 +173,7 @@
             <div>
                     <div>
                         <label class="form-label">Diagramets maxbredd [{{trendsize}} minuter]</label>
-                        <input type="range" min="1" max="10" class="form-range" v-model="trendsize">
+                        <input type="range" min="0.5" max="10" step="0.5" class="form-range" v-model="trendsize">
                     </div>
                     <div>
                         <label class="form-label">Scrolla i diagrrammet [{{trendposition/10}}s]</label>
@@ -207,7 +207,6 @@
                 PV_trend: [],
                 SP_trend: [],
                 out_trend: [],
-                tidsaxel: [0],
                 dead_level: [],
                 dead_times: 12,
                 auto: true,
@@ -234,6 +233,14 @@
                     return maxpos;
                 }
                 return 0;
+            },
+            tidsaxel: function(){
+                var tider = [];
+                var antal = this.trendsize;
+                for(var i = 0; i<Number(antal)*600;i++){
+                    tider.push(i*0.1);
+                }
+                return tider;
             }
             
         },
@@ -251,7 +258,6 @@
                 this.PV_trend=[];
                 this.SP_trend=[];
                 this.out_trend=[];
-                this.tidsaxel=[0];
             },
             runpid(){
                 if(this.pausa){
@@ -283,12 +289,11 @@
                 this.PV_trend.push(dlevel);
                 this.SP_trend.push(Number(this.SP));
                 this.out_trend.push(Number(this.out));
-                this.tidsaxel.push((Number(this.tidsaxel[this.tidsaxel.length-1])+0.1));
 
                 if(this.loadsim){
-                    let speed=3;
-                    let scale=45;
-                    this.load = 5+Math.abs(Math.sin(Number(this.tidsaxel.slice(-1))/speed)*scale);
+                    let timepos=Number(this.trendlen);
+                    let scale=45*Math.sin(timepos/26);
+                    this.load=+55+Math.sin(timepos/15)*scale;
                 }
 
                 let start
@@ -310,7 +315,7 @@
                 window.chart.data.datasets[0].data = JSON.parse(JSON.stringify(this.PV_trend)).splice(start, end);
                 window.chart.data.datasets[1].data = JSON.parse(JSON.stringify(this.SP_trend)).splice(start, end);
                 window.chart.data.datasets[2].data = JSON.parse(JSON.stringify(this.out_trend)).splice(start, end);
-                chart.data.labels = JSON.parse(JSON.stringify(this.tidsaxel)).splice(start, end).map(totime);
+                chart.data.labels = JSON.parse(JSON.stringify(this.tidsaxel)).map(totime);
                 window.chart.update();
             }
         },
