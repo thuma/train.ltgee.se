@@ -7,6 +7,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     </head>
     <body>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="importmap">
     {
         "imports": {
@@ -14,6 +15,12 @@
         }
     }
     </script>
+    <style>
+    .clickable{
+        cursor: pointer;
+        cursor: hand;
+    }
+    </style>
     <div class="container-lg" id="top">
         <div id="app">
             <div class="row">
@@ -33,15 +40,21 @@
                         <path
                            id="path405"
                            d="m 127.5,29 v 28 h 20 v -28 h -20 z"
-                           style="fill:blue;stroke:#000000;stroke-width:0.499999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                           class="clickable"
+                           style="fill:blue;stroke:#000000;stroke-width:0.499999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                            class="clickable"
+                            v-on:click="info('prossesstank.webp')"
+                           />
                         <path
                             id="path405fill"
                             v-bind:d="'m 127.5,29 v '+((100-level)*28/100)+' h 20 v -'+((100-level)*28/100)+' h -20 z'"
-                            style="fill:lightgray;stroke:none" />
+                            style="fill:lightgray;stroke:none"
+                            v-on:click="info('prossesstank.webp')"
+                            />
                         <path
                            id="path406"
                            d="m 124.98223,31.443315 h -5.00098"
-                           style="fill:none;stroke:#000000;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                           style="fill:none;stroke:#000000;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"/>
                         <path
                            id="path407"
                            d="M 137.48255,63.944377 V 58.9434"
@@ -53,7 +66,10 @@
                         <path
                            id="path1692"
                            d="m 92.997963,57.391539 c 4.14091,0 7.499347,3.35844 7.499347,7.500761 0,4.142319 -3.358437,7.49935 -7.499347,7.49935 -4.14231,0 -7.50076,-3.357031 -7.50076,-7.49935 0,-4.142321 3.35845,-7.500761 7.50076,-7.500761 z"
-                           style="fill:none;stroke:#000000;stroke-width:0.499999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                           class="clickable"
+                           style="fill:#ffffff;stroke:#000000;stroke-width:0.499999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                           v-on:click="info('cpupmp.webp')"
+                           />
                         <path
                            id="path1693"
                            d="m 85.497203,64.8923 7.50076,-7.500761 7.499347,7.500761"
@@ -77,7 +93,10 @@
                         <path
                            id="path2880"
                            d="m 137.45578,76.43351 2.49978,4.99957 H 134.956 l 4.99956,-10.00054 H 134.956 Z"
-                           style="fill:none;stroke:#000000;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+                           style="fill:#ffffff;stroke:#000000;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                           class="clickable"
+                           v-on:click="info('valve.jpg')"
+                           />
                         <path
                            id="path2881"
                            d="M 137.57961,88.93349 V 83.93286"
@@ -172,7 +191,7 @@
             </div>
             <div>
                     <div>
-                        <label class="form-label">Diagramets maxbredd [{{trendsize}} minuter]</label>
+                        <label class="form-label">Diagramets bredd [{{trendsize}} minuter]</label>
                         <input type="range" min="0.5" max="10" step="0.5" class="form-range" v-model="trendsize">
                     </div>
                     <div>
@@ -245,6 +264,13 @@
             
         },
         methods: {
+            info(typ){
+                Swal.fire({
+                    imageUrl: "imgs/pid/"+typ,
+                    imageHeight: 320,
+                    imageAlt: "Symbolen"
+                });
+            },
             load_man(){
                 this.loadsim = !this.loadsim;
             },
