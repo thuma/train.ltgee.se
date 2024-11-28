@@ -316,10 +316,22 @@
 
                         newout = (pval + this.istore + dfuture);
                         this.oldD = pval;
+
+                        if(Math.abs(newout-oldout)>2.5){
+                            var out_diff = newout-oldout;
+                            if(out_diff<0){
+                                newout=oldout-2.5;
+                            } else {
+                                newout=oldout+2.5;
+                            }
+                        }
+                        if(newout > 100){newout = 100}
+                        if(newout < 0){newout = 0}
+                        this.out = newout.toPrecision(4);
+                    } else {
+                        newout = this.out;
                     }
                     
-                    if(newout > 100){newout = 100}
-                    if(newout < 0){newout = 0}
                     this.level_l = this.level_l - this.outflow/10;
                     this.level_l = this.level_l + this.inflow/10;
                     if(this.level_l<0){
@@ -328,16 +340,6 @@
                     this.PV_trend.push(dlevel);
                     this.SP_trend.push(Number(this.SP));
                     this.out_trend.push(Number(newout));
-                    
-                    if(Math.abs(newout-oldout)>2.5){
-                        var out_diff = newout-oldout;
-                        if(out_diff<0){
-                            newout=oldout-2.5;
-                        } else {
-                            newout=oldout+2.5;
-                        }
-                    }
-                    this.out = newout.toPrecision(4);
 
                     if(this.loadsim){
                         let timepos=Number(this.trendlen);
