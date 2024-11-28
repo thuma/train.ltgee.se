@@ -198,6 +198,9 @@
                         <label class="form-label">Scrolla i diagrrammet [{{trendposition/10}}s]</label>
                         <input type="range" min="0" v-bind:max="trendposmax" class="form-range" v-model="trendposition">
                     </div>
+                    <div>
+                        Totalavikelse {{ diff.toPrecision(3) }} %s
+                    </div>
             </div>
         </div>
     </div>
@@ -231,6 +234,7 @@
                 auto: true,
                 pausa: true,
                 loadsim: false,
+                diff: 0,
             }
         },
         computed: {
@@ -261,7 +265,6 @@
                 }
                 return tider;
             }
-            
         },
         methods: {
             info(typ){
@@ -285,43 +288,63 @@
                 this.SP_trend=[];
                 this.out_trend=[];
             },
+            totaldiff(trenda,tendb){
+                var totalt = 0;
+                for(var i = 0; i < trenda.length; i++){
+                    totalt = totalt + Math.abs(trenda[i]-tendb[i]);
+                }
+                return totalt/10;
+            },
             runpid(){
-                if(this.pausa){
-                    return
-                }
-                this.dead_level.push(this.level);
-                const dlevel = this.dead_level.shift();
-                if(this.auto){
-                    var pval = (this.SP-dlevel)*this.P
-                    var ival = pval/10*(1/Number(this.I));
-                    this.istore = ival + this.istore;
+                if(!this.pausa){
+                    this.dead_level.push(this.level);
+                    const dlevel = this.dead_level.shift();
+                    const oldout = Number(this.out);
+                    var newout = 0;
+                    if(this.auto){
+                        var pval = (this.SP-dlevel)*this.P
+                        if(Number(this.I)<0.1){
+                            this.istore = 0;
+                        } else {
+                            var ival = pval/10*(1/Number(this.I));
+                            this.istore = ival + this.istore;
+                            if(this.istore > 100){this.istore = 100}
+                            if(this.istore < 0){this.istore = 0}
+                        }
+
+                        var dfuture = (pval-this.oldD)*this.D*10;
+
+                        newout = (pval + this.istore + dfuture);
+                        this.oldD = pval;
+                    }
                     
-                    var dfuture = (pval-this.oldD)*this.D*10;
+                    if(newout > 100){newout = 100}
+                    if(newout < 0){newout = 0}
+                    this.level_l = this.level_l - this.outflow/10;
+                    this.level_l = this.level_l + this.inflow/10;
+                    if(this.level_l<0){
+                        this.level_l = 0;
+                    }
+                    this.PV_trend.push(dlevel);
+                    this.SP_trend.push(Number(this.SP));
+                    this.out_trend.push(Number(newout));
+                    
+                    if(Math.abs(newout-oldout)>2.5){
+                        var out_diff = newout-oldout;
+                        if(out_diff<0){
+                            newout=oldout-2.5;
+                        } else {
+                            newout=oldout+2.5;
+                        }
+                    }
+                    this.out = newout.toPrecision(4);
 
-                    if(this.istore > 100){this.istore = 100}
-                    if(this.istore < 0){this.istore = 0}
-
-                    this.out = (pval + this.istore + dfuture).toPrecision(4);
-                    this.oldD = pval;
+                    if(this.loadsim){
+                        let timepos=Number(this.trendlen);
+                        let scale=45*Math.sin(timepos/26);
+                        this.load=+55+Math.sin(timepos/15)*scale;
+                    }
                 }
-                
-                if(this.out > 100){this.out = 100}
-                if(this.out < 0){this.out = 0}
-                this.level_l = this.level_l - this.outflow/10;
-                this.level_l = this.level_l + this.inflow/10;
-                if(this.level_l<0){
-                    this.level_l = 0;
-                }
-                this.PV_trend.push(dlevel);
-                this.SP_trend.push(Number(this.SP));
-                this.out_trend.push(Number(this.out));
-
-                if(this.loadsim){
-                    let timepos=Number(this.trendlen);
-                    let scale=45*Math.sin(timepos/26);
-                    this.load=+55+Math.sin(timepos/15)*scale;
-                }
-
                 let start
                 let end
 
@@ -333,7 +356,7 @@
                     start = this.trendposition;
                     end = Number(this.trendsize)*600;
                 }
-                
+
                 function totime(sec){
                     return sec.toPrecision(4)+"s";
                 }
@@ -341,6 +364,7 @@
                 window.chart.data.datasets[0].data = JSON.parse(JSON.stringify(this.PV_trend)).splice(start, end);
                 window.chart.data.datasets[1].data = JSON.parse(JSON.stringify(this.SP_trend)).splice(start, end);
                 window.chart.data.datasets[2].data = JSON.parse(JSON.stringify(this.out_trend)).splice(start, end);
+                this.diff = this.totaldiff(window.chart.data.datasets[0].data,window.chart.data.datasets[1].data);
                 chart.data.labels = JSON.parse(JSON.stringify(this.tidsaxel)).map(totime);
                 window.chart.update();
             }
