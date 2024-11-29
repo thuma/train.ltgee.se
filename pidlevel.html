@@ -114,7 +114,7 @@
                              id="tspan6"
                              style="stroke-width:0.264583"
                              x="102.84434"
-                             y="65.828377">{{out}}%</tspan></text>
+                             y="65.828377">{{outp}}%</tspan></text>
                         <rect
                            style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.264583;stroke-dasharray:none;stroke-opacity:1"
                            id="rect6"
@@ -125,7 +125,7 @@
                         <rect
                            style="fill:blue;stroke:none;"
                            id="rect6fill"
-                           v-bind:width="out/100*8.8037958"
+                           v-bind:width="outp/100*8.8037958"
                            height="1.8007762"
                            x="102.04399"
                            y="67.128929" />
@@ -152,32 +152,32 @@
                 <div class="col col-lg-6">
                     <div class="input-group mb-3">
                         <span class="input-group-text">P</span>
-                        <input class="form-control" v-model="P">
+                        <input class="form-control" type="number" v-model="P">
                         <span class="input-group-text">faktor</span>
                     </div>
                     <div class="input-group mb-3">
                         <span class="input-group-text">I</span>
-                        <input class="form-control" v-model="I">
+                        <input class="form-control" type="number" v-model="I">
                         <span class="input-group-text">sekunder</span>
                     </div>
                     <div class="input-group mb-3">
                         <span class="input-group-text">D</span>
-                        <input class="form-control" v-model="D">
+                        <input class="form-control" type="number" v-model="D">
                         <span class="input-group-text">sekunder</span>
                     </div>
                     <div class="input-group mb-3">
                         <span class="input-group-text">Pv</span>
-                        <input class="form-control" disabled="true" v-model="level">
+                        <input class="form-control" type="number" disabled="true" v-model="level">
                         <span class="input-group-text">%</span>
                     </div>
                     <div class="input-group mb-3">
                         <span class="input-group-text">Cv</span>
-                        <input class="form-control" :disabled=auto v-model="out">
+                        <input class="form-control" type="number" :disabled=auto v-model="out">
                         <span class="input-group-text">%</span>
                     </div>
                     <div class="input-group mb-3">
                         <span class="input-group-text">Sp</span>
-                        <input class="form-control" v-model="SP">
+                        <input class="form-control" type="number" v-model="SP">
                         <span class="input-group-text">%</span>
                     </div>
                     <div>
@@ -244,8 +244,12 @@
             level: function(){
                 return (100*this.level_l/this.volym_l).toPrecision(4);  
             },
+            outp: function(){
+                return Number(this.out) || 0;
+            },
             inflow: function() {
-                return this.out/100 * this.maxinflow_ls;
+                const out = Number(this.out) || 0;
+                return out/100 * this.maxinflow_ls;
             },
             trendlen: function(){
                 return this.PV_trend.length;
@@ -299,7 +303,7 @@
                 if(!this.pausa){
                     this.dead_level.push(this.level);
                     const dlevel = this.dead_level.shift();
-                    const oldout = Number(this.out);
+                    const oldout = Number(this.out) || 0;
                     var newout = 0;
                     if(this.auto){
                         var pval = (this.SP-dlevel)*this.P
@@ -329,7 +333,7 @@
                         if(newout < 0){newout = 0}
                         this.out = newout.toPrecision(4);
                     } else {
-                        newout = this.out;
+                        newout = this.out || 0; 
                     }
                     
                     this.level_l = this.level_l - this.outflow/10;
