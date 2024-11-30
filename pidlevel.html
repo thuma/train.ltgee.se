@@ -242,7 +242,7 @@
                 return this.maxflow_ls*Number(this.load)/100*Math.pow(this.level/100, 2);
             },
             level: function(){
-                return (100*this.level_l/this.volym_l).toPrecision(4);  
+                return Number((100*this.level_l/this.volym_l).toPrecision(4)) || 0;  
             },
             outp: function(){
                 return Number(this.out) || 0;
