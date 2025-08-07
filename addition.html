@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/elschema.css">
+
+    <script src="bootstrap.min.js"></script>
+    <script src="vue.js"></script>
+    <title>Ohms Addition</title>
+  </head>
+  <body>
+
+  <div id="app" class="container" v-if="email">
+    <h1>Träning Addition</h1>
+    <p>
+    I denna övning får du träna på addition.
+    </p>
+    <div>
+      <p>Vad är {{A}} + {{B}}?</p>
+      <div>Svar:<input class="form-control" type="number" v-model="svar"></div>
+      <div v-if="status == true" class="alert alert-success">
+        Grattis! Du klarade frågan!<br>
+        <button class="btn btn-primary" v-on:click="next">Nästa övning</button><br>
+        <img class="rounded" width="320" v-bind:src="successImage()">
+      </div>
+      <button class="btn btn-primary" v-on:click="kolla">Kolla om svaret är rätt.</button>
+      <div class="progress mt-2">
+        <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/15 * 100)+"%"}'></div>
+      </div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>
+    <div v-if="antal >= 15" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="handinlink()">
+      </div>
+    </div>
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+  Vue.use(Success);
+  Vue.use(SaveAndRestore);
+  var app = new Vue({
+    el: '#app',
+    data: {
+      A: 1,
+      B: 1,
+      questions: [],
+      svar: "",
+      poang: 1,
+      ksvar: "",
+      antal:-1,
+      taskname: "Addition"
+    },
+    computed: {
+      status: function () {
+        if (this.ksvar == this.S){
+          return true;
+        }
+        else {
+          return false;
+        }
+      },
+      S: function(){
+        return this.A+this.B;
+      }
+    },
+    methods: {
+      kolla: function(){
+         if(!(this.S == this.svar)){
+           alert("Svaret är inte rätt");
+           this.poang = this.poang/2;
+         }
+         this.ksvar = this.svar;
+      },
+      next: function () {
+        this.questions.push(this.veta);
+        this.A=(Math.floor(Math.random() * 9)+1);
+        this.B=(Math.floor(Math.random() * 9)+1);
+        this.antal = this.antal + this.poang;
+        this.svar="";
+        this.ksvar="";
+        this.poang=1;
+        this.save();
+      }
+    }
+  })
+  </script>
+  
+</html>
+
