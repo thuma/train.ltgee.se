@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="19.303143mm"
+   height="16.640697mm"
+   viewBox="0 0 19.303143 16.640697"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="centralutanpåliggande.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.73584456"
+     inkscape:cx="42.807954"
+     inkscape:cy="270.43755"
+     inkscape:window-width="1920"
+     inkscape:window-height="1029"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Lager 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-93.927086,-76.993749)">
+    <g
+       fill="none"
+       stroke="#000000"
+       stroke-opacity="1"
+       stroke-width="1"
+       stroke-linecap="square"
+       stroke-linejoin="miter"
+       stroke-miterlimit="2"
+       transform="matrix(0,-0.27187525,0.27187525,0,103.57855,88.061004)"
+       font-family="Sans"
+       font-size="10px"
+       font-weight="400"
+       font-style="normal"
+       id="g138">
+      <polyline
+         fill="none"
+         vector-effect="none"
+         points="22,-22 32,-12 "
+         id="polyline137" />
+      <polyline
+         fill="none"
+         vector-effect="none"
+         points="26,-26 36,-16 "
+         id="polyline138" />
+    </g>
+    <g
+       fill="none"
+       stroke="#000000"
+       stroke-opacity="1"
+       stroke-width="1"
+       stroke-linecap="square"
+       stroke-linejoin="bevel"
+       transform="matrix(0,-0.27187525,0.27187525,0,103.57855,88.061004)"
+       font-family="Sans"
+       font-size="10px"
+       font-weight="400"
+       font-style="normal"
+       id="g139">
+      <polyline
+         fill="none"
+         vector-effect="none"
+         points="0,0 30,-30 40,-20 "
+         id="polyline139" />
+    </g>
+    <g
+       fill="#ffffff"
+       fill-opacity="1"
+       stroke="#000000"
+       stroke-opacity="1"
+       stroke-width="1"
+       stroke-linecap="square"
+       stroke-linejoin="bevel"
+       transform="matrix(0,-0.27187525,0.27187525,0,103.57855,88.061004)"
+       font-family="Sans"
+       font-size="10px"
+       font-weight="400"
+       font-style="normal"
+       id="g140">
+      <circle
+         cx="0"
+         cy="0"
+         r="10"
+         id="circle139" />
+    </g>
+    <g
+       fill="none"
+       stroke="#000000"
+       stroke-opacity="1"
+       stroke-width="1"
+       stroke-linecap="square"
+       stroke-linejoin="miter"
+       stroke-miterlimit="2"
+       transform="matrix(0,0.27187525,-0.27187525,0,106.29741,90.779757)"
+       font-family="Sans"
+       font-size="10px"
+       font-weight="400"
+       font-style="normal"
+       id="g144">
+      <path
+         vector-effect="none"
+         fill-rule="evenodd"
+         d="M 0,-25 H 10 V 45 H 0 v -70"
+         id="path143" />
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <script src="bootstrap.min.js"></script>
+    <script src="vue.js"></script>
+    <title>Elschemasymboler med sensorer</title>
+    <style>
+     pre {
+       margin:0;
+     }
+     td {
+       font-size: 13px;
+     }
+    </style>
+  </head>
+  <body>
+
+  <div id="app" class="container" v-if="email">
+    <h1>Installaltionssymboler</h1>
+    <p> I denna övning får du träna på att känna igen de mest grundläggande elinstallationssymbolerna.
+    </p>
+    <img style="width: 127px;" v-bind:src="'imgs/installationssymboler/'+circuit.file">
+    <div>
+      <br>
+      <p>Vilken symbol visas på bilden?</p>
+      <div class="input-group mb-3">
+        <div class="input-group-preend">
+          <span class="input-group-text" >Symbolen är </span>
+        </div>
+        <select v-model="svar" class="custom-select">
+          <option selected>Välj...</option>
+          <option v-for="c in abcord" v-bind:value="c.file">{{c.name}}</option>
+        </select>
+      </div>
+      <button v-on:click="check" class="btn btn-primary">Kontrollera svaren.</button><br>
+      <div v-if="right" class="alert alert-success">
+        Grattis! Du klarade frågan!<br>
+        <button class="btn btn-primary" v-on:click="next">Nästa övning</button><br>
+        <img class="rounded" width="320" v-bind:src="successImage()">
+      </div>
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/34 * 100)+"%"}'></div>
+    </div>
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>    <div v-if="antal >= 34" class="alert alert-success" >
+      Nu har du klarat ett träningsvarv. <br>
+      Lämna in denna länk på google classroom:<br>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <button class="btn btn-primary" v-on:click="copylink()" type="button">Kopiera länk</button>
+        </div>
+        <input id="correctlink" class="form-control" v-bind:value="handinlink()">
+      </div>
+    </div>
+
+  </div>
+  </body>
+  <script src="common.js"></script>
+  <script>
+  Vue.use(Success);
+  Vue.use(SaveAndRestore);
+    var app = new Vue({
+      el: '#app',
+      data: {
+        svar: "",
+        tosvar: "",
+        circuitid: 0,
+        circuits:[
+        {"file":"brytare3pol.svg","name":"Trepolig strömbrytare"},
+        {"file":"brytare.svg","name":"Enplig strömbrytare"},
+        {"file":"centralinfalld.svg","name":"Elcentral infälld"},
+        {"file":"centralutanpaliggande.svg","name":"Elcentral utanpåliggande"},
+        {"file":"dimmer.svg","name":"Dimmer"},
+        {"file":"jord.svg","name":"Jordning"},
+        {"file":"kopplingsdosa.svg","name":"Kopplingsdosa"},
+        {"file":"kron.svg","name":"Kronbrytare"},
+        {"file":"lampa.svg","name":"Lampa"},
+        {"file":"lamputtag.svg","name":"Lamputtag jordat"},
+        {"file":"lysror.svg","name":"Lysrörsarmatur"},
+        {"file":"spotlight.svg","name":"Spotlight"},
+        {"file":"teledata.svg","name":"Tele/data uttag"},
+        {"file":"trapp.svg","name":"Trappbrytare"},
+        {"file":"ulopplampa.svg","name":"Utlopp för lamparmatur"},
+        {"file":"ulopplampavagg.svg","name":"Utlopp för lamparmatur på vägg"},
+        {"file":"utag2.svg","name":"Två uttag"},
+        {"file":"uttag3.svg","name":"Tre uttag"},
+        {"file":"uttagjordat.svg","name":"Jordat eluttag"},
+        {"file":"uttagjordtackt.svg","name":"Jordat eluttag täckt"},
+        {"file":"uttagstrafo.svg","name":"Uttag med skyddstranformator"},
+        {"file":"uttagtackt.svg","name":"Täckt elluttag"},
+        {"file":"utta.svg","name":"Eluttag"},
+        ],
+        circuit:{"file":"brytare3pol.svg","name":"Trepolig strömbrytare"},
+        antal:-1,
+        questions:[],
+        poang: 1,
+        taskname: "Installationssymboler"
+      },
+      computed: {
+        right: function () {
+          return this.tosvar == this.circuit.file;
+        },
+        abcord: function(){
+          function sortera(a,b){
+            if (a["name"] > b["name"]) return 1;
+             if (a["name"] < b["name"]) return -1;
+             return 0;
+          }
+          return this.circuits.slice().sort(sortera);
+        }
+      },
+      created() {
+        for (i = this.circuits.length -1; i > 0; i--) {
+          j = Math.floor(Math.random() * i);
+          k = this.circuits[i];
+          this.circuits[i] = this.circuits[j];
+          this.circuits[j] = k;
+        }
+      },
+      methods: {
+        check: function () {
+          this.tosvar = JSON.parse(JSON.stringify(this.svar));
+          if (!this.right){
+            alert("Svaret stämmer inte");
+            this.poang = this.poang/2;
+          }
+          if (this.antal < 0){
+            this.antal = 0;
+          }
+        },
+        next: function () {
+          if( this.circuitid > this.circuits.length-2){
+            this.circuitid = 0;
+          } else {
+            this.circuitid++;
+          }
+          this.circuit = this.circuits[this.circuitid];
+          this.svar = "";
+          this.tosvar = JSON.parse(JSON.stringify(this.svar));
+          this.antal += this.poang;
+          this.poang = 1;
+          this.questions.push(this.circuitid);
+          this.save();
+        }
+      }
+    })
+  </script>
+  
+</html>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="6.9037037mm"
+   height="7.2046943mm"
+   viewBox="0 0 6.9037037 7.2046943"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="uttag3.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.73584456"
+     inkscape:cx="102.60319"
+     inkscape:cy="260.92467"
+     inkscape:window-width="1920"
+     inkscape:window-height="1029"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Lager 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-78.052082,-79.374999)">
+    <g
+       fill="none"
+       stroke="#000000"
+       stroke-opacity="1"
+       stroke-width="1"
+       stroke-linecap="square"
+       stroke-linejoin="bevel"
+       transform="matrix(0.27187525,0,0,0.27187525,80.906772,81.685939)"
+       font-family="Sans"
+       font-size="10px"
+       font-weight="400"
+       font-style="normal"
+       id="g34">
+      <path
+         vector-effect="none"
+         fill-rule="evenodd"
+         d="m -10,17.5 c 0,-5.5228 4.47715,-10 10,-10 5.52285,0 10,4.4772 10,10"
+         id="path33" />
+    </g>
+    <g
+       fill="none"
+       stroke="#000000"
+       stroke-opacity="1"
+       stroke-width="1"
+       stroke-linecap="square"
+       stroke-linejoin="miter"
+       stroke-miterlimit="2"
+       transform="matrix(0.27187525,0,0,0.27187525,80.906772,81.685939)"
+       font-family="Sans"
+       font-size="10px"
+       font-weight="400"
+       font-style="normal"
+       id="g35">
+      <polyline
+         fill="none"
+         vector-effect="none"
+         points="0,7 0,-8 "
+         id="polyline34" />
+    </g>
+    <g
+       fill="none"
+       stroke="#000000"
+       stroke-opacity="1"
+       stroke-width="1"
+       stroke-linecap="square"
+       stroke-linejoin="bevel"
+       transform="matrix(0.27187525,0,0,0.27187525,83.897357,81.142194)"
+       font-family="Sans"
+       font-size="10px"
+       font-weight="400"
+       font-style="normal"
+       id="g36">
+      <text
+         fill="#000000"
+         fill-opacity="1"
+         stroke="none"
+         xml:space="preserve"
+         x="0"
+         y="9"
+         font-family="'Sans Serif'"
+         font-size="7px"
+         font-weight="400"
+         font-style="normal"
+         id="text35">3</text>
+    </g>
+    <g
+       fill="none"
+       stroke="#000000"
+       stroke-opacity="1"
+       stroke-width="1"
+       stroke-linecap="square"
+       stroke-linejoin="miter"
+       stroke-miterlimit="2"
+       transform="matrix(0.27187525,0,0,0.27187525,80.906772,81.685939)"
+       font-family="Sans"
+       font-size="10px"
+       font-weight="400"
+       font-style="normal"
+       id="g37">
+      <polyline
+         fill="none"
+         vector-effect="none"
+         points="10,9 2,15 "
+         id="polyline36" />
+    </g>
+  </g>
+</svg>

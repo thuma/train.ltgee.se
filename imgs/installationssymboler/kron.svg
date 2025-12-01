@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="22.13451mm"
+   height="11.203193mm"
+   viewBox="0 0 22.13451 11.203193"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   sodipodi:docname="kron.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.73584456"
+     inkscape:cx="103.96217"
+     inkscape:cy="216.75774"
+     inkscape:window-width="1240"
+     inkscape:window-height="768"
+     inkscape:window-x="323"
+     inkscape:window-y="61"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Lager 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-77.787499,-91.016667)">
+    <g
+       fill="none"
+       stroke="#000000"
+       stroke-opacity="1"
+       stroke-width="1"
+       stroke-linecap="square"
+       stroke-linejoin="miter"
+       stroke-miterlimit="2"
+       transform="matrix(0.27187525,0,0,0.27187525,88.854754,99.365169)"
+       font-family="Sans"
+       font-size="10px"
+       font-weight="400"
+       font-style="normal"
+       id="g5">
+      <polyline
+         fill="none"
+         vector-effect="none"
+         points="-30,-30 0,0 "
+         id="polyline2" />
+      <polyline
+         fill="none"
+         vector-effect="none"
+         points="30,-30 0,8.88178e-16 "
+         id="polyline3" />
+      <polyline
+         fill="none"
+         vector-effect="none"
+         points="-30,-30 -40,-20 "
+         id="polyline4" />
+      <polyline
+         fill="none"
+         vector-effect="none"
+         points="30,-30 40,-20 "
+         id="polyline5" />
+    </g>
+    <g
+       fill="#ffffff"
+       fill-opacity="1"
+       stroke="#000000"
+       stroke-opacity="1"
+       stroke-width="1"
+       stroke-linecap="square"
+       stroke-linejoin="bevel"
+       transform="matrix(0.27187525,0,0,0.27187525,88.854754,99.365169)"
+       font-family="Sans"
+       font-size="10px"
+       font-weight="400"
+       font-style="normal"
+       id="g6">
+      <circle
+         cx="0"
+         cy="0"
+         r="10"
+         id="circle5" />
+    </g>
+  </g>
+</svg>
