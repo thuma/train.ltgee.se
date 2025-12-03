@@ -45,9 +45,9 @@
       </div>
     </div>
     <div class="progress mt-2">
-      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/34 * 100)+"%"}'></div>
+      <div class="progress-bar" role="progressbar" v-bind:style='{"width": (antal/90 * 100)+"%"}'></div>
     </div>
-    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>    <div v-if="antal >= 34" class="alert alert-success" >
+    <button class="btn btn-secondary" v-on:click="reset()">Återställ övning</button>    <div v-if="antal >= 90" class="alert alert-success" >
       Nu har du klarat ett träningsvarv. <br>
       Lämna in denna länk på google classroom:<br>
       <div class="input-group mb-3">
