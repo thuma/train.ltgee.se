@@ -35,18 +35,20 @@
     <p>
     I denna övning får du träna på 10-kompisarna.
     </p>
-    <div class="row">
+    <div v-if="!status" class="row" style="background-image: url(imgs/10kompis/road.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;">
       <div class="col">
         <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
-          <button type="button" class="btn btn-outline-primary" v-on:click="run(1)">1</button>
-          <button type="button" class="btn btn-outline-primary" v-on:click="run(2)">2</button>
-          <button type="button" class="btn btn-outline-primary" v-on:click="run(3)">3</button>
-          <button type="button" class="btn btn-outline-primary" v-on:click="run(4)">4</button>
-          <button type="button" class="btn btn-outline-primary" v-on:click="run(5)">5</button>
-          <button type="button" class="btn btn-outline-primary" v-on:click="run(6)">6</button>
-          <button type="button" class="btn btn-outline-primary" v-on:click="run(7)">7</button>
-          <button type="button" class="btn btn-outline-primary" v-on:click="run(8)">8</button>
-          <button type="button" class="btn btn-outline-primary" v-on:click="run(9)">9</button>
+          <button type="button" class="btn btn-primary" v-on:click="run(1)">1</button>
+          <button type="button" class="btn btn-primary" v-on:click="run(2)">2</button>
+          <button type="button" class="btn btn-primary" v-on:click="run(3)">3</button>
+          <button type="button" class="btn btn-primary" v-on:click="run(4)">4</button>
+          <button type="button" class="btn btn-primary" v-on:click="run(5)">5</button>
+          <button type="button" class="btn btn-primary" v-on:click="run(6)">6</button>
+          <button type="button" class="btn btn-primary" v-on:click="run(7)">7</button>
+          <button type="button" class="btn btn-primary" v-on:click="run(8)">8</button>
+          <button type="button" class="btn btn-primary" v-on:click="run(9)">9</button>
         </div>
       </div>
       <div class="col">
@@ -55,7 +57,7 @@
       </div>
     </div>
     <div>
-      <p>Vem är 10-komis till {{A}}?</p>
+      <p>Rätt väg är 10-komis till {{A}}?</p>
       <div v-if="status == true" class="alert alert-success">
         <img class="rounded" width="320" v-bind:src="successImage()">
       </div>
@@ -123,7 +125,7 @@
            this.svar = "";
          } else {
            var denna = this;
-           window.setTimeout(function() {denna.next()}, 2000)
+           window.setTimeout(function() {denna.next()}, 3000)
          }
          this.ksvar = this.svar;
       },
